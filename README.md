@@ -4,7 +4,9 @@ A concise, responsive marketing portfolio using the supplied rainbow background 
 
 ## Preview
 
-Run `python3 -m http.server 8000` from this folder and visit http://localhost:8000. Use HTTP preview for embedded videos: YouTube requires an HTTP Referer, which opening an HTML file directly may not supply. The photo gallery can also work from a local file.
+Double-click `Preview.command`, or run `python3 preview.py`. This starts a persistent localhost-only server and opens the portfolio. It verifies the server belongs to this website and chooses another port if 8000 is occupied. Closing the launcher does not stop the preview. Use `python3 preview.py --no-open` to start it without opening a browser. Logs are stored as `minko-preview-PORT.log` in the system temporary folder.
+
+Use HTTP preview for embedded videos: YouTube requires an HTTP Referer, which opening an HTML file directly may not supply. Opening a local HTML file no longer forcibly redirects to a potentially unavailable server.
 
 ## Edit
 

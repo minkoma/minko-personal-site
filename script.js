@@ -24,9 +24,12 @@ document.querySelectorAll('.flip-card').forEach(card => {
   card.addEventListener('click', () => card.setAttribute('aria-pressed', String(card.getAttribute('aria-pressed') !== 'true')));
 });
 
-// file:// has no HTTP origin/referrer. Route the portfolio through local preview.
+// Keep local-file navigation usable even when no preview server is running.
 if (location.protocol === 'file:' && document.querySelector('iframe[src*="youtube"]')) {
-  location.replace('http://127.0.0.1:8000/portfolio.html' + location.hash);
+  const notice = document.createElement('p');
+  notice.className = 'playback-note';
+  notice.textContent = 'For embedded video playback, start Preview.command in the website folder. Original video links also work below.';
+  document.querySelector('#videos').prepend(notice);
 }
 if (/^https?:$/.test(location.protocol)) {
   document.querySelectorAll('iframe[src*="youtube"]').forEach(frame => {
