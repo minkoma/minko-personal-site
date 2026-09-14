@@ -19,9 +19,60 @@ function initialiseInteractiveContent(scope = document) {
   }
   scope.querySelectorAll('.flip-card:not([data-flip-ready])').forEach(card => {
     card.dataset.flipReady = 'true';
-    card.addEventListener('click', () => card.setAttribute('aria-pressed', String(card.getAttribute('aria-pressed') !== 'true')));
+    const back = card.querySelector('.flip-back');
+    const collage = card.querySelector('.memory-collage');
+    if (back && collage && !back.querySelector('.memory-detail-collage')) {
+      const detailCollage = collage.cloneNode(true);
+      detailCollage.classList.add('memory-detail-collage');
+      back.prepend(detailCollage);
+    }
+    card.addEventListener('click', () => {
+      if (card.classList.contains('memory-card')) openMemoryDialog(card);
+      else card.setAttribute('aria-pressed', String(card.getAttribute('aria-pressed') !== 'true'));
+    });
   });
 }
+
+function openMemoryDialog(card) {
+  let dialog = document.getElementById('memory-dialog');
+  if (!dialog) {
+    dialog = document.createElement('dialog');
+    dialog.id = 'memory-dialog';
+    dialog.className = 'memory-dialog';
+    dialog.innerHTML = '<button class="memory-dialog-close" type="button" aria-label="Close details">×</button><div class="memory-dialog-content"></div>';
+    document.body.append(dialog);
+    dialog.querySelector('.memory-dialog-close').addEventListener('click', closeMemoryDialog);
+    dialog.addEventListener('click', event => { if (event.target === dialog) closeMemoryDialog(); });
+  }
+  if (dialog.open) return;
+  window.activeMemoryCard = card;
+  dialog.dataset.photoCount = String(card.querySelectorAll('.memory-photo').length);
+  card.setAttribute('aria-pressed', 'true');
+  card.classList.add('memory-card-active');
+  const content = dialog.querySelector('.memory-dialog-content');
+  const back = card.querySelector('.flip-back');
+  content.replaceChildren(back.cloneNode(true));
+  content.querySelector('.memory-return')?.remove();
+  dialog.showModal();
+  requestAnimationFrame(() => dialog.classList.add('is-opening'));
+}
+
+function closeMemoryDialog() {
+  const dialog = document.getElementById('memory-dialog');
+  if (!dialog?.open || dialog.classList.contains('is-closing')) return;
+  const card = window.activeMemoryCard;
+  /* Close both layers in the same frame: the card and window are one interaction. */
+  dialog.classList.remove('is-opening', 'is-closing');
+  dialog.close();
+  card?.classList.remove('memory-card-active');
+  card?.setAttribute('aria-pressed', 'false');
+  card?.focus();
+  window.activeMemoryCard = null;
+}
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeMemoryDialog();
+});
 
 async function loadOnePageSections() {
   const sections = [...document.querySelectorAll('[data-page]')];
