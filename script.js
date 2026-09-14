@@ -10,6 +10,20 @@ function initialiseInteractiveContent(scope = document) {
       catch { status.textContent = 'Please copy the email address above.'; }
     });
   }
+  scope.querySelectorAll('[data-email-action]:not([data-initialised])').forEach(action => {
+    action.dataset.initialised = 'true';
+    const openEmail = event => {
+      if (event.target.closest('button')) return;
+      window.location.href = 'mailto:minkoma2002@gmail.com';
+    };
+    action.addEventListener('click', openEmail);
+    action.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openEmail(event);
+      }
+    });
+  });
   if (window.PhotoSwipeLightbox) {
     scope.querySelectorAll('.photo-gallery:not([data-lightbox-ready])').forEach(galleryElement => {
       galleryElement.dataset.lightboxReady = 'true';
@@ -30,6 +44,65 @@ function initialiseInteractiveContent(scope = document) {
       if (card.classList.contains('memory-card')) openMemoryDialog(card);
       else card.setAttribute('aria-pressed', String(card.getAttribute('aria-pressed') !== 'true'));
     });
+  });
+  scope.querySelectorAll('[data-album-carousel]:not([data-album-ready])').forEach(album => {
+    album.dataset.albumReady = 'true';
+    const viewport = album.querySelector('.album-viewport');
+    const slides = [...album.querySelectorAll('.album-slide')];
+    const count = album.querySelector('[data-album-count]');
+    const updateCount = () => {
+      const index = Math.min(slides.length - 1, Math.max(0, Math.round(viewport.scrollLeft / viewport.clientWidth)));
+      if (count) count.textContent = `${index + 1} / ${slides.length}`;
+    };
+    album.querySelector('[data-album-prev]')?.addEventListener('click', () => viewport.scrollBy({ left: -viewport.clientWidth, behavior: reduceMotion ? 'auto' : 'smooth' }));
+    album.querySelector('[data-album-next]')?.addEventListener('click', () => viewport.scrollBy({ left: viewport.clientWidth, behavior: reduceMotion ? 'auto' : 'smooth' }));
+    viewport.addEventListener('scroll', updateCount, { passive: true });
+    window.addEventListener('resize', updateCount);
+    updateCount();
+  });
+  scope.querySelectorAll('[data-design-viewer]:not([data-design-ready])').forEach(viewer => {
+    if (!window.Swiper) return;
+    viewer.dataset.designReady = 'true';
+    const thumbs = new Swiper(viewer.querySelector('.design-thumbs-swiper'), {
+      slidesPerView: 'auto',
+      spaceBetween: 10,
+      watchSlidesProgress: true,
+      freeMode: true,
+      breakpoints: { 600: { slidesPerView: 4, spaceBetween: 12 } },
+      a11y: { enabled: true },
+    });
+    const main = new Swiper(viewer.querySelector('.design-main-swiper'), {
+      effect: 'fade',
+      fadeEffect: { crossFade: true },
+      speed: reduceMotion ? 0 : 420,
+      keyboard: { enabled: true },
+      navigation: { nextEl: viewer.querySelector('.swiper-button-next'), prevEl: viewer.querySelector('.swiper-button-prev') },
+      thumbs: { swiper: thumbs },
+      a11y: { enabled: true },
+    });
+    const title = viewer.querySelector('[data-design-title]');
+    const body = viewer.querySelector('[data-design-body]');
+    const count = viewer.querySelector('[data-design-count]');
+    const pdf = viewer.closest('.design-album')?.querySelector('[data-design-pdf]');
+    const download = viewer.closest('.design-album')?.querySelector('[data-design-download]');
+    const updateCaption = swiper => {
+      const slide = swiper.slides[swiper.activeIndex];
+      if (!slide) return;
+      if (title) title.textContent = slide.dataset.captionTitle || '';
+      if (body) body.textContent = slide.dataset.captionBody || '';
+      if (count) count.textContent = `${swiper.activeIndex + 1} / ${swiper.slides.length}`;
+      if (pdf) pdf.href = slide.dataset.pdf || 'assets/design-portfolio.pdf';
+      if (download) download.href = slide.dataset.pdf || 'assets/design-portfolio.pdf';
+    };
+    main.on('slideChange', updateCaption);
+    updateCaption(main);
+  });
+  scope.querySelectorAll('.instagram-frame iframe:not([data-scroll-ready])').forEach(iframe => {
+    iframe.dataset.scrollReady = 'true';
+    iframe.addEventListener('wheel', event => {
+      window.scrollBy(event.deltaX, event.deltaY);
+      event.preventDefault();
+    }, { passive: false });
   });
 }
 
@@ -93,7 +166,8 @@ async function loadOnePageSections() {
         contactPanel?.querySelector('h1')?.remove();
         contactPanel?.classList.remove('panel', 'contact-panel');
         contactPanel?.classList.add('contact-content');
-        contactPanel?.insertAdjacentHTML('beforeend', '<div class="contact-social" aria-label="Social links"><a href="https://www.linkedin.com/in/minko-m-281519255/" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">in</span> LinkedIn</a><a href="https://www.instagram.com/miankuo/" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">◎</span> Instagram</a><a href="mailto:minkoma2002@gmail.com"><span aria-hidden="true">@</span> Email</a></div>');
+        // The contact panel already contains its primary email and LinkedIn links.
+        // Keep the one-page version focused instead of appending a duplicate link row.
       }
       section.insertAdjacentHTML('afterbegin', `<header class="section-heading"><p>${section.id === 'portfolio' ? 'Selected work' : section.id === 'experience' ? 'Professional path' : section.id === 'contact' ? 'Let’s connect' : 'A little more'}</p><h1>${section.dataset.sectionLabel}</h1></header>`);
       section.removeAttribute('aria-busy');
