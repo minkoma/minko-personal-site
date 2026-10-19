@@ -1,0 +1,8 @@
+/* A contemporary, humanist sans: distinctive in the details, easy to read at every size. */
+html,
+button,
+input,
+textarea,
+select {
+  font-family: "Instrument Sans", Arial, Helvetica, sans-serif;
+}
