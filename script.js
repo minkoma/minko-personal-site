@@ -147,38 +147,6 @@ document.addEventListener('keydown', event => {
   if (event.key === 'Escape') closeMemoryDialog();
 });
 
-async function loadOnePageSections() {
-  const sections = [...document.querySelectorAll('[data-page]')];
-  await Promise.all(sections.map(async section => {
-    try {
-      const response = await fetch(section.dataset.page);
-      if (!response.ok) throw new Error(`Could not load ${section.dataset.page}`);
-      const page = new DOMParser().parseFromString(await response.text(), 'text/html');
-      const sourceMain = page.querySelector('main');
-      if (!sourceMain) throw new Error(`No main content in ${section.dataset.page}`);
-      const fragment = section.dataset.fragment ? sourceMain.querySelector(`#${section.dataset.fragment}`) : null;
-      section.innerHTML = fragment ? fragment.innerHTML : sourceMain.innerHTML;
-      section.querySelector(':scope > h1')?.remove();
-      section.querySelector(':scope > .portfolio-jump')?.remove();
-      section.querySelector(':scope > h2')?.remove();
-      if (section.id === 'contact') {
-        const contactPanel = section.querySelector('.contact-panel');
-        contactPanel?.querySelector('h1')?.remove();
-        contactPanel?.classList.remove('panel', 'contact-panel');
-        contactPanel?.classList.add('contact-content');
-        // The contact panel already contains its primary email and LinkedIn links.
-        // Keep the one-page version focused instead of appending a duplicate link row.
-      }
-      section.insertAdjacentHTML('afterbegin', `<header class="section-heading"><p>${section.id === 'portfolio' ? 'Selected work' : section.id === 'experience' ? 'Professional path' : section.id === 'contact' ? 'Let’s connect' : 'A little more'}</p><h1>${section.dataset.sectionLabel}</h1></header>`);
-      section.removeAttribute('aria-busy');
-      initialiseInteractiveContent(section);
-    } catch (error) {
-      section.innerHTML = '<p class="section-loading">This section could not load. Please refresh the page.</p>';
-      console.error(error);
-    }
-  }));
-}
-
 function initialiseSectionNavigation() {
   const links = [...document.querySelectorAll('a[href^="#"]')];
   const sections = [...document.querySelectorAll('.page-section')];
@@ -206,11 +174,10 @@ function initialiseFloatingDock() {
   dock.addEventListener('pointerleave', () => items.forEach(item => item.style.removeProperty('--dock-scale')));
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   const year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
   initialiseInteractiveContent();
   initialiseSectionNavigation();
   initialiseFloatingDock();
-  await loadOnePageSections();
 });

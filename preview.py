@@ -52,7 +52,7 @@ def main():
                     break
                 time.sleep(0.1)
         if ready(port):
-            url = f"http://127.0.0.1:{port}/portfolio.html"
+            url = f"http://127.0.0.1:{port}/index.html"
             print(url, flush=True)
             if not args.no_open:
                 subprocess.run(["open", url], check=True)

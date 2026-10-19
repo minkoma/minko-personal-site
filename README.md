@@ -10,18 +10,14 @@ Use HTTP preview for embedded videos: YouTube requires an HTTP Referer, which op
 
 ## Edit
 
-- `index.html`: About Me and education; glossy glass lettering is applied only to the name Minko Ma.
-- `experience.html`: three roles with alternating photo galleries; click images to zoom and browse each role’s photos with PhotoSwipe.
-- `portfolio.html`: Video and PPT & Design sections, five embedded players, original-source links, and the design PDF preview/download. No PPT source was supplied yet.
-- `fun-facts.html`: a short personal introduction outside work.
-- `contact.html`: email, LinkedIn, and a copy-email button.
+- `index.html`: the full single-page site — About Me, Experience, Video Portfolio, Design Portfolio, Beyond the Résumé, and Contact, all in one file. Glossy glass lettering is applied only to the name Minko Ma. Experience uses alternating photo galleries with PhotoSwipe zoom; the portfolio has five embedded players with original-source links and the design PDF preview/download; Beyond the Résumé holds the personal flip cards; Contact has email, LinkedIn, and a copy-email button.
 - `styles.css`: layout, colors, typography, and mobile styling.
 - `resume.html`: current résumé, with a Print / Save PDF button.
 - `assets/`: original portrait and graphic design portfolio reused from the previous website.
 
 The résumé supplied for this site is the source of truth. Northwestern graduation is listed as expected December 2026. The UCSD Day of Caring total is presented as a campaign total rather than an individual fundraising attribution.
 
-Video links and LinkedIn were carried over from the previous repository. The background is copied from the supplied Background folder; the name effect uses CSS gradients, outlines, and highlights. System fonts keep the site independent of font services. All six pages include the shared navigation and a top-right résumé link. On narrow screens, the navigation scrolls horizontally while the résumé stays visible above it.
+Video links and LinkedIn were carried over from the previous repository. The background is copied from the supplied Background folder; the name effect uses CSS gradients, outlines, and highlights. System fonts keep the site independent of font services. The single-page site and the résumé page share the same navigation and a top-right résumé link. On narrow screens, the navigation scrolls horizontally while the résumé stays visible above it.
 
 ## Publish on GitHub Pages
 
