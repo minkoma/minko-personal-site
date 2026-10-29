@@ -10,7 +10,7 @@ A concise, responsive marketing portfolio using the supplied rainbow background 
 | --- | --- | --- |
 | `v1/` | Lakeside Editorial | Daylight, serif display, sticky card stack, side-scrolling design shelf |
 | `v2/` | Kinetic Noir | Near-black, oversized grotesque, pinned hero handoff, coverflow films, drag strip |
-| `v3/` | Paper Scrapbook | Paper grain, tape and handwriting, a ribbon that draws itself, draggable photo scraps |
+| `v3/` | Paper Scrapbook | Paper grain, tape and handwriting, no top bar. The hero photo drops in and develops, then the name lands letter by letter and stays pokeable. Path steps alternate a note and a big photo collage. "Bits of me" uses shaped photos and hides nine easter eggs |
 
 All three read the same content and the same hero artwork, so the only difference is design and motion.
 
@@ -24,16 +24,16 @@ All three read the same content and the same hero artwork, so the only differenc
 The supplied artwork arrived as three flat 1920×1080 frames. `tools/prep_hero.py` and `tools/prep_scene.py` rebuild them into independent layers in `assets/hero/`:
 
 - `scene.jpg` — the shoreline with both the lettering and the subject painted out, so the background can move on its own.
-- `name.png` — the white lettering with a real alpha channel, reconstructed from the composite and bridged back across the parts her arm covered. The purple drop shadow is reapplied in CSS so it can be animated.
+- `name.png` — the white lettering with a real alpha channel, reconstructed from the composite and bridged back across the parts her arm covers. The purple drop shadow is reapplied in CSS so it can be animated.
+- `name-01…07.png` — the same lettering cut into its seven letters (M, I, N, K, O, M, A). v3 animates each one separately; the boxes live in `data/minko.js` under `hero.letters`.
 - `subject.png` — the cut-out, keyed from the white-background frame and keeping the original frame registration.
-- `name-01…05.png` — the lettering split into clusters, available if you want per-letter animation later.
 - `layers.json` — the measured geometry, mirrored into `data/minko.js`.
 
 All three layers share one 16:9 stage sized like `background-size: cover`, which is what keeps them in register at any viewport and lets the name pass behind her. On a portrait screen the stage letterboxes instead of cropping, so the full name stays readable.
 
 ### Review helpers
 
-Append `?static=1` to any version URL to render it finished and motionless; add `&flat=1` to also shorten the hero so one screenshot captures the whole page.
+Append `?static=1` to any version URL to render it finished and motionless; add `&flat=1` to also shorten the hero so one screenshot captures the whole page. `?fast=1` runs every animation 40× faster, which lets a headless screenshot catch the end of the intro.
 
 ## Preview
 

@@ -152,27 +152,76 @@ nbox = [int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1]
 Image.fromarray(name_rgba, "RGBA").crop(nbox).save(f"{OUT}/name.png")
 
 # -------------------------------------------------------------- letter slicing
-col = name_mask.sum(axis=0)
-runs, start = [], None
-for x in range(W):
-    if col[x] > 0 and start is None:
-        start = x
-    elif col[x] == 0 and start is not None:
-        runs.append((start, x))
-        start = None
-if start is not None:
-    runs.append((start, W))
-runs = [r for r in runs if r[1] - r[0] > 12]
-print("letter runs", runs)
+# Each letter is one 8-connected piece of the name mask, except where two
+# serifs touch. Those merged pieces are split at their thinnest column, and
+# specks left over from the occlusion bridge are dropped.
+def components(mask):
+    lab = np.zeros(mask.shape, np.int32)
+    comps = []
+    for sy, sx in zip(*np.nonzero(mask)):
+        if lab[sy, sx]:
+            continue
+        idx = len(comps) + 1
+        q = deque([(sy, sx)])
+        lab[sy, sx] = idx
+        pts = []
+        while q:
+            y, x = q.popleft()
+            pts.append((y, x))
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    ny, nx = y + dy, x + dx
+                    if 0 <= ny < H and 0 <= nx < W and mask[ny, nx] and not lab[ny, nx]:
+                        lab[ny, nx] = idx
+                        q.append((ny, nx))
+        comps.append(np.array(pts))
+    return comps
+
+
+pieces = []
+for pts in components(name_mask):
+    if len(pts) < 1500:
+        continue
+    m = np.zeros((H, W), bool)
+    m[pts[:, 0], pts[:, 1]] = True
+    pieces.append(m)
+
+widths = sorted(int(np.ptp(np.nonzero(p.any(axis=0))[0])) for p in pieces)
+median_w = widths[len(widths) // 2]
+split = []
+for p in pieces:
+    cols = np.nonzero(p.any(axis=0))[0]
+    x0, x1 = int(cols.min()), int(cols.max()) + 1
+    if x1 - x0 > 1.7 * median_w:
+        counts = p[:, x0:x1].sum(axis=0)
+        lo, hi = int((x1 - x0) * 0.3), int((x1 - x0) * 0.7)
+        cut_x = x0 + lo + int(np.argmin(counts[lo:hi]))
+        left, right = p.copy(), p.copy()
+        left[:, cut_x:] = False
+        right[:, :cut_x] = False
+        split += [left, right]
+    else:
+        split.append(p)
+split.sort(key=lambda p: int(np.nonzero(p.any(axis=0))[0].min()))
+
+for old in os.listdir(OUT):
+    if old.startswith("name-") and old.endswith(".png"):
+        os.remove(os.path.join(OUT, old))
 
 letters = []
-for i, (x0, x1) in enumerate(runs, 1):
-    sub = name_mask[:, x0:x1]
-    ly = np.nonzero(sub.any(axis=1))[0]
-    y0, y1 = int(ly.min()), int(ly.max()) + 1
+for i, p in enumerate(split, 1):
+    ys, xs = np.nonzero(p)
+    x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
+    # Pad so the soft edge is not clipped, and keep only this letter's pixels.
+    x0, y0 = max(0, x0 - 2), max(0, y0 - 2)
+    x1, y1 = min(W, x1 + 2), min(H, y1 + 2)
+    own = dilate(p, 2)
+    rgba = name_rgba.copy()
+    rgba[..., 3] = np.where(own, rgba[..., 3], 0)
     path = f"name-{i:02d}.png"
-    Image.fromarray(name_rgba, "RGBA").crop((x0, y0, x1, y1)).save(f"{OUT}/{path}")
-    letters.append({"file": path, "x": x0, "y": y0, "w": x1 - x0, "h": y1 - y0})
+    Image.fromarray(rgba, "RGBA").crop((x0, y0, x1, y1)).save(f"{OUT}/{path}")
+    letters.append({"file": path, "box": [x0, y0, x1, y1]})
+print("letters", [l["box"] for l in letters])
 
 # ------------------------------------------------------------------- scene plate
 paint = (dilate(glyph, 18) | dilate(shadow, 8)) & ~subject

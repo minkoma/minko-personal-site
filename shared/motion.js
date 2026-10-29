@@ -18,6 +18,10 @@
   const reduced = global.matchMedia("(prefers-reduced-motion: reduce)").matches || staticMode;
   const touch = global.matchMedia("(hover: none)").matches;
   const hasGsap = typeof global.gsap !== "undefined";
+  /* `?fast=1` runs every GSAP animation 40× faster. QA only: headless browsers
+     throttle animation frames, so this lets a screenshot catch the end state
+     of an intro without changing what a real visitor sees. */
+  if (hasGsap && /(?:^|[?&])fast=1(?:&|$)/.test(global.location.search)) gsap.globalTimeline.timeScale(40);
   if (hasGsap && global.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
   if (hasGsap && global.Draggable) gsap.registerPlugin(Draggable);
 

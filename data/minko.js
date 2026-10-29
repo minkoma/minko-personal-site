@@ -25,7 +25,15 @@ window.MINKO = {
     subject: "../assets/hero/subject.png",
     nameBox: [280, 45, 1631, 457],
     subjectBox: [758, 46, 1254, 1060],
-    clusters: ["01", "02", "03", "04", "05"]
+    letters: [
+      { src: "../assets/hero/name-01.png", box: [278,  176,  521,  368] },
+      { src: "../assets/hero/name-02.png", box: [509,  160,  611,  329] },
+      { src: "../assets/hero/name-03.png", box: [614,  136,  780,  316] },
+      { src: "../assets/hero/name-04.png", box: [808,  136,  984,  301] },
+      { src: "../assets/hero/name-05.png", box: [989,  136,  1148,  305] },
+      { src: "../assets/hero/name-06.png", box: [1222,  146,  1451,  338] },
+      { src: "../assets/hero/name-07.png", box: [1447,  192,  1633,  373] }
+    ]
   },
 
   stats: [
@@ -190,6 +198,7 @@ window.MINKO = {
 
   interests: [
     {
+      key: "twins",
       emoji: "👯‍♀️",
       title: "Two of a kind",
       headline: "Two minutes ahead. Ten centimetres behind.",
@@ -197,6 +206,7 @@ window.MINKO = {
       photos: ["../assets/aboutme/web/twin1.jpg", "../assets/aboutme/web/twin2.jpg", "../assets/aboutme/web/twin3.jpg"]
     },
     {
+      key: "ballet",
       emoji: "🩰",
       title: "A little room to dance",
       headline: "My favourite way to get out of my head.",
@@ -204,6 +214,7 @@ window.MINKO = {
       photos: ["../assets/aboutme/web/ballet.jpg", "../assets/aboutme/web/ballet2.jpg", "../assets/aboutme/web/ballet3.jpg"]
     },
     {
+      key: "travel",
       emoji: "🌍",
       title: "Just one more stamp",
       headline: "15+ countries, and still curious.",
@@ -217,6 +228,7 @@ window.MINKO = {
       ]
     },
     {
+      key: "cats",
       emoji: "🐾",
       title: "Small paws, big love",
       headline: "Five tiny guests. A very full heart.",
@@ -229,6 +241,7 @@ window.MINKO = {
       ]
     },
     {
+      key: "food",
       emoji: "🍜",
       title: "Always room for a bite",
       headline: "A curious palate, a busy kitchen.",
@@ -242,6 +255,7 @@ window.MINKO = {
       ]
     },
     {
+      key: "crafts",
       emoji: "🧶",
       title: "Made with a little patience",
       headline: "Yarn, thread, ink. Endless possibilities.",
@@ -254,6 +268,7 @@ window.MINKO = {
       ]
     },
     {
+      key: "forky",
       emoji: "🍴",
       title: "My kind of character",
       headline: "A soft spot for a very unusual toy.",
@@ -261,6 +276,7 @@ window.MINKO = {
       photos: ["../assets/aboutme/web/me-forky.jpg"]
     },
     {
+      key: "coffee",
       emoji: "☕",
       title: "But first, a latte",
       headline: "Home café. Occasional chaos.",
@@ -268,6 +284,7 @@ window.MINKO = {
       photos: ["../assets/aboutme/web/make-coffee.jpg"]
     },
     {
+      key: "bear",
       emoji: "🧸",
       title: "Fifteen years of goodnight",
       headline: "Some things you never outgrow.",

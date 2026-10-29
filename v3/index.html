@@ -29,33 +29,25 @@
         fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="4 10"></path>
 </svg>
 
-<header class="topbar">
-  <a class="topbar-brand" href="#hero">minko<span>.</span></a>
-  <nav class="topnav" aria-label="Sections">
-    <a href="#hello">Hello</a>
-    <a href="#path">My path</a>
-    <a href="#film">Films</a>
-    <a href="#design">Decks</a>
-    <a href="#beyond">Me</a>
-    <a href="#contact">Say hi</a>
-  </nav>
-  <a class="tape-link" href="../resume.html">résumé</a>
-</header>
-
 <main id="main">
 
   <!-- ------------------------------------------------------------- hero -->
   <section id="hero" class="hero">
+    <a class="corner-sticker" href="../resume.html">résumé ↗</a>
+    <div class="polaroid-wrap" data-polaroid-wrap>
     <div class="polaroid" data-polaroid>
       <span class="tape tape-tl" aria-hidden="true"></span>
       <span class="tape tape-br" aria-hidden="true"></span>
-      <div class="polaroid-window">
+      <div class="polaroid-window" data-window>
         <div class="hero-stage is-framed" data-hero></div>
+        <div class="develop" aria-hidden="true"></div>
       </div>
       <p class="polaroid-caption">Northwestern, December 2025 — the lake behaved for once.</p>
     </div>
+    </div>
     <p class="scribble scribble-1">that’s me! 👋</p>
     <p class="scribble scribble-2">marketer &amp; storyteller</p>
+    <p class="scribble scribble-4" data-poke-hint>psst… poke the letters</p>
     <p class="scribble scribble-3">scroll down ↓</p>
     <div class="confetti" aria-hidden="true"></div>
   </section>
@@ -64,7 +56,6 @@
   <section id="hello" class="hello">
     <h2 data-split="words">Hi, I’m Minko</h2>
     <p class="hello-text" data-highlight></p>
-    <ul class="stickies" data-stats></ul>
   </section>
 
   <!-- ------------------------------------------------------------- path -->
@@ -103,10 +94,12 @@
 
   <!-- ----------------------------------------------------------- beyond -->
   <section id="beyond" class="beyond">
+    <div class="doodles" aria-hidden="true" data-doodles></div>
     <header class="section-head">
       <p class="eyebrow">the fun pages</p>
       <h2 data-split="words">Bits of me</h2>
-      <p class="hand">pick up a photo and move it around</p>
+      <p class="hand">every page hides a little surprise. tap one!</p>
+      <p class="egg-count" data-egg-count>surprises found: <b>0</b> / 9</p>
     </header>
     <div class="scatter" data-interests></div>
   </section>
@@ -123,6 +116,8 @@
   </section>
 
 </main>
+
+<div class="stage-fx" aria-hidden="true" data-fx></div>
 
 <script src="../assets/vendor/gsap.min.js"></script>
 <script src="../assets/vendor/ScrollTrigger.min.js"></script>
