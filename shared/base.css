@@ -1,0 +1,335 @@
+/* Shared across all three versions: resets, hero layer registration, cursor,
+   lightbox, and the split-text mask. Visual identity lives in each version's
+   own stylesheet. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: auto;
+}
+
+html.is-locked,
+html.is-locked body {
+  overflow: hidden;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: #fff;
+  color: #111;
+  padding: 12px 18px;
+  z-index: 9999;
+}
+
+.skip:focus {
+  left: 12px;
+  top: 12px;
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* ----------------------------------------------------------- split text mask */
+.sp-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.sp-unit {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ------------------------------------------------------------- hero staging */
+/* One 16:9 stage covers the viewport like background-size: cover, and every
+   layer fills it, so the scene, the lettering, and the cut-out stay in the
+   exact registration of the original artwork at any screen size. */
+.hero-stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100vw, 177.7778vh);
+  height: max(56.25vw, 100vh);
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+}
+
+.hero-layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.hero-layer > img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.hero-name {
+  z-index: 2;
+}
+
+.hero-name img {
+  height: auto;
+  object-fit: contain;
+  /* Rebuilds the purple drop shadow the original artwork carried, so the white
+     lettering keeps its weight against a pale sky. */
+  filter: drop-shadow(0.5vw 0.6vw 0.5vw rgba(74, 52, 140, 0.55));
+}
+
+.hero-subject {
+  z-index: 3;
+}
+
+.hero-scene {
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------- cursor */
+html.has-cursor,
+html.has-cursor a,
+html.has-cursor button,
+html.has-cursor [data-cursor] {
+  cursor: none;
+}
+
+.cursor {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9000;
+}
+
+.cursor-dot,
+.cursor-ring,
+.cursor-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.cursor-ring {
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  transition: width 0.3s, height 0.3s, margin 0.3s, opacity 0.3s, background 0.3s;
+}
+
+.cursor.is-link .cursor-ring {
+  width: 58px;
+  height: 58px;
+  margin: -29px 0 0 -29px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.cursor.is-active .cursor-ring {
+  width: 86px;
+  height: 86px;
+  margin: -43px 0 0 -43px;
+  background: color-mix(in srgb, currentColor 90%, transparent);
+  border-color: transparent;
+}
+
+.cursor-label {
+  margin-top: 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0;
+  color: #fff;
+  mix-blend-mode: difference;
+  transition: opacity 0.25s;
+  white-space: nowrap;
+}
+
+.cursor.has-label .cursor-label {
+  opacity: 1;
+}
+
+.trail-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8000;
+}
+
+/* ------------------------------------------------------------- lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  display: none;
+  place-items: center;
+  background: rgba(14, 12, 22, 0.92);
+  backdrop-filter: blur(6px);
+  padding: clamp(16px, 5vw, 64px);
+}
+
+.lightbox.is-open {
+  display: grid;
+}
+
+.lightbox figure {
+  margin: 0;
+  max-width: min(1100px, 92vw);
+  text-align: center;
+}
+
+.lightbox img {
+  max-height: 78vh;
+  width: auto;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox figcaption {
+  color: #efeaff;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  margin-top: 16px;
+}
+
+.lightbox button {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lightbox button:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.lightbox-close {
+  top: 20px;
+  right: 20px;
+}
+
+.lightbox-prev {
+  left: 16px;
+  top: 50%;
+}
+
+.lightbox-next {
+  right: 16px;
+  top: 50%;
+}
+
+/* ------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .cursor,
+  .trail-canvas {
+    display: none;
+  }
+}
+
+/* Content stays visible when JavaScript never runs. */
+html.no-js [data-reveal],
+html.no-js [data-reveal-item],
+html.no-js [data-split] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+/* QA only: `?static=1&flat=1` shortens the hero so one tall capture shows the
+   whole page. Has no effect on a normal visit. */
+html.is-flat .hero {
+  height: 620px;
+  min-height: 0;
+}
+
+html.is-flat .hero-stage {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+}
+
+html.is-flat .statement-section,
+html.is-flat .album-inner,
+html.is-flat .rail-inner,
+html.is-flat .hello,
+html.is-flat .intro {
+  min-height: 0;
+}
+
+html.is-flat .job,
+html.is-flat .spread {
+  position: relative;
+  top: 0;
+}
+
+/* On a portrait screen a cover-cropped 16:9 stage cuts the name in half, so
+   the frame is letterboxed instead: the whole composition stays intact and the
+   section's own background fills the space above and below. A version that
+   frames the stage itself (the scrapbook polaroid) opts out with .is-framed. */
+@media (max-aspect-ratio: 5 / 6) {
+  .hero-stage:not(.is-framed) {
+    width: 100vw;
+    height: 56.25vw;
+    top: 40%;
+  }
+}

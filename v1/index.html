@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minko Ma — Marketing portfolio</title>
+<meta name="description" content="Yitian (Minko) Ma — marketer and storyteller. Northwestern IMC graduate student. Brand strategy, social content, video production, and design work.">
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<link rel="stylesheet" href="v1.css">
+</head>
+<body>
+<script>document.documentElement.classList.remove('no-js')</script>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="preloader" data-preloader>
+  <p class="preloader-name">Minko Ma</p>
+  <span class="preloader-bar"><i data-preloader-bar></i></span>
+</div>
+
+<span class="progress-bar" data-progress aria-hidden="true"></span>
+
+<nav class="dots" aria-label="Sections">
+  <a href="#hero"><span>Top</span></a>
+  <a href="#intro"><span>Intro</span></a>
+  <a href="#journey"><span>Journey</span></a>
+  <a href="#work"><span>Work</span></a>
+  <a href="#film"><span>Film</span></a>
+  <a href="#design"><span>Design</span></a>
+  <a href="#beyond"><span>Beyond</span></a>
+  <a href="#contact"><span>Contact</span></a>
+</nav>
+
+<header class="topbar">
+  <a class="topbar-brand" href="#hero" data-cursor="Top">MM</a>
+  <div class="topbar-links">
+    <a href="../resume.html">Résumé</a>
+    <a href="#contact">Contact</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ------------------------------------------------------------- hero -->
+  <section id="hero" class="hero" aria-label="Introduction">
+    <div class="hero-stage" data-hero></div>
+    <div class="hero-grain" aria-hidden="true"></div>
+    <div class="hero-petals" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <p class="hero-kicker" data-hero-kicker>Northwestern IMC ’26 · Marketing &amp; brand storytelling</p>
+      <p class="hero-lede" data-hero-lede></p>
+    </div>
+    <button class="hero-cue" type="button" data-scroll-cue data-cursor="Scroll">
+      <span>scroll</span>
+      <i aria-hidden="true"></i>
+    </button>
+  </section>
+
+  <!-- ------------------------------------------------------------ intro -->
+  <section id="intro" class="intro">
+    <p class="statement" data-highlight></p>
+    <ul class="stats" data-stats data-reveal="up"></ul>
+  </section>
+
+  <!-- ---------------------------------------------------------- journey -->
+  <section id="journey" class="journey" data-parallax-scene>
+    <header class="section-head">
+      <p class="eyebrow">01 — Education</p>
+      <h2 data-split="words">Where it started</h2>
+    </header>
+    <div class="journey-grid" data-journey></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- work -->
+  <section id="work" class="work">
+    <header class="section-head">
+      <p class="eyebrow">02 — Experience</p>
+      <h2 data-split="words">Three rooms I learned in</h2>
+    </header>
+    <div class="stack" data-stack data-work></div>
+    <div class="skills" data-skills data-reveal="up"></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- film -->
+  <section id="film" class="film">
+    <header class="section-head">
+      <p class="eyebrow">03 — Video</p>
+      <h2 data-split="words">Stories that move</h2>
+    </header>
+    <div class="film-grid" data-videos data-reveal="up"></div>
+    <p class="note">Players load on click, so nothing streams until you ask for it.</p>
+  </section>
+
+  <!-- ----------------------------------------------------------- design -->
+  <section id="design" class="album" data-horizontal>
+    <div class="album-inner">
+      <header class="album-head">
+        <p class="eyebrow">04 — Design</p>
+        <h2>The album</h2>
+        <p>Keep scrolling — the shelf moves sideways.</p>
+      </header>
+      <div class="album-track" data-horizontal-track data-album></div>
+      <span class="album-progress"><i data-horizontal-progress></i></span>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------------- beyond -->
+  <section id="beyond" class="beyond">
+    <header class="section-head">
+      <p class="eyebrow">05 — Beyond the résumé</p>
+      <h2 data-split="words">Little moments, favourite things</h2>
+    </header>
+    <div class="beyond-grid" data-interests></div>
+  </section>
+
+  <!-- ---------------------------------------------------------- contact -->
+  <section id="contact" class="contact">
+    <div class="marquee" data-marquee="26" data-marquee-scroll="true" aria-hidden="true">
+      <div class="marquee-track"><span>Let’s make something people remember&nbsp;·&nbsp;</span><span>Let’s make something people remember&nbsp;·&nbsp;</span></div>
+    </div>
+    <div class="contact-inner">
+      <h2 data-split="chars">Say hello</h2>
+      <div class="contact-actions" data-contact></div>
+    </div>
+    <footer class="foot">
+      <p>© <span data-year></span> Yitian (Minko) Ma</p>
+      <p><a href="../versions.html">Compare versions</a></p>
+    </footer>
+  </section>
+
+</main>
+
+<script src="../assets/vendor/gsap.min.js"></script>
+<script src="../assets/vendor/ScrollTrigger.min.js"></script>
+<script src="../assets/vendor/lenis.min.js"></script>
+<script src="../data/minko.js"></script>
+<script src="../shared/motion.js"></script>
+<script src="v1.js"></script>
+</body>
+</html>

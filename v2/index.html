@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minko Ma — Marketing &amp; brand storytelling</title>
+<meta name="description" content="Yitian (Minko) Ma — marketer, storyteller, Northwestern IMC ’26. Loyalty strategy, social content, video production, and design.">
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<link rel="stylesheet" href="../assets/vendor/swiper-bundle.min.css">
+<link rel="stylesheet" href="v2.css">
+</head>
+<body>
+<script>document.documentElement.classList.remove('no-js')</script>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="preloader" data-preloader>
+  <span class="preloader-count" data-preloader-count>00</span>
+  <span class="preloader-bar"><i data-preloader-bar></i></span>
+</div>
+
+<span class="progress-bar" data-progress aria-hidden="true"></span>
+
+<header class="topbar">
+  <a class="topbar-brand" href="#hero">Minko&nbsp;Ma</a>
+  <nav class="topnav" aria-label="Sections">
+    <a href="#statement">Intro</a>
+    <a href="#work">Work</a>
+    <a href="#film">Film</a>
+    <a href="#design">Design</a>
+    <a href="#beyond">Beyond</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <a class="topbar-cta" href="../resume.html" data-magnetic="0.2">Résumé</a>
+</header>
+
+<main id="main">
+
+  <!-- ------------------------------------------------------------- hero -->
+  <section id="hero" class="hero">
+    <div class="hero-wrap" data-hero-wrap>
+      <div class="hero-stage" data-hero></div>
+      <div class="hero-tint" aria-hidden="true"></div>
+      <div class="hero-grain" aria-hidden="true"></div>
+    </div>
+    <div class="hero-ticker" aria-hidden="true" data-marquee="34" data-marquee-scroll="true">
+      <div class="marquee-track">
+        <span>marketing · storytelling · loyalty · brand · content · video&nbsp;</span>
+        <span>marketing · storytelling · loyalty · brand · content · video&nbsp;</span>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <p class="hero-role" data-hero-role></p>
+      <p class="hero-place" data-hero-place></p>
+      <button class="hero-cue" type="button" data-scroll-cue data-cursor="Enter">Enter</button>
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------------- statement -->
+  <section id="statement" class="statement-section" data-scene="150%">
+    <div class="statement-media" data-scene-media aria-hidden="true"></div>
+    <div class="statement-inner">
+      <p class="eyebrow" data-scene-copy>Who she is</p>
+      <p class="statement" data-highlight data-scene-copy></p>
+      <ul class="stats" data-stats data-scene-copy></ul>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- experience -->
+  <section id="work" class="rail" data-horizontal>
+    <div class="rail-inner">
+      <header class="rail-head">
+        <p class="eyebrow">Experience &amp; education</p>
+        <h2>A timeline you can push</h2>
+      </header>
+      <div class="rail-track" data-horizontal-track data-timeline></div>
+      <span class="rail-progress"><i data-horizontal-progress></i></span>
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------------------- film -->
+  <section id="film" class="film">
+    <header class="section-head">
+      <p class="eyebrow">Video portfolio</p>
+      <h2 data-split="words">Press play</h2>
+    </header>
+    <div class="swiper film-swiper">
+      <div class="swiper-wrapper" data-videos></div>
+      <div class="swiper-pagination"></div>
+      <button class="swiper-button-prev" aria-label="Previous"></button>
+      <button class="swiper-button-next" aria-label="Next"></button>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------ design -->
+  <section id="design" class="spreads">
+    <header class="section-head">
+      <p class="eyebrow">Design portfolio</p>
+      <h2 data-split="words">Decks, stacked</h2>
+    </header>
+    <div class="spread-stack" data-stack data-album></div>
+  </section>
+
+  <!-- ------------------------------------------------------------ beyond -->
+  <section id="beyond" class="beyond">
+    <header class="section-head">
+      <p class="eyebrow">Beyond the résumé</p>
+      <h2 data-split="words">Drag me around</h2>
+    </header>
+    <div class="drag-row" data-drag-row>
+      <div class="drag-track" data-drag-track data-interests></div>
+    </div>
+    <p class="note">Drag sideways, or tap a photo to open it.</p>
+  </section>
+
+  <!-- ----------------------------------------------------------- contact -->
+  <section id="contact" class="contact">
+    <h2 class="contact-title" data-split="chars">Let’s talk</h2>
+    <div class="contact-grid" data-contact></div>
+    <div class="skills" data-skills></div>
+    <footer class="foot">
+      <p>© <span data-year></span> Yitian (Minko) Ma</p>
+      <p><a href="../versions.html">Compare versions</a></p>
+    </footer>
+  </section>
+
+</main>
+
+<script src="../assets/vendor/gsap.min.js"></script>
+<script src="../assets/vendor/ScrollTrigger.min.js"></script>
+<script src="../assets/vendor/Draggable.min.js"></script>
+<script src="../assets/vendor/lenis.min.js"></script>
+<script src="../assets/vendor/swiper-bundle.min.js"></script>
+<script src="../data/minko.js"></script>
+<script src="../shared/motion.js"></script>
+<script src="v2.js"></script>
+</body>
+</html>

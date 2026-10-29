@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minko Ma — three versions to compare</title>
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..800&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#f7f4ef;color:#1d1b2a;font:16px/1.65 "Instrument Sans",system-ui,sans-serif}
+  header{padding:clamp(40px,8vh,90px) clamp(20px,5vw,80px) 10px;max-width:900px}
+  h1{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:clamp(34px,6vw,70px);line-height:1;margin:0 0 18px;letter-spacing:-.02em}
+  p{margin:0 0 14px;color:#5b5870}
+  .grid{display:grid;gap:clamp(18px,3vw,34px);grid-template-columns:repeat(auto-fit,minmax(310px,1fr));padding:clamp(24px,5vh,50px) clamp(20px,5vw,80px) 70px}
+  .card{background:#fff;border:1px solid rgba(29,27,42,.12);border-radius:18px;overflow:hidden;box-shadow:0 20px 50px rgba(44,36,82,.1);display:flex;flex-direction:column}
+  .card .shot{aspect-ratio:16/10;background:#ded5ea center/cover}
+  .card .body{padding:22px 24px 26px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .tag{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#5b4b9e}
+  h2{font-family:"Fraunces",Georgia,serif;font-weight:500;font-size:26px;margin:0}
+  ul{margin:4px 0 0;padding-left:18px;font-size:14px;color:#5b5870;display:grid;gap:6px}
+  a.open{margin-top:auto;align-self:start;text-decoration:none;border:1px solid currentColor;border-radius:24px;padding:10px 18px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:#1d1b2a}
+  a.open:hover{background:#5b4b9e;border-color:#5b4b9e;color:#fff}
+  footer{padding:0 clamp(20px,5vw,80px) 60px;font-size:13px;color:#5b5870;max-width:860px}
+  code{background:#efe9e1;padding:2px 6px;border-radius:4px;font-size:12.5px}
+  .v1 .shot{background-image:linear-gradient(160deg,#f7f4ef,#d9e4e8)}
+  .v2 .shot{background-image:linear-gradient(160deg,#0c0a14,#4d2fa8)}
+  .v3 .shot{background-image:linear-gradient(160deg,#f6efe3,#efe4d2)}
+  .shot{display:grid;place-items:center;font-family:"Fraunces",Georgia,serif;font-size:30px}
+  .v2 .shot{color:#f4f1fb}
+</style>
+</head>
+<body>
+<header>
+  <h1>Three versions, one set of content</h1>
+  <p>Every version reads the same content file (<code>data/minko.js</code>) and the same hero layers (<code>assets/hero/</code>), so the differences are purely design and motion. Open each, scroll to the bottom, then tell me what to keep and what to cut.</p>
+  <p>The current static site is still at <a href="index.html">index.html</a>. Nothing there was changed.</p>
+</header>
+
+<div class="grid">
+  <article class="card v1">
+    <div class="shot">Lakeside Editorial</div>
+    <div class="body">
+      <p class="tag">Version 1 · light, editorial</p>
+      <h2>Lakeside Editorial</h2>
+      <ul>
+        <li>Daylight palette pulled from the photo; Fraunces serif display.</li>
+        <li>Hero: name drifts behind her, scene pushes back on scroll.</li>
+        <li>Experience as a sticky card stack; design work as a side-scrolling shelf.</li>
+        <li>Falling petals, section dots, magnetic buttons, hover-to-read interest cards.</li>
+      </ul>
+      <a class="open" href="v1/index.html">Open version 1 →</a>
+    </div>
+  </article>
+
+  <article class="card v2">
+    <div class="shot">Kinetic Noir</div>
+    <div class="body">
+      <p class="tag">Version 2 · dark, kinetic</p>
+      <h2>Kinetic Noir</h2>
+      <ul>
+        <li>Near-black ground, oversized grotesque headlines that skew with scroll speed.</li>
+        <li>Hero pins and shrinks into a card as the first statement arrives.</li>
+        <li>Experience as a pushable horizontal rail; films in a 3D coverflow.</li>
+        <li>Cursor trail, velocity marquee, drag-anywhere photo strip.</li>
+      </ul>
+      <a class="open" href="v2/index.html">Open version 2 →</a>
+    </div>
+  </article>
+
+  <article class="card v3">
+    <div class="shot">Paper Scrapbook</div>
+    <div class="body">
+      <p class="tag">Version 3 · warm, playful</p>
+      <h2>Paper Scrapbook</h2>
+      <ul>
+        <li>Paper grain, washi tape, handwriting, nothing perfectly square.</li>
+        <li>Hero framed as a taped photograph that sways on load.</li>
+        <li>A dotted ribbon draws itself down the page as you scroll.</li>
+        <li>Pick up and move the photo scraps; confetti on the contact buttons.</li>
+      </ul>
+      <a class="open" href="v3/index.html">Open version 3 →</a>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <p>Shared parts: <code>shared/motion.js</code> holds every effect (parallax, split-text, sticky stack, horizontal pin, cursor, lightbox, counters, drag rows), and each version switches them on through data attributes. <code>tools/</code> holds the scripts that rebuilt the supplied artwork into separate scene, name, and cut-out layers.</p>
+</footer>
+</body>
+</html>
