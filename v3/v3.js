@@ -308,20 +308,20 @@
     if (!motion || gsap.isTweening(img)) return;
     gsap
       .timeline()
-      .to(img, { scaleX: 1.22, scaleY: 0.82, duration: 0.12, ease: "power2.out" })
-      .to(img, { scaleX: 0.9, scaleY: 1.14, duration: 0.12 })
-      .to(img, { scaleX: 1, scaleY: 1, duration: 0.6, ease: "elastic.out(1.1, 0.35)" });
+      .to(img, { scaleX: 1.06, scaleY: 0.95, duration: 0.15, ease: "power2.out" })
+      .to(img, { scaleX: 0.98, scaleY: 1.03, duration: 0.15 })
+      .to(img, { scaleX: 1, scaleY: 1, duration: 0.5, ease: "power2.out" });
   }
 
   function hop(letter) {
     const h = $(".hop", letter);
     const [cx, cy] = centerOf(letter);
-    burst(cx, cy, { count: 12, spread: 160, chars: ["✦", "✿", "♥"] });
+    burst(cx, cy, { count: 6, spread: 90, chars: ["✦"] });
     if (!motion) return;
     gsap
       .timeline()
-      .to(h, { yPercent: -70, rotate: "+=360", duration: 0.55, ease: "power2.out" })
-      .to(h, { yPercent: 0, duration: 0.5, ease: "bounce.out" })
+      .to(h, { yPercent: -14, duration: 0.35, ease: "power2.out" })
+      .to(h, { yPercent: 0, duration: 0.6, ease: "power2.inOut" })
       .set(h, { rotate: 0 });
   }
 
@@ -345,7 +345,7 @@
   bouquet.addEventListener("click", () => {
     const [cx, cy] = centerOf(bouquet);
     burst(cx, cy, { count: 26, spread: 300, chars: ["✿", "❀", "✦", "♥"], size: 1.3 });
-    if (motion) gsap.fromTo(layers.subject, { rotate: 0 }, { rotate: 1.2, duration: 0.12, yoyo: true, repeat: 3, transformOrigin: "50% 90%" });
+    if (motion) gsap.fromTo(layers.subject, { rotate: 0 }, { rotate: 0.4, duration: 0.2, yoyo: true, repeat: 1, transformOrigin: "50% 90%" });
   });
   body.addEventListener("click", (e) => {
     bubble(e.clientX, e.clientY - 30, ["hi!! 👋", "thanks for stopping by!", "go wildcats 💜", "scroll down, there’s more ↓"][Math.floor(Math.random() * 4)]);
@@ -365,21 +365,15 @@
       .fromTo(develop, { opacity: 1 }, { opacity: 0, duration: 1.8, ease: "power1.inOut" }, 0)
       .fromTo(win, { filter: "saturate(0) brightness(1.5) blur(8px)", scale: 1.12 }, { filter: "saturate(1) brightness(1) blur(0px)", scale: 1, duration: 2.2, ease: "power2.out", clearProps: "filter" }, 0)
       /* 2. She pops up from the bench. */
-      .fromTo(subjectImg, { yPercent: 22, scaleY: 0.86, autoAlpha: 0, transformOrigin: "50% 100%" }, { yPercent: 0, scaleY: 1, autoAlpha: 1, duration: 0.75, ease: "back.out(2)" }, 0.9)
-      .add(() => {
-        const [cx, cy] = centerOf(bouquet);
-        burst(cx, cy, { count: 22, spread: 260, chars: ["✿", "❀", "✦"] });
-      }, 1.4);
+      .fromTo(subjectImg, { yPercent: 3, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 1.4, ease: "power3.out" }, 0.8);
 
     /* 3. The letters drop in one by one, squash on landing, then settle. */
     letters.forEach((letter, i) => {
       const h = $(".hop", letter);
       const img = $("img", letter);
-      const at = 1.5 + i * 0.12;
+      const at = 1.3 + i * 0.09;
       intro
-        .fromTo(h, { yPercent: -420, rotate: (i % 2 ? 1 : -1) * (14 + i * 3), autoAlpha: 0 }, { yPercent: 0, rotate: 0, autoAlpha: 1, duration: 0.7, ease: "power3.in" }, at)
-        .to(img, { scaleY: 0.66, scaleX: 1.24, duration: 0.09, ease: "power1.out", transformOrigin: "50% 100%" }, at + 0.7)
-        .to(img, { scaleY: 1, scaleX: 1, duration: 0.7, ease: "elastic.out(1.2, 0.3)" }, at + 0.79);
+        .fromTo(h, { yPercent: 18, autoAlpha: 0, filter: "blur(6px)" }, { yPercent: 0, autoAlpha: 1, filter: "blur(0px)", duration: 1.1, ease: "power3.out", clearProps: "filter" }, at);
     });
 
     intro
@@ -389,17 +383,16 @@
     const tagLen = tagLine.getTotalLength();
     gsap.set(tagLine, { strokeDasharray: tagLen, strokeDashoffset: tagLen });
     intro
-      .fromTo(tagChars, { yPercent: 110, rotate: 12, autoAlpha: 0 }, { yPercent: 0, rotate: 0, autoAlpha: 1, duration: 0.5, stagger: 0.035, ease: "back.out(2.4)" }, "-=0.3")
+      .fromTo(tagChars, { yPercent: 40, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.6, stagger: 0.025, ease: "power2.out" }, "-=0.3")
       .to(tagLine, { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, "-=0.2")
-      .fromTo(".scribble-3", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(2)" }, "-=0.3")
-      .fromTo(".corner-sticker", { autoAlpha: 0, scale: 0.6, rotate: 18 }, { autoAlpha: 1, scale: 1, rotate: 4, duration: 0.5, ease: "back.out(3)" }, "<")
+      .fromTo(".scribble-3", { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.3")
+      .fromTo(".corner-sticker", { autoAlpha: 0, y: -8 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "<")
       .add(() => {
         /* Idle: every letter breathes on its own phase, so the name never sits dead still. */
         letters.forEach((letter, i) => {
           gsap.to($(".bob", letter), {
-            yPercent: -6,
-            rotate: i % 2 ? 2.5 : -2.5,
-            duration: 1.4 + i * 0.13,
+            yPercent: -1.5,
+            duration: 3 + i * 0.2,
             ease: "sine.inOut",
             yoyo: true,
             repeat: -1,
@@ -407,10 +400,7 @@
           });
         });
         /* A wave runs through the letters every few seconds as a nudge to poke them. */
-        gsap.delayedCall(2.5, function wave() {
-          letters.forEach((l, i) => gsap.delayedCall(i * 0.08, () => jelly($("img", l))));
-          gsap.delayedCall(7, wave);
-        });
+
       });
 
     /* Scroll-out: the letters float away at different speeds while the photo pushes in. */
