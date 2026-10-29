@@ -382,7 +382,7 @@
             opacity: 1,
             stagger: 0.4,
             ease: "none",
-            scrollTrigger: { trigger: el, start: "top 78%", end: "bottom 45%", scrub: true }
+            scrollTrigger: { trigger: el, start: el.dataset.hlStart || "top 78%", end: el.dataset.hlEnd || "bottom 45%", scrub: true }
           }
         );
       });

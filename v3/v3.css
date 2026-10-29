@@ -446,7 +446,7 @@ p {
 .hello-text {
   font-family: var(--display);
   font-size: clamp(24px, 3.4vw, 54px);
-  line-height: 1.5;
+  line-height: 1.38;
   margin-top: clamp(24px, 4vh, 48px);
   max-width: 36ch;
 }
