@@ -352,7 +352,6 @@
   });
 
   /* ==================================================== hero: entrance */
-  const polaroid = $("[data-polaroid]");
   const win = $("[data-window]");
   const develop = $(".develop");
   const subjectImg = $("img", layers.subject);
@@ -361,24 +360,22 @@
   if (motion) {
     intro = gsap.timeline({ paused: true });
     intro
-      /* 1. The photo drops onto the page and bounces flat. */
-      .fromTo(polaroid, { y: -window.innerHeight * 1.05, rotate: -16 }, { y: 0, rotate: -1.2, duration: 1.15, ease: "bounce.out" })
-      .fromTo(".polaroid .tape", { scale: 1.8, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.3, stagger: 0.12, ease: "back.out(3)" }, ">-0.35")
-      /* 2. It develops like an instant photo: pale and soft, then colour. */
-      .fromTo(develop, { opacity: 1 }, { opacity: 0, duration: 1.7, ease: "power1.inOut" }, "<-0.1")
-      .fromTo(win, { filter: "saturate(0) brightness(1.5) blur(6px)" }, { filter: "saturate(1) brightness(1) blur(0px)", duration: 1.9, ease: "power1.inOut", clearProps: "filter" }, "<")
-      /* 3. She pops up from the bench. */
-      .fromTo(subjectImg, { yPercent: 22, scaleY: 0.86, autoAlpha: 0, transformOrigin: "50% 100%" }, { yPercent: 0, scaleY: 1, autoAlpha: 1, duration: 0.75, ease: "back.out(2)" }, "-=1.1")
+      /* 1. The full-screen photo develops like an instant print: pale and soft,
+         easing back from a slight zoom as the colour comes in. */
+      .fromTo(develop, { opacity: 1 }, { opacity: 0, duration: 1.8, ease: "power1.inOut" }, 0)
+      .fromTo(win, { filter: "saturate(0) brightness(1.5) blur(8px)", scale: 1.12 }, { filter: "saturate(1) brightness(1) blur(0px)", scale: 1, duration: 2.2, ease: "power2.out", clearProps: "filter" }, 0)
+      /* 2. She pops up from the bench. */
+      .fromTo(subjectImg, { yPercent: 22, scaleY: 0.86, autoAlpha: 0, transformOrigin: "50% 100%" }, { yPercent: 0, scaleY: 1, autoAlpha: 1, duration: 0.75, ease: "back.out(2)" }, 0.9)
       .add(() => {
         const [cx, cy] = centerOf(bouquet);
         burst(cx, cy, { count: 22, spread: 260, chars: ["✿", "❀", "✦"] });
-      }, "-=0.35");
+      }, 1.4);
 
-    /* 4. The letters drop in one by one, squash on landing, then settle. */
+    /* 3. The letters drop in one by one, squash on landing, then settle. */
     letters.forEach((letter, i) => {
       const h = $(".hop", letter);
       const img = $("img", letter);
-      const at = 2.05 + i * 0.12;
+      const at = 1.5 + i * 0.12;
       intro
         .fromTo(h, { yPercent: -420, rotate: (i % 2 ? 1 : -1) * (14 + i * 3), autoAlpha: 0 }, { yPercent: 0, rotate: 0, autoAlpha: 1, duration: 0.7, ease: "power3.in" }, at)
         .to(img, { scaleY: 0.66, scaleX: 1.24, duration: 0.09, ease: "power1.out", transformOrigin: "50% 100%" }, at + 0.7)
@@ -386,7 +383,15 @@
     });
 
     intro
-      .fromTo(".scribble", { autoAlpha: 0, y: 14, rotate: 8 }, { autoAlpha: 1, y: 0, rotate: (i, el) => ({ "scribble-1": 8, "scribble-2": -6, "scribble-4": -7 })[el.classList[1]] || 0, stagger: 0.14, duration: 0.6, ease: "back.out(2)" }, "-=0.4")
+    /* Tagline writes itself in, then the underline sweeps under it. */
+    const tagChars = M.split($("[data-tagline]"), "chars");
+    const tagLine = $(".tagline-line path");
+    const tagLen = tagLine.getTotalLength();
+    gsap.set(tagLine, { strokeDasharray: tagLen, strokeDashoffset: tagLen });
+    intro
+      .fromTo(tagChars, { yPercent: 110, rotate: 12, autoAlpha: 0 }, { yPercent: 0, rotate: 0, autoAlpha: 1, duration: 0.5, stagger: 0.035, ease: "back.out(2.4)" }, "-=0.3")
+      .to(tagLine, { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, "-=0.2")
+      .fromTo(".scribble-3", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(2)" }, "-=0.3")
       .fromTo(".corner-sticker", { autoAlpha: 0, scale: 0.6, rotate: 18 }, { autoAlpha: 1, scale: 1, rotate: 4, duration: 0.5, ease: "back.out(3)" }, "<")
       .add(() => {
         /* Idle: every letter breathes on its own phase, so the name never sits dead still. */
@@ -401,7 +406,6 @@
             delay: i * 0.17
           });
         });
-        gsap.to(polaroid, { rotate: -2.2, duration: 5, ease: "sine.inOut", yoyo: true, repeat: -1 });
         /* A wave runs through the letters every few seconds as a nudge to poke them. */
         gsap.delayedCall(2.5, function wave() {
           letters.forEach((l, i) => gsap.delayedCall(i * 0.08, () => jelly($("img", l))));
@@ -409,7 +413,7 @@
         });
       });
 
-    /* Scroll-out: the letters float away at different speeds, the photo lifts. */
+    /* Scroll-out: the letters float away at different speeds while the photo pushes in. */
     const out = gsap.timeline({
       scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.8 }
     });
@@ -417,10 +421,12 @@
       out.to(l, { yPercent: -(160 + ((i * 53) % 140)), xPercent: (i - 3) * 18, rotate: (i % 2 ? 1 : -1) * (20 + i * 4), autoAlpha: 0, ease: "none" }, 0)
     );
     out
-      .to("[data-polaroid-wrap]", { yPercent: -10, rotate: 2.4, ease: "none" }, 0)
+      .to(layers.scene, { scale: 1.12, yPercent: 6, ease: "none" }, 0)
+      .to(layers.subject, { yPercent: 5, ease: "none" }, 0)
+      .to(".tagline", { yPercent: -120, autoAlpha: 0, ease: "none" }, 0)
       .to(".scribble, .corner-sticker", { autoAlpha: 0, ease: "none" }, 0);
 
-    /* Floating paper confetti behind the photo. */
+    /* Floating paper confetti over the photo. */
     const conf = $(".hero .confetti");
     for (let i = 0; i < 16; i++) {
       const bit = document.createElement("i");
