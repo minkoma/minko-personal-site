@@ -336,9 +336,17 @@ p {
   text-shadow: 0 2px 0 var(--plum-deep), 0 6px 22px rgba(40, 25, 80, 0.45);
 }
 
+/* Caveat's ascenders and descenders overflow its em box, and .tagline-text
+   sets line-height: 1, so the shared .sp-mask clip cropped the tops of the k,
+   t and ll and the tail of the y. The tagline is revealed with a fade and a
+   40% rise rather than the full slide-up the [data-split] headings use, so
+   nothing here depends on the clip and it can simply be turned off. Padding
+   the mask instead cannot fix it: the bottom padding needed for the descender
+   is exactly what would leave the glyph visible before it rises. */
 .tagline-text .sp-mask {
-  padding-bottom: 0.18em;
-  margin-bottom: -0.18em;
+  overflow: visible;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 .tagline-line {

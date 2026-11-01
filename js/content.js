@@ -16,23 +16,34 @@ window.MINKO = {
   },
 
   /* Hero layer geometry, measured from the supplied 1920x1080 artwork by
-     tools/prep_hero.py. Fractions are of the frame, so any stage size works. */
+     tools/prep_hero.py. Fractions are of the frame, so any stage size works.
+
+     The letters are SVG, traced from the original mask by tools/trace_name.py.
+     The lettering only ever existed as pixels in the supplied photograph, and
+     the hero scales it well past its native size.
+
+     `nudge` is an x offset in frame pixels applied on top of the measured box.
+     The hand lettering sets its own letterfit, and two pairs sat too tight
+     once the name was drawn at full width: the M and A of "MA" touched at
+     their bottom serifs, and the M and I of "MINKO" came within 13px. These
+     offsets open every gap inside a word to 21px and leave the 83px word
+     space alone. */
   hero: {
     frame: [1920, 1080],
     scene: "assets/hero/scene.jpg",
     scenePlaceholder: "assets/hero/scene-small.jpg",
-    name: "assets/hero/name.png",
+    name: "assets/hero/name.svg",
     subject: "assets/hero/subject.png",
     nameBox: [280, 45, 1631, 457],
     subjectBox: [758, 46, 1254, 1060],
     letters: [
-      { src: "assets/hero/name-01.png", box: [278,  176,  521,  368] },
-      { src: "assets/hero/name-02.png", box: [509,  160,  611,  329] },
-      { src: "assets/hero/name-03.png", box: [614,  136,  780,  316] },
-      { src: "assets/hero/name-04.png", box: [808,  136,  984,  301] },
-      { src: "assets/hero/name-05.png", box: [989,  136,  1148,  305] },
-      { src: "assets/hero/name-06.png", box: [1222,  146,  1451,  338] },
-      { src: "assets/hero/name-07.png", box: [1447,  192,  1633,  373] }
+      { src: "assets/hero/name-01.svg", box: [278,  176,  521,  368], nudge: -6 },
+      { src: "assets/hero/name-02.svg", box: [509,  160,  611,  329], nudge:  2 },
+      { src: "assets/hero/name-03.svg", box: [614,  136,  780,  316], nudge:  2 },
+      { src: "assets/hero/name-04.svg", box: [808,  136,  984,  301], nudge:  4 },
+      { src: "assets/hero/name-05.svg", box: [989,  136,  1148,  305], nudge:  6 },
+      { src: "assets/hero/name-06.svg", box: [1222,  146,  1451,  338], nudge: 10 },
+      { src: "assets/hero/name-07.svg", box: [1447,  192,  1633,  373], nudge: 34 }
     ]
   },
 

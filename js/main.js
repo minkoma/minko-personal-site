@@ -220,7 +220,8 @@
   layers.name.innerHTML = D.hero.letters
     .map((l, i) => {
       const [x0, y0, x1, y1] = l.box;
-      return `<span class="letter" data-letter="${i}" style="left:${pct(x0, FW)};top:${pct(y0, FH)};width:${pct(x1 - x0, FW)};height:${pct(y1 - y0, FH)}">
+      const dx = l.nudge || 0;
+      return `<span class="letter" data-letter="${i}" style="left:${pct(x0 + dx, FW)};top:${pct(y0, FH)};width:${pct(x1 - x0, FW)};height:${pct(y1 - y0, FH)}">
         <span class="hop"><span class="bob"><img src="${l.src}" alt="" draggable="false"></span></span>
       </span>`;
     })
