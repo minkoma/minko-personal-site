@@ -1,4 +1,4 @@
-/* Shared across all three versions: resets, hero layer registration, cursor,
+/* Shared: resets, hero layer registration, cursor,
    lightbox, and the split-text mask. Visual identity lives in each version's
    own stylesheet. */
 

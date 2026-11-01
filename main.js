@@ -114,11 +114,11 @@
     `<article class="deck deck-end" data-horizontal-card>
        <h3>that’s the shelf!</h3>
        <p class="hand">want it all in one file?</p>
-       <a class="button" href="../assets/design-portfolio.pdf" download data-magnetic="0.2">download everything ↓</a>
+       <a class="button" href="assets/design-portfolio.pdf" download data-magnetic="0.2">download everything ↓</a>
      </article>`;
 
   /* ---------------------------------------------------------- bits of me */
-  /* Each card has its own photo arrangement and shapes, set in v3.css by key. */
+  /* Each card has its own photo arrangement and shapes, set in styles.css by key. */
   const SHAPES = {
     twins: ["circle", "circle", "heart"],
     ballet: ["arch", "circle", "arch"],
