@@ -15,36 +15,28 @@ window.MINKO = {
     languages: "Bilingual in Mandarin and English"
   },
 
-  /* Hero layer geometry, measured from the supplied 1920x1080 artwork by
-     tools/prep_hero.py. Fractions are of the frame, so any stage size works.
+  /* Hero layer geometry. Boxes stay in 1920x1080 units whatever resolution the
+     images actually carry, because they are only ever turned into percentages
+     and main.js positions the hotspots in the same space. Measured from the
+     6000x3375 artwork by tools/prep_hero.py, which prints these values.
 
-     The letters are SVG, traced from the original mask by tools/trace_name.py.
-     The lettering only ever existed as pixels in the supplied photograph, and
-     the hero scales it well past its native size.
-
-     `nudge` is an x offset in frame pixels applied on top of the measured box.
-     The hand lettering sets its own letterfit, and two pairs sat too tight
-     once the name was drawn at full width: the M and A of "MA" touched at
-     their bottom serifs, and the M and I of "MINKO" came within 13px. These
-     offsets open every gap inside a word to 21px and leave the 83px word
-     space alone. */
+     The name is one traced SVG covering the whole wordmark, built by
+     tools/trace_name.py. The 6000px artwork supplies the name as white letters
+     on white with only a drop-shadow outline visible, so its glyph shapes are
+     not in the file at all; the letterform comes from the old masks, which is
+     lossless to place at any size. Run trace_name.py --letters to get the
+     per-letter files back and set splitLetters to animate them separately. */
   hero: {
     frame: [1920, 1080],
-    scene: "assets/hero/scene.jpg",
+    scene: "assets/hero/scene.webp",
+    sceneFallback: "assets/hero/scene.jpg",
     scenePlaceholder: "assets/hero/scene-small.jpg",
     name: "assets/hero/name.svg",
-    subject: "assets/hero/subject.png",
-    nameBox: [280, 45, 1631, 457],
-    subjectBox: [758, 46, 1254, 1060],
-    letters: [
-      { src: "assets/hero/name-01.svg", box: [278,  176,  521,  368], nudge: -6 },
-      { src: "assets/hero/name-02.svg", box: [509,  160,  611,  329], nudge:  2 },
-      { src: "assets/hero/name-03.svg", box: [614,  136,  780,  316], nudge:  2 },
-      { src: "assets/hero/name-04.svg", box: [808,  136,  984,  301], nudge:  4 },
-      { src: "assets/hero/name-05.svg", box: [989,  136,  1148,  305], nudge:  6 },
-      { src: "assets/hero/name-06.svg", box: [1222,  146,  1451,  338], nudge: 10 },
-      { src: "assets/hero/name-07.svg", box: [1447,  192,  1633,  373], nudge: 34 }
-    ]
+    subject: "assets/hero/subject.webp",
+    subjectFallback: "assets/hero/subject.png",
+    nameBox: [48.6, 398.7, 1881.6, 705.9],
+    subjectBox: [758.1, 43.2, 1254.1, 1056.6],
+    splitLetters: false
   },
 
   stats: [

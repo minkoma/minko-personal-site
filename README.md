@@ -26,34 +26,62 @@ tools/              hero layer scripts, the lettering tracer, the preview server
 
 ## The hero
 
-The supplied artwork arrived as three flat 1920×1080 frames. `tools/prep_hero.py` and `tools/prep_scene.py` rebuild them into independent layers in `assets/hero/`:
+The artwork arrives as three 6000x3375 frames, identified by role rather than by filename:
 
-- `scene.jpg`: the shoreline with the lettering and the subject painted out.
-- `name.png`: the white lettering with a real alpha channel, bridged back across the parts her arm covers.
-- `name-01…07.png`: the lettering cut into its seven letters (M, I, N, K, O, M, A).
-- `name.svg`, `name-01…07.svg`: the same lettering as vectors, traced from those masks by `tools/trace_name.py`. These are what the page loads. Their boxes live in `js/content.js` under `hero.letters`.
-- `subject.png`: the cut-out, keeping the original frame registration.
-- `layers.json`: the measured geometry, mirrored into `js/content.js`.
+| role | contents |
+|---|---|
+| photo | the photograph, scene and subject, no lettering |
+| cutout | the subject alone on pure white |
+| plate | the wordmark, white letters on white, only the purple drop shadow visible |
+
+`tools/prep_hero.py` turns the first two into the layers in `assets/hero/`:
+
+- `scene.webp` / `scene.jpg`: the photograph with the subject painted out.
+- `scene-small.jpg`: a placeholder for the first paint.
+- `subject.webp` / `subject.png`: the subject with a real alpha channel, in the original frame registration.
+- `name.svg`: the whole wordmark as one traced vector, from `tools/trace_name.py`.
+- `layers.json`: the measured geometry. It prints the same boxes in 1920x1080 units to paste into `js/content.js`.
+
+Both photographic layers ship as WebP with a legacy fallback. The subject is a photographic cutout with an alpha channel, the case PNG is worst at: at 3200px it is about 1 MB as PNG and 110 KB as WebP.
 
 All layers share one 16:9 stage sized like `background-size: cover`, which keeps them in register and lets the name pass behind her. On a portrait screen the stage letterboxes instead of cropping.
 
-### Why the lettering is traced
+Geometry in `js/content.js` stays in 1920x1080 units whatever resolution the images carry, because the boxes only ever become percentages and `main.js` positions the hotspots in the same space.
 
-The lettering only ever existed as pixels in the photograph, so there is no original vector artwork. `prep_hero.py` extracts it as a 1-bit mask, which leaves the edges as 90-degree staircase steps, and the hero then draws the name at full viewport width, well past the mask's native size. Re-deriving a softer mask from the photograph is not an option either: the lake and sky are as bright as the white lettering, so luminance cannot separate them.
+### Why the name is a traced vector
 
-`tools/trace_name.py` therefore traces the mask to SVG: it upsamples the alpha so the half-pixel blur becomes sub-pixel edge information, takes contours by marching squares at the 0.5 iso-level, smooths each loop with Taubin smoothing, and fits one cubic Bezier per point. Taubin rather than a moving average because a moving average is curve-shortening flow, which visibly thins the hairline serifs.
+The lettering only ever existed as pixels. The plate carries the name's *position* but not its *shape*: its glyph fill is pure white on a pure white background, so the letterform is simply not in the file, and all that remains is an open drop-shadow outline that a fill leaks straight through. Luminance cannot recover it from the photograph either, because the lake and sky are as bright as the white letters.
 
-It prints a fidelity report and exits non-zero if the trace drifts: intersection-over-union against the upsampled field it traced, and area bias, which is what would show up as letters looking fatter or thinner. Keep IoU above 0.975 and bias within 2%. The gate is not set higher because the smoothing is deliberately removing a one-pixel staircase, and that costs a couple of percent of IoU by itself. Two loops are dropped as too small to be letterform: a white sail on the lake under the wordmark, and a speck above it.
+So the letterform comes from the 1-bit masks the first version of the pipeline cut out of the old 1920px composite, `name-01…07.png`, with their geometry in `letters.json`. Those are the only record of it, which is why they are kept even though nothing else uses them.
 
-Re-run it after any change to `prep_hero.py`:
+`tools/trace_name.py` traces them to one combined SVG: it upsamples each alpha so the half-pixel blur becomes sub-pixel edge information, takes contours by marching squares at the 0.5 iso-level, smooths each loop with Taubin smoothing, and fits one cubic Bezier per point. Taubin rather than a moving average because a moving average is curve-shortening flow, which visibly thins the hairline serifs. Being vector, the result is lossless to place at any size, so the name gains nothing from a higher-resolution source.
+
+It prints a fidelity report and exits non-zero if the trace drifts: intersection-over-union against the upsampled field it traced, and area bias, which is what would show up as letters looking fatter or thinner. Keep IoU above 0.975 and bias within 2%. The gate is not higher because the smoothing is deliberately removing a one-pixel staircase, which costs a couple of percent of IoU by itself. Two loops are dropped as too small to be letterform: a white sail on the lake under the wordmark, and a speck above it.
 
 ```
-python3 tools/trace_name.py
+python3 tools/prep_hero.py      # scene, subject, geometry
+python3 tools/trace_name.py     # name.svg, placed per that geometry
 ```
 
-### Letterfit
+Run the tracer after the prep, since it reads the name box the prep measures.
 
-`hero.letters` in `js/content.js` carries a `nudge`, an x offset in frame pixels applied on top of each measured box. The hand lettering sets its own letterfit, and two pairs sat too tight at full width: the M and A of "MA" touched at their bottom serifs, and the M and I of "MINKO" came within 13px. The offsets open every gap inside a word to 21px and leave the 83px word space alone.
+### Placement and letterfit
+
+The plate puts the name larger and lower than the old composite did: its box is a uniform 4.23x of the letters' own ink box, where a plain frame rescale would have been 3.125x. `trace_name.py` maps the traced letters onto that box.
+
+`letters.json` carries a `nudge` per letter, an x offset in the mask's own units. The hand lettering sets its own letterfit, and two pairs sat too tight: the M and A of "MA" touched outright at their bottom serifs, and the M and I of "MINKO" came within 13px, against 20-39px elsewhere. The nudges open every gap inside a word to 21px and leave the 83px word space alone. Because separating them widens the word, and the artwork already runs from 2.5% to 98% of the frame, the result is refit into the artwork's own box so the nudges change letterfit rather than footprint. `--no-nudge` places the letters exactly as drawn.
+
+The wordmark is also scaled to fit the visible viewport width by `main.js`. At 2.5% to 98% of the frame it is narrower than the stage's own crop: at 1440x900 the stage is 1600px wide and loses 80px a side, against the name's 40px margin, so the outer M and A were being cut off. The name is typography rather than part of the photograph, so it is scaled to fit rather than cropped with the photo; at exactly 16:9 the scale is 1 and the artwork is reproduced as drawn.
+
+### Splitting the name into letters
+
+`hero.splitLetters` in `js/content.js` is off, so the name is one piece. `main.js` builds the same structure either way, so the entrance, the idle bob, the poke and the scroll-out all still apply, to the word rather than to each letter. To animate the letters separately, write the per-letter files and turn the flag on:
+
+```
+python3 tools/trace_name.py --letters
+```
+
+and restore a `letters` array in `hero` from `letters.json`. Note the name's easter egg completes on one poke while the name is a single piece.
 
 ## Review helpers
 

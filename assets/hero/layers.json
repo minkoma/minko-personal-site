@@ -1,90 +1,25 @@
 {
   "frame": [
-    1920,
-    1080
+    6000,
+    3375
   ],
+  "output_width": 3200,
   "subject": {
     "file": "subject.png",
     "box": [
-      758,
-      46,
-      1254,
-      1060
+      2369,
+      135,
+      3919,
+      3302
     ]
   },
   "name": {
-    "file": "name.png",
     "box": [
-      280,
-      45,
-      1631,
-      457
+      152,
+      1226,
+      5880,
+      2226
     ],
-    "letters": [
-      {
-        "file": "name-01.png",
-        "box": [
-          278,
-          176,
-          521,
-          368
-        ]
-      },
-      {
-        "file": "name-02.png",
-        "box": [
-          509,
-          160,
-          611,
-          329
-        ]
-      },
-      {
-        "file": "name-03.png",
-        "box": [
-          614,
-          136,
-          780,
-          316
-        ]
-      },
-      {
-        "file": "name-04.png",
-        "box": [
-          808,
-          136,
-          984,
-          301
-        ]
-      },
-      {
-        "file": "name-05.png",
-        "box": [
-          989,
-          136,
-          1148,
-          305
-        ]
-      },
-      {
-        "file": "name-06.png",
-        "box": [
-          1222,
-          146,
-          1451,
-          338
-        ]
-      },
-      {
-        "file": "name-07.png",
-        "box": [
-          1447,
-          192,
-          1633,
-          373
-        ]
-      }
-    ]
-  },
-  "plate": "plate.jpg"
+    "note": "measured from the plate's drop-shadow outline; the glyph shapes come from tools/trace_name.py, not from the plate"
+  }
 }

@@ -212,20 +212,57 @@
   const [FW, FH] = D.hero.frame;
   const pct = (v, total) => (v / total) * 100 + "%";
 
-  /* Swap the single name image for seven separately animatable letters.
+  /* The name layer is rebuilt as positioned, separately animatable pieces.
      Nesting keeps each animation on its own element:
-     .letter (position + scroll-out) > .hop (entrance + click) > .bob (idle) > img (jelly). */
+     .letter (position + scroll-out) > .hop (entrance + click) > .bob (idle) > img (jelly).
+
+     With hero.splitLetters off there is one piece holding the whole wordmark,
+     which is the same structure with a length of one, so the entrance, the
+     idle bob, the poke and the scroll-out all still apply, to the word rather
+     than to each letter. */
   layers.name.setAttribute("role", "img");
   layers.name.setAttribute("aria-label", D.profile.name);
-  layers.name.innerHTML = D.hero.letters
-    .map((l, i) => {
-      const [x0, y0, x1, y1] = l.box;
-      const dx = l.nudge || 0;
-      return `<span class="letter" data-letter="${i}" style="left:${pct(x0 + dx, FW)};top:${pct(y0, FH)};width:${pct(x1 - x0, FW)};height:${pct(y1 - y0, FH)}">
+  const pieces = D.hero.splitLetters && D.hero.letters
+    ? D.hero.letters
+    : [{ src: D.hero.name, box: D.hero.nameBox }];
+  layers.name.innerHTML =
+    `<div class="name-fit" data-name-fit>` +
+    pieces
+      .map((l, i) => {
+        const [x0, y0, x1, y1] = l.box;
+        const dx = l.nudge || 0;
+        return `<span class="letter" data-letter="${i}" style="left:${pct(x0 + dx, FW)};top:${pct(y0, FH)};width:${pct(x1 - x0, FW)};height:${pct(y1 - y0, FH)}">
         <span class="hop"><span class="bob"><img src="${l.src}" alt="" draggable="false"></span></span>
       </span>`;
-    })
-    .join("");
+      })
+      .join("") +
+    `</div>`;
+
+  /* The 16:9 stage is sized like background-size: cover, so on any viewport
+     taller than 16:9 its sides are cropped. The wordmark in the artwork runs
+     from 2.5% to 98% of the frame, which is narrower than that crop: at
+     1440x900 the stage is 1600px wide and loses 80px a side, against the
+     name's 40px margin, so the outer M and A were being cut off.
+
+     The name is typography rather than part of the photograph, so it is scaled
+     to fit the visible width instead of being cropped with the photo. It keeps
+     its position on the stage, so it still passes behind her, and at exactly
+     16:9 the scale is 1 and the artwork is reproduced as drawn. The scale
+     lives on an inner element so it cannot collide with the GSAP transforms
+     that drive the layer's parallax. */
+  const nameFit = $("[data-name-fit]", layers.name);
+  const nameSpan = (D.hero.nameBox[2] - D.hero.nameBox[0]) / FW;
+  const NAME_MARGIN = 24;
+
+  function fitName() {
+    const stageWidth = stage.getBoundingClientRect().width;
+    if (!stageWidth) return;
+    const drawn = nameSpan * stageWidth;
+    const room = window.innerWidth - NAME_MARGIN * 2;
+    nameFit.style.scale = String(Math.min(1, room / drawn));
+  }
+  fitName();
+  window.addEventListener("resize", fitName);
 
   /* Hotspots on her: the bouquet, and the rest of her. The cut-out layer itself
      ignores the pointer so the letters behind it stay clickable. */

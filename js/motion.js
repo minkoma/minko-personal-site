@@ -169,15 +169,24 @@
         height: ((box[3] - box[1]) / fh) * 100 + "%"
       });
 
+      /* The scene is a photograph and the subject a photographic cutout with an
+         alpha channel, which is the case PNG handles worst: at 3200px the
+         subject is about 1 MB as PNG and under 110 KB as WebP. Both ship in
+         both formats and the browser picks. */
+      const media = (src, fallback, attrs) =>
+        fallback
+          ? `<picture><source srcset="${src}" type="image/webp"><img src="${fallback}" ${attrs}></picture>`
+          : `<img src="${src}" ${attrs}>`;
+
       stage.innerHTML = `
         <div class="hero-layer hero-scene" data-hero-scene>
-          <img src="${hero.scene}" alt="Lake Michigan shoreline with the Chicago skyline" fetchpriority="high" width="${fw}" height="${fh}">
+          ${media(hero.scene, hero.sceneFallback, `alt="Lake Michigan shoreline with the Chicago skyline" fetchpriority="high" width="${fw}" height="${fh}"`)}
         </div>
         <div class="hero-layer hero-name" data-hero-name>
           <img src="${hero.name}" alt="Minko Ma" width="${hero.nameBox[2] - hero.nameBox[0]}" height="${hero.nameBox[3] - hero.nameBox[1]}">
         </div>
         <div class="hero-layer hero-subject" data-hero-subject>
-          <img src="${hero.subject}" alt="Minko Ma in her Northwestern graduation gown, holding a bouquet" fetchpriority="high" width="${fw}" height="${fh}">
+          ${media(hero.subject, hero.subjectFallback, `alt="Minko Ma in her Northwestern graduation gown, holding a bouquet" fetchpriority="high" width="${fw}" height="${fh}"`)}
         </div>`;
 
       const nameEl = stage.querySelector(".hero-name img");

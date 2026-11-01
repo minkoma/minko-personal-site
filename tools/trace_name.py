@@ -25,6 +25,7 @@ intersection-over-union of each traced outline against its source mask.
     python3 tools/trace_name.py [--check]
 """
 
+import argparse
 import json
 import math
 import sys
@@ -390,30 +391,112 @@ def svg(loops, width, height, extra=""):
     )
 
 
-def main():
+def place(loops, src_box, dst_box):
+    """Map loops from a letter mask's own pixel space into frame coordinates."""
+    sx = (dst_box[2] - dst_box[0]) / (src_box[2] - src_box[0])
+    sy = (dst_box[3] - dst_box[1]) / (src_box[3] - src_box[1])
+    return [[(dst_box[0] + x * sx, dst_box[1] + y * sy) for x, y in loop]
+            for loop in loops]
+
+
+def build_wordmark(apply_nudge=True):
+    """One combined wordmark SVG, placed to match the 6000px artwork.
+
+    The 6000px name plate carries the name's position but not its shape, so the
+    letterform comes from the masks and the placement from the plate. The plate
+    puts the name larger and lower than the old composite did: its bbox is a
+    uniform 4.23x of the letters' own ink box, where a simple frame rescale
+    would have been 3.125x.
+
+    The nudges that separate the touching M and A are kept, and the result is
+    then shifted and if necessary scaled to stay inside the frame, because the
+    new artwork already runs nearly edge to edge and has no room to spread into.
+    """
+    letters = json.loads((ASSETS / "letters.json").read_text())
     layers = json.loads((ASSETS / "layers.json").read_text())
-    results = []
+    frame = layers["frame"]
+    target = layers["name"]["box"]
+    ink = letters["ink_box"]
 
-    targets = [(l["file"], l["box"]) for l in layers["name"]["letters"]]
-    targets.append((layers["name"]["file"], layers["name"]["box"]))
+    sx = (target[2] - target[0]) / (ink[2] - ink[0])
+    sy = (target[3] - target[1]) / (ink[3] - ink[1])
+    print(f"placing wordmark: ink {ink} -> {target}   scale {sx:.3f} x {sy:.3f}")
 
-    for file, box in targets:
-        src = ASSETS / file
+    loops, reports = [], []
+    for l in letters["letters"]:
+        src = ASSETS / l["file"]
         alpha = np.asarray(Image.open(src))[:, :, 3].astype(float) / 255.0
         h, w = alpha.shape
-        loops, dropped = trace(alpha)
-        out = src.with_suffix(".svg")
-        label = ' role="img" aria-hidden="true"' if file.startswith("name-") else ""
-        out.write_text(svg(loops, w, h, label))
-        score, bias = quality(loops, dropped, alpha)
-        results.append((out.name, w, h, len(loops), len(dropped), score, bias, out.stat().st_size))
+        kept, dropped = trace(alpha)
+        nudge = (l["nudge"] if apply_nudge else 0)
+        bx0, by0, bx1, by1 = l["box"]
+        dst = [target[0] + (bx0 + nudge - ink[0]) * sx,
+               target[1] + (by0 - ink[1]) * sy,
+               target[0] + (bx1 + nudge - ink[0]) * sx,
+               target[1] + (by1 - ink[1]) * sy]
+        placed = place(kept, [0, 0, w, h], dst)
+        loops.extend(placed)
+        reports.append((l["file"], quality(kept, dropped, alpha)))
 
-    print(f"{'file':<16}{'size':>12}{'loops':>7}{'cut':>5}{'IoU':>8}{'bias':>9}{'bytes':>9}")
-    for name, w, h, n, cut, score, bias, size in results:
-        print(f"{name:<16}{f'{w}x{h}':>12}{n:>7}{cut:>5}{score:>8.3f}{bias*100:>8.1f}%{size:>9}")
-    worst = min(r[5] for r in results)
-    fattest = max(abs(r[6]) for r in results)
-    print(f"\nworst IoU {worst:.3f}   largest area bias {fattest*100:.1f}%")
+    xs = [x for loop in loops for x, _ in loop]
+    ys = [y for loop in loops for _, y in loop]
+    x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
+
+    # Fit the nudged wordmark back into the box the artwork gives it, uniformly
+    # and about that box's centre. Separating the M and A widens the word, and
+    # the new artwork already runs from 2.5% to 98% of the frame, so letting it
+    # grow would push the A against the frame edge, where a `cover` stage crops
+    # it on a narrow viewport. Scaling instead keeps the artist's margins and
+    # makes the nudges a change of letterfit rather than of footprint.
+    k = (target[2] - target[0]) / (x1 - x0)
+    if abs(k - 1.0) > 1e-6:
+        tcx, tcy = (target[0] + target[2]) / 2, (target[1] + target[3]) / 2
+        cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+        print(f"  refit into the artwork's box: scale {k:.4f} about its centre")
+        loops = [[((x - cx) * k + tcx, (y - cy) * k + tcy) for x, y in loop]
+                 for loop in loops]
+        xs = [x for loop in loops for x, _ in loop]
+        ys = [y for loop in loops for _, y in loop]
+        x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
+
+    bw, bh = x1 - x0, y1 - y0
+    flat = [[(x - x0, y - y0) for x, y in loop] for loop in loops]
+    (ASSETS / "name.svg").write_text(svg(flat, round(bw, 1), round(bh, 1)))
+    box = [round(x0), round(y0), round(x1), round(y1)]
+    print(f"  name.svg {bw:.0f}x{bh:.0f}  box {box}  "
+          f"{len(loops)} loops  {(ASSETS / 'name.svg').stat().st_size / 1024:.0f} KB")
+    return box, reports
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--no-nudge", action="store_true",
+                    help="place the letters exactly as the artwork has them, "
+                         "with the M and A of MA still touching")
+    ap.add_argument("--letters", action="store_true",
+                    help="also write the per-letter SVGs, for split animation")
+    args = ap.parse_args()
+
+    box, reports = build_wordmark(apply_nudge=not args.no_nudge)
+
+    if args.letters:
+        letters = json.loads((ASSETS / "letters.json").read_text())
+        for l in letters["letters"]:
+            src = ASSETS / l["file"]
+            alpha = np.asarray(Image.open(src))[:, :, 3].astype(float) / 255.0
+            h, w = alpha.shape
+            kept, _ = trace(alpha)
+            (src.with_suffix(".svg")).write_text(
+                svg(kept, w, h, ' role="img" aria-hidden="true"'))
+        print(f"  wrote {len(letters['letters'])} per-letter SVGs")
+
+    print(f"\n{'mask':<16}{'IoU':>8}{'bias':>9}")
+    for name, (iou, bias) in reports:
+        print(f"{name:<16}{iou:>8.3f}{bias * 100:>8.1f}%")
+    worst = min(r[1][0] for r in reports)
+    fattest = max(abs(r[1][1]) for r in reports)
+    print(f"\nworst IoU {worst:.3f}   largest area bias {fattest * 100:.1f}%")
+    print(f"name box for js/content.js: {box}")
     # The gate sits at 0.975, not higher: the smoothing is deliberately
     # removing a one-pixel staircase, and erasing a 1px ripple along a
     # perimeter this long costs a couple of percent of IoU by itself. Area

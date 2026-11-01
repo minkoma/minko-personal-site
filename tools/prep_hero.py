@@ -1,278 +1,219 @@
-"""Rebuild the supplied composite hero frame into independent, animatable layers.
+#!/usr/bin/env python3
+"""Rebuild the hero's layers from the supplied 6000x3375 artwork.
 
-Inputs (1920x1080, all RGB, no alpha):
-  Minko Ma (2).png  composite  -> scene + arched name behind the subject
-  Minko Ma (1).png  cutout     -> subject alone on white
-  Minko Ma.png      name plate -> white name on white, only its purple drop shadow is visible
+Inputs (all 6000x3375 RGB, no alpha), by role rather than by filename, because
+the names are not self-describing:
+
+  photo    the photograph, scene and subject, no lettering
+  cutout   the subject alone on pure white
+  plate    the wordmark: white letters on white, only the purple drop shadow
+           is visible, so it carries the name's POSITION but not its shape
 
 Outputs in assets/hero/:
-  plate.jpg        scene with the name painted out (subject still present underneath)
-  subject.png      subject with a real alpha channel, full 1920x1080 frame registration
-  name.png         white name glyphs with alpha, drop shadow removed
-  name-01..n.png   one file per letter, for per-letter animation
-  layers.json      geometry every layout needs
+  scene.jpg        the photograph with the subject painted out
+  scene-small.jpg  a placeholder for the first paint
+  subject.png      the subject with a real alpha channel, frame-registered
+  layers.json      the geometry every layout needs
+
+This supersedes the earlier two-step prep_hero.py + prep_scene.py, which
+existed because the old artwork supplied a composite with the lettering burned
+into the sky: the name had to be painted out to recover a clean scene, and the
+subject painted out of that in a second pass. The new photo has no lettering,
+so the inpainting that used to touch the sky is gone entirely and only the
+subject needs removing.
+
+The name is NOT rebuilt here. The plate's glyph fill is pure white on pure
+white, identical to the background, so the letterform is simply not in the
+file; only the open drop-shadow outline is. The letterform instead lives in the
+vectors under tools/trace_name.py, traced from the old masks, which is lossless
+to scale up. What the plate is used for is the name's true bounding box: the
+old box was measured from a threshold mask that had caught a sailboat and some
+specks, so it carried about 40% empty padding.
+
+    python3 tools/prep_hero.py [--width 3200]
 """
 
+import argparse
 import json
 import os
-from collections import deque
 
 import numpy as np
 from PIL import Image, ImageFilter
 
-SRC = "/Users/zichenyu/Desktop/mama photos"
-# File naming is not self-describing: "Minko Ma.png" is the subject cutout,
-# "Minko Ma (1).png" the name plate, "Minko Ma (2).png" the finished composite.
-OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "hero")
-os.makedirs(OUT, exist_ok=True)
+import maskutil as mu
 
-comp = np.array(Image.open(f"{SRC}/Minko Ma (2).png").convert("RGB")).astype(np.int16)
-cut = np.array(Image.open(f"{SRC}/Minko Ma.png").convert("RGB")).astype(np.int16)
-plate = np.array(Image.open(f"{SRC}/Minko Ma (1).png").convert("RGB")).astype(np.int16)
-H, W, _ = comp.shape
+Image.MAX_IMAGE_PIXELS = None
 
+import sys
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+OUT = os.path.join(os.path.dirname(HERE), "assets", "hero")
 
-def largest_component(mask):
-    """Return the largest 4-connected component of a boolean mask."""
-    seen = np.zeros(mask.shape, np.int32)
-    best, best_size = None, 0
-    label = 0
-    ys, xs = np.nonzero(mask)
-    for sy, sx in zip(ys, xs):
-        if seen[sy, sx]:
-            continue
-        label += 1
-        q = deque([(sy, sx)])
-        seen[sy, sx] = label
-        size = 0
-        while q:
-            y, x = q.popleft()
-            size += 1
-            for ny, nx in ((y - 1, x), (y + 1, x), (y, x - 1), (y, x + 1)):
-                if 0 <= ny < mask.shape[0] and 0 <= nx < mask.shape[1] and mask[ny, nx] and not seen[ny, nx]:
-                    seen[ny, nx] = label
-                    q.append((ny, nx))
-        if size > best_size:
-            best, best_size = label, size
-    return seen == best if best else np.zeros(mask.shape, bool)
+SRC = os.path.expanduser("~/Downloads")
+PHOTO = f"{SRC}/Minko Ma (3).png"
+CUTOUT = f"{SRC}/Minko Ma (1) (1).png"
+PLATE = f"{SRC}/Minko Ma (2) (1).png"
+
+WHITE = 248        # a cutout pixel at or above this on every channel is background
+FEATHER = 2        # px of blur on the full-res subject matte
+SHADOW_MIN = 600   # drop outline specks below this many px
 
 
-def flood_from_border(passable):
-    """Flood fill inward from the frame edge through `passable` pixels."""
-    out = np.zeros(passable.shape, bool)
-    q = deque()
-    h, w = passable.shape
-    for x in range(w):
-        for y in (0, h - 1):
-            if passable[y, x] and not out[y, x]:
-                out[y, x] = True
-                q.append((y, x))
+def load(path):
+    a = np.asarray(Image.open(path).convert("RGB"))
+    return a
+
+
+def subject_matte(cutout):
+    """The subject as a boolean mask, from a cutout on pure white.
+
+    Her dress is white too, but it is enclosed by the purple robe, so a region
+    of near-white that cannot reach the frame edge is part of her, not
+    background. That is the whole trick, and it is why this cannot be a simple
+    threshold.
+    """
+    near_white = cutout.min(axis=2) >= WHITE
+    subject = ~mu.border_components(near_white)
+    subject = mu.fill_enclosed(subject)
+    return mu.keep_larger_than(subject, 4000)
+
+
+def paint_out(photo, mask):
+    """Replace the masked region by bridging each row between its edges.
+
+    The lake, the bench and the path are horizontally continuous, so a
+    left-to-right ramp reconstructs them well enough for a layer that spends
+    its life behind the subject. Only the few pixels the pointer parallax
+    uncovers are ever seen.
+    """
+    out = photo.astype(np.float32).copy()
+    h, w, _ = out.shape
     for y in range(h):
-        for x in (0, w - 1):
-            if passable[y, x] and not out[y, x]:
-                out[y, x] = True
-                q.append((y, x))
-    while q:
-        y, x = q.popleft()
-        for ny, nx in ((y - 1, x), (y + 1, x), (y, x - 1), (y, x + 1)):
-            if 0 <= ny < h and 0 <= nx < w and passable[ny, nx] and not out[ny, nx]:
-                out[ny, nx] = True
-                q.append((ny, nx))
+        xs = np.nonzero(mask[y])[0]
+        if not len(xs):
+            continue
+        cuts = np.nonzero(np.diff(xs) != 1)[0]
+        starts = np.concatenate([[xs[0]], xs[cuts + 1]])
+        ends = np.concatenate([xs[cuts], [xs[-1]]])
+        for x0, x1 in zip(starts, ends):
+            left = out[y, x0 - 1] if x0 > 0 else None
+            right = out[y, x1 + 1] if x1 + 1 < w else None
+            if left is None and right is None:
+                continue
+            left = right if left is None else left
+            right = left if right is None else right
+            n = x1 - x0 + 1
+            t = ((np.arange(n) + 1) / (n + 1))[:, None]
+            out[y, x0:x1 + 1] = left * (1 - t) + right * t
     return out
 
 
-def dilate(mask, r):
-    m = mask
-    for _ in range(r):
-        p = np.zeros_like(m)
-        p[1:, :] |= m[:-1, :]
-        p[:-1, :] |= m[1:, :]
-        p[:, 1:] |= m[:, :-1]
-        p[:, :-1] |= m[:, 1:]
-        m = m | p
-    return m
+def downscale_rgba(rgb, alpha, width):
+    """Resize an RGBA image through premultiplied alpha.
+
+    Resizing straight RGBA pulls the background's pure white into every edge
+    pixel, which leaves a bright fringe around her once she sits over the lake.
+    Premultiplying first keeps the edge colour honest.
+    """
+    h, w = alpha.shape
+    height = round(h * width / w)
+    a = alpha.astype(np.float32) / 255.0
+    pre = rgb.astype(np.float32) * a[..., None]
+    pre_s = np.asarray(Image.fromarray(np.clip(pre, 0, 255).astype(np.uint8))
+                       .resize((width, height), Image.LANCZOS)).astype(np.float32)
+    a_s = np.asarray(Image.fromarray(alpha).resize((width, height), Image.LANCZOS)
+                     ).astype(np.float32) / 255.0
+    safe = np.maximum(a_s, 1e-4)[..., None]
+    rgb_s = np.clip(pre_s / safe, 0, 255).astype(np.uint8)
+    return np.dstack([rgb_s, np.clip(a_s * 255, 0, 255).astype(np.uint8)])
 
 
-# ---------------------------------------------------------------- subject alpha
-# The cutout sits on pure white, so everything reachable from the frame edge
-# through near-white pixels is background. Her white dress is enclosed by the
-# purple robe, so the fill cannot reach it.
-near_white = cut.min(axis=2) >= 248
-background = flood_from_border(near_white)
-subject = ~background
-subject = largest_component(subject)
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--width", type=int, default=3200,
+                    help="WebP output width in px; the 16:9 stage can reach "
+                         "roughly 2x the CSS viewport width on a retina screen")
+    ap.add_argument("--fallback-width", type=int, default=1920,
+                    help="width of the JPEG/PNG fallbacks. Smaller than --width "
+                         "on purpose: a browser with no WebP support is old "
+                         "enough that resolution is not what it needs, and a "
+                         "full-size alpha PNG costs about 1 MB in the repo")
+    args = ap.parse_args()
 
-# Keep interior holes (gaps between robe and arm) only if they are background.
-holes = flood_from_border(~subject)
-subject = ~holes
+    photo = load(PHOTO)
+    cutout = load(CUTOUT)
+    plate = load(PLATE)
+    H, W, _ = photo.shape
+    for name, a in (("cutout", cutout), ("plate", plate)):
+        if a.shape != photo.shape:
+            raise SystemExit(f"{name} is {a.shape[1]}x{a.shape[0]}, photo is {W}x{H}")
+    print(f"sources {W}x{H}")
 
-alpha = Image.fromarray((subject * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.6))
-subject_rgba = np.dstack([cut.astype(np.uint8), np.array(alpha)])
-Image.fromarray(subject_rgba, "RGBA").save(f"{OUT}/subject.png")
+    # ------------------------------------------------------------- subject
+    subject = subject_matte(cutout)
+    ys, xs = np.nonzero(subject)
+    sbox = [int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1]
+    print(f"subject bbox {sbox}  ({subject.sum() / 1e6:.2f} Mpx)")
 
-ys, xs = np.nonzero(subject)
-sbox = [int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1]
+    matte = np.asarray(
+        Image.fromarray((subject * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(FEATHER))
+    )
+    rgba = downscale_rgba(cutout, matte, args.width)
+    sub_img = Image.fromarray(rgba, "RGBA")
+    # WebP first: this is a photographic cutout with an alpha channel, the case
+    # PNG is worst at. At 3200px the PNG is about 1 MB and the WebP under 100 KB
+    # for no visible difference. The PNG stays as a fallback.
+    sub_img.save(f"{OUT}/subject.webp", quality=90, method=6)
+    fb = round(args.fallback_width * sub_img.size[1] / sub_img.size[0])
+    sub_img.resize((args.fallback_width, fb), Image.LANCZOS).save(
+        f"{OUT}/subject.png", optimize=True)
 
-# ------------------------------------------------------------------ name glyphs
-# In the composite the glyph fill is pure white; the pale sky never is.
-band = np.zeros((H, W), bool)
-band[:470, :] = True
-subject_wide = dilate(subject, 3)
-glyph = (comp.min(axis=2) >= 247) & band & ~subject_wide
+    # --------------------------------------------------------------- scene
+    grown = mu.dilate(subject, 15 * W // 1920)
+    scene = paint_out(photo, grown)
+    img = Image.fromarray(np.clip(scene, 0, 255).astype(np.uint8))
+    soft = img.filter(ImageFilter.GaussianBlur(9 * W // 1920))
+    m = Image.fromarray((grown * 255).astype(np.uint8)).filter(
+        ImageFilter.GaussianBlur(11 * W // 1920))
+    img = Image.composite(soft, img, m)
+    height = round(H * args.width / W)
+    img = img.resize((args.width, height), Image.LANCZOS)
+    img.save(f"{OUT}/scene.webp", quality=86, method=6)
+    img.resize((args.fallback_width, round(H * args.fallback_width / W)), Image.LANCZOS).save(
+        f"{OUT}/scene.jpg", quality=86, optimize=True, progressive=True)
+    img.resize((480, round(480 * H / W)), Image.LANCZOS).save(
+        f"{OUT}/scene-small.jpg", quality=70)
 
-# The purple drop shadow, used both for inpainting and to recover the parts of
-# the name the subject覆盖s.
-r, g, b = comp[..., 0], comp[..., 1], comp[..., 2]
-shadow = band & (b - g > 4) & (r - g > 1) & (b > 110) & (r < 245) & ~subject_wide
+    # ---------------------------------------------------------- name bbox
+    r, g, b = plate[..., 0].astype(int), plate[..., 1].astype(int), plate[..., 2].astype(int)
+    shadow = mu.keep_larger_than((b - g > 6) & (r - g > 2), SHADOW_MIN)
+    ys, xs = np.nonzero(shadow)
+    nbox = [int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1]
+    print(f"name bbox    {nbox}  (from the drop-shadow outline)")
 
-# The subject covers part of the lettering in the composite, and the standalone
-# name plate cannot give the missing bodies back: its drop-shadow outline is not
-# closed, so a fill leaks into the glyph interiors. The strokes are near
-# vertical, so bridge each occluded column between the glyph pixels above and
-# below it instead.
-def bridge(mask, occluded, max_gap=140):
-    out = mask.copy()
-    for x in range(W):
-        col = mask[:, x]
-        if not col.any():
-            continue
-        ys_col = np.nonzero(col)[0]
-        for a, b in zip(ys_col, ys_col[1:]):
-            gap = b - a
-            if 1 < gap <= max_gap and occluded[a + 1:b, x].all():
-                out[a + 1:b, x] = True
-    return out
-
-
-name_mask = bridge(glyph, subject_wide | ~band) & band
-name_alpha = Image.fromarray((name_mask * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.5))
-name_rgba = np.dstack([np.full((H, W, 3), 255, np.uint8), np.array(name_alpha)])
-ys, xs = np.nonzero(name_mask)
-nbox = [int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1]
-Image.fromarray(name_rgba, "RGBA").crop(nbox).save(f"{OUT}/name.png")
-
-# -------------------------------------------------------------- letter slicing
-# Each letter is one 8-connected piece of the name mask, except where two
-# serifs touch. Those merged pieces are split at their thinnest column, and
-# specks left over from the occlusion bridge are dropped.
-def components(mask):
-    lab = np.zeros(mask.shape, np.int32)
-    comps = []
-    for sy, sx in zip(*np.nonzero(mask)):
-        if lab[sy, sx]:
-            continue
-        idx = len(comps) + 1
-        q = deque([(sy, sx)])
-        lab[sy, sx] = idx
-        pts = []
-        while q:
-            y, x = q.popleft()
-            pts.append((y, x))
-            for dy in (-1, 0, 1):
-                for dx in (-1, 0, 1):
-                    ny, nx = y + dy, x + dx
-                    if 0 <= ny < H and 0 <= nx < W and mask[ny, nx] and not lab[ny, nx]:
-                        lab[ny, nx] = idx
-                        q.append((ny, nx))
-        comps.append(np.array(pts))
-    return comps
-
-
-pieces = []
-for pts in components(name_mask):
-    if len(pts) < 1500:
-        continue
-    m = np.zeros((H, W), bool)
-    m[pts[:, 0], pts[:, 1]] = True
-    pieces.append(m)
-
-widths = sorted(int(np.ptp(np.nonzero(p.any(axis=0))[0])) for p in pieces)
-median_w = widths[len(widths) // 2]
-split = []
-for p in pieces:
-    cols = np.nonzero(p.any(axis=0))[0]
-    x0, x1 = int(cols.min()), int(cols.max()) + 1
-    if x1 - x0 > 1.7 * median_w:
-        counts = p[:, x0:x1].sum(axis=0)
-        lo, hi = int((x1 - x0) * 0.3), int((x1 - x0) * 0.7)
-        cut_x = x0 + lo + int(np.argmin(counts[lo:hi]))
-        left, right = p.copy(), p.copy()
-        left[:, cut_x:] = False
-        right[:, :cut_x] = False
-        split += [left, right]
-    else:
-        split.append(p)
-split.sort(key=lambda p: int(np.nonzero(p.any(axis=0))[0].min()))
-
-for old in os.listdir(OUT):
-    if old.startswith("name-") and old.endswith(".png"):
-        os.remove(os.path.join(OUT, old))
-
-letters = []
-for i, p in enumerate(split, 1):
-    ys, xs = np.nonzero(p)
-    x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
-    # Pad so the soft edge is not clipped, and keep only this letter's pixels.
-    x0, y0 = max(0, x0 - 2), max(0, y0 - 2)
-    x1, y1 = min(W, x1 + 2), min(H, y1 + 2)
-    own = dilate(p, 2)
-    rgba = name_rgba.copy()
-    rgba[..., 3] = np.where(own, rgba[..., 3], 0)
-    path = f"name-{i:02d}.png"
-    Image.fromarray(rgba, "RGBA").crop((x0, y0, x1, y1)).save(f"{OUT}/{path}")
-    letters.append({"file": path, "box": [x0, y0, x1, y1]})
-print("letters", [l["box"] for l in letters])
-
-# ------------------------------------------------------------------- scene plate
-paint = (dilate(glyph, 18) | dilate(shadow, 8)) & ~subject
-out = comp.astype(np.float32).copy()
-for y in range(H):
-    row = paint[y]
-    if not row.any():
-        continue
-    xs = np.nonzero(row)[0]
-    # Horizontal inpaint: the strokes are mostly vertical and the scene's
-    # structure (horizon, skyline) is horizontal, so bridging left-to-right
-    # keeps the skyline intact.
-    groups, s = [], xs[0]
-    for a, bb in zip(xs, xs[1:]):
-        if bb != a + 1:
-            groups.append((s, a))
-            s = bb
-    groups.append((s, xs[-1]))
-    for x0, x1 in groups:
-        left = x0 - 1
-        right = x1 + 1
-        cl = out[y, left] if left >= 0 and not row[left] else None
-        cr = out[y, right] if right < W and not row[right] else None
-        if cl is None and cr is None:
-            continue
-        if cl is None:
-            cl = cr
-        if cr is None:
-            cr = cl
-        n = x1 - x0 + 1
-        t = ((np.arange(n) + 1) / (n + 1))[:, None]
-        out[y, x0:x1 + 1] = cl * (1 - t) + cr * t
-
-plate_img = Image.fromarray(np.clip(out, 0, 255).astype(np.uint8))
-# A blur restricted to the repainted band hides interpolation streaks; at this
-# scale it reads as atmospheric haze over the far skyline.
-blurred = plate_img.filter(ImageFilter.GaussianBlur(5))
-m = Image.fromarray((dilate(paint, 3) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(6))
-plate_img = Image.composite(blurred, plate_img, m)
-plate_img.save(f"{OUT}/plate.jpg", quality=88, optimize=True, progressive=True)
-plate_img.resize((480, 270), Image.LANCZOS).save(f"{OUT}/plate-small.jpg", quality=70)
-
-json.dump(
-    {
+    json.dump({
         "frame": [W, H],
+        "output_width": args.width,
         "subject": {"file": "subject.png", "box": sbox},
-        "name": {"file": "name.png", "box": nbox, "letters": letters},
-        "plate": "plate.jpg",
-    },
-    open(f"{OUT}/layers.json", "w"),
-    indent=2,
-)
-print("subject box", sbox, "name box", nbox)
-print("wrote", sorted(os.listdir(OUT)))
+        "name": {
+            "box": nbox,
+            "note": "measured from the plate's drop-shadow outline; the glyph "
+                    "shapes come from tools/trace_name.py, not from the plate",
+        },
+    }, open(f"{OUT}/layers.json", "w"), indent=2)
+
+    # js/content.js keeps its geometry in 1920x1080 units, independent of how
+    # many pixels the images actually carry, because main.js also positions the
+    # hotspots in that space. Print the converted values to paste across.
+    k = 1920 / W
+    fmt = lambda box: "[" + ", ".join(f"{v * k:.1f}" for v in box) + "]"
+    print(f"\nfor js/content.js (1920x1080 units):")
+    print(f"  subjectBox: {fmt(sbox)}")
+    print(f"  nameBox:    {fmt(nbox)}   <- before trace_name.py refits it")
+
+    for f in ("scene.webp", "scene.jpg", "scene-small.jpg", "subject.webp", "subject.png"):
+        print(f"  {f:<16}{os.path.getsize(f'{OUT}/{f}') / 1024:8.0f} KB")
+
+
+if __name__ == "__main__":
+    main()
