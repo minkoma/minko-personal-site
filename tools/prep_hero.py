@@ -4,10 +4,11 @@
 Inputs (all 6000x3375 RGB, no alpha), by role rather than by filename, because
 the names are not self-describing:
 
-  photo    the photograph, scene and subject, no lettering
-  cutout   the subject alone on pure white
-  plate    the wordmark: white letters on white, only the purple drop shadow
-           is visible, so it carries the name's POSITION but not its shape
+  Minko Ma original.png   the photograph, scene and subject, no lettering
+  Minko Ma body.png       the subject alone on pure white
+  Minko Ma name.png       the wordmark: white letters on white, only the purple
+                          drop shadow is visible, so it carries the name's
+                          POSITION but not its shape
 
 Outputs in assets/hero/:
   scene.jpg        the photograph with the subject painted out
@@ -49,10 +50,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 OUT = os.path.join(os.path.dirname(HERE), "assets", "hero")
 
-SRC = os.path.expanduser("~/Downloads")
-PHOTO = f"{SRC}/Minko Ma (3).png"
-CUTOUT = f"{SRC}/Minko Ma (1) (1).png"
-PLATE = f"{SRC}/Minko Ma (2) (1).png"
+# The supplied 6000x3375 artwork, kept in the repo beside its outputs so the
+# pipeline is reproducible. Named by role, because the originals arrive with
+# names like "Minko Ma (2) (1).png" that say nothing about their contents.
+PHOTO = f"{OUT}/Minko Ma original.png"
+CUTOUT = f"{OUT}/Minko Ma body.png"
+PLATE = f"{OUT}/Minko Ma name.png"
 
 WHITE = 248        # a cutout pixel at or above this on every channel is background
 FEATHER = 2        # px of blur on the full-res subject matte

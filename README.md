@@ -26,15 +26,15 @@ tools/              hero layer scripts, the lettering tracer, the preview server
 
 ## The hero
 
-The artwork arrives as three 6000x3375 frames, identified by role rather than by filename:
+The artwork is three 6000x3375 frames, kept in `assets/hero/` beside their outputs so the pipeline is reproducible. They are named by role, because the originals arrive as `Minko Ma (2) (1).png` and similar, which says nothing about their contents:
 
-| role | contents |
+| file | contents |
 |---|---|
-| photo | the photograph, scene and subject, no lettering |
-| cutout | the subject alone on pure white |
-| plate | the wordmark, white letters on white, only the purple drop shadow visible |
+| `Minko Ma original.png` | the photograph, scene and subject, no lettering |
+| `Minko Ma body.png` | the subject alone on pure white |
+| `Minko Ma name.png` | the wordmark, white letters on white, only the purple drop shadow visible |
 
-`tools/prep_hero.py` turns the first two into the layers in `assets/hero/`:
+`tools/prep_hero.py` turns the first two into the layers in the same directory:
 
 - `scene.webp` / `scene.jpg`: the photograph with the subject painted out.
 - `scene-small.jpg`: a placeholder for the first paint.
