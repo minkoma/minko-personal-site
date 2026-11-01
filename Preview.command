@@ -1,3 +1,3 @@
 #!/bin/zsh
 cd -- "${0:A:h}"
-python3 preview.py
+python3 tools/preview.py

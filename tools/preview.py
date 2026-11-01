@@ -9,7 +9,7 @@ import tempfile
 import time
 import urllib.request
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 MARKER = b"minko-personal-site-preview-v1"
 
 class Handler(SimpleHTTPRequestHandler):
