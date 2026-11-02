@@ -33,17 +33,17 @@ window.MINKO = {
     name: "assets/hero/name.svg",
     subject: "assets/hero/subject.webp",
     subjectFallback: "assets/hero/subject.png",
-    nameBox: [48.6, 398.7, 1881.6, 705.9],
+    nameBox: [287.2, 202.8, 1640.4, 436.4],
     subjectBox: [758.1, 43.2, 1254.1, 1056.6],
     splitLetters: true,
     letters: [
-      { src: "assets/hero/name-01.svg", box: [48.6, 434.3, 344.2, 664.1] },
-      { src: "assets/hero/name-02.svg", box: [371.4, 421.5, 488.8, 625.8] },
-      { src: "assets/hero/name-03.svg", box: [515.5, 398.7, 718.3, 615.4] },
-      { src: "assets/hero/name-04.svg", box: [764.5, 404.8, 988.0, 605.1] },
-      { src: "assets/hero/name-05.svg", box: [1014.3, 408.8, 1208.7, 616.1] },
-      { src: "assets/hero/name-06.svg", box: [1335.2, 428.8, 1618.0, 648.3] },
-      { src: "assets/hero/name-07.svg", box: [1645.0, 486.5, 1881.6, 705.9] }
+      { src: "assets/hero/name-01.svg", box: [287.2, 231.1, 506.8, 403.0] },
+      { src: "assets/hero/name-02.svg", box: [525.8, 220.7, 613.6, 371.9] },
+      { src: "assets/hero/name-03.svg", box: [632.5, 202.8, 782.0, 363.5] },
+      { src: "assets/hero/name-04.svg", box: [816.8, 207.2, 981.9, 355.2] },
+      { src: "assets/hero/name-05.svg", box: [1001.6, 210.7, 1145.0, 363.6] },
+      { src: "assets/hero/name-06.svg", box: [1238.1, 226.9, 1446.6, 390.5] },
+      { src: "assets/hero/name-07.svg", box: [1466.2, 273.6, 1640.4, 436.4] }
     ]
   },
 

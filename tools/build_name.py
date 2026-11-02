@@ -51,6 +51,15 @@ UNIT = 1920 / 1440
 # the artwork's box afterwards.
 NUDGE = [0, 15, 15, 15, 15, 15, 33]
 
+# Where the wordmark sits, in 1920x1080 units. This is a DESIGN choice and
+# deliberately not the box prep_hero.py measures from the name plate: that box
+# is where Canva's own composite put the name, which is larger and lower, running
+# from 2.5% to 98% of the frame. Minko asked for it higher and smaller, arcing
+# over the skyline above her head rather than across her. Measured from her
+# reference screenshot by comparing a render at the same viewport, which avoids
+# having to reason about the cover stage's crop. Pass --box to override.
+NAME_BOX = [287.2, 202.7, 1640.4, 436.5]
+
 
 # ------------------------------------------------------------------ path data
 
@@ -193,12 +202,16 @@ def bend(x0, radius, centre_x):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rise", type=float, default=64.0,
+    ap.add_argument("--rise", type=float, default=70.0,
                     help="how far the ends drop below the middle, in 1920x1080 "
-                         "units. 64 matches the arch in the supplied artwork")
+                         "units. 70 matches the arch in the reference")
     ap.add_argument("--no-nudge", action="store_true",
                     help="use the font's own letterfit, leaving the M and A of "
                          "MA nearly touching as the artwork has them")
+    ap.add_argument("--box", type=float, nargs=4, metavar=("X0", "Y0", "X1", "Y1"),
+                    default=NAME_BOX,
+                    help="where to place the wordmark, in 1920x1080 units; "
+                         "defaults to the design position, not the plate's")
     ap.add_argument("--letters", action="store_true",
                     help="also write name-01..07.svg for per-letter animation")
     args = ap.parse_args()
@@ -207,7 +220,10 @@ def main():
     nudge = [0.0] * 7 if args.no_nudge else [n / UNIT for n in NUDGE]
     glyphs = [(x + nudge[i], segs) for i, (x, segs) in enumerate(glyphs)]
     layers = json.load(open(os.path.join(HERO, "layers.json")))
-    target = [v * 1920 / layers["frame"][0] for v in layers["name"]["box"]]
+    plate = [v * 1920 / layers["frame"][0] for v in layers["name"]["box"]]
+    target = list(args.box)
+    print(f"placing into {[round(v, 1) for v in target]}"
+          f"   (the plate's own box is {[round(v, 1) for v in plate]})")
 
     straight = bbox([p for x, segs in glyphs
                      for p in path_points(segs, lambda a, b: (a, b))])
