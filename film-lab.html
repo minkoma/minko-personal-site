@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Film lab — five ways to show the films</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/film-lab.css">
+</head>
+<body>
+
+<div class="flab-wrap">
+
+  <header class="flab-head">
+    <p class="hand">a scratch page, not part of the site</p>
+    <h1>Five ways to show the films</h1>
+    <p>
+      Your four real films in every layout, each one playable, so you are judging the thing itself
+      and not a sketch. The film decoration you liked is kept in options 1 to 4, in a different
+      form each time: ticket stubs, a contact sheet, clapperboard slates, 35mm perforations.
+      Option 5 swaps it for a different era on purpose, so you have something to react against.
+    </p>
+    <p>
+      One thing worth knowing before you pick. Your films are not one shape. Two are landscape,
+      the Alumni Awards is a squarish Instagram post, and the Farmers' Market is a vertical reel.
+      The current strip forces all four into the same 16:9 frame, which crops the vertical one
+      badly. Each option below handles that differently, and that is the real decision.
+    </p>
+    <p class="flab-flag">
+      Separately, and worth fixing whichever option wins: all four poster images are portrait
+      photos (1439&times;2000, 900&times;1200, 1500&times;2000, 675&times;1200). Every 16:9 frame on
+      the current site is therefore showing a thin horizontal band cut out of a tall photo, which is
+      why some posters look oddly framed. The proper fix is a still grabbed from each film at the
+      shape it will be displayed in. Ask me and I will pull those frames.
+    </p>
+  </header>
+
+  <nav class="flab-nav" aria-label="jump to an option">
+    <a href="#opt1">1 · Cinema marquee</a>
+    <a href="#opt2">2 · Contact sheet</a>
+    <a href="#opt3">3 · Reel index</a>
+    <a href="#opt4">4 · Editorial strips</a>
+    <a href="#opt5">5 · Tape shelf</a>
+  </nav>
+
+  <!-- ------------------------------------------------------------- 1 -->
+  <section class="flab-panel" id="opt1">
+    <div class="flab-panel-head">
+      <span class="flab-num">1</span>
+      <h2>Cinema marquee</h2>
+      <span class="flab-tag">one big screen</span>
+    </div>
+    <p class="flab-why">
+      One film plays large on a lit marquee screen; the other three wait below as torn ticket
+      stubs. The decoration moves from the frame to the stubs: perforated tear edge, admit one,
+      a numbered seat. Best when you want the newest or strongest film to dominate, and it gives
+      a vertical reel the whole height of the screen instead of cropping it. The cost is that
+      three films are reduced to text labels until clicked.
+    </p>
+    <div class="marquee" data-opt-marquee></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- 2 -->
+  <section class="flab-panel" id="opt2">
+    <div class="flab-panel-head">
+      <span class="flab-num">2</span>
+      <h2>Contact sheet</h2>
+      <span class="flab-tag">all four at once</span>
+    </div>
+    <p class="flab-why">
+      A darkroom contact sheet with sprocket holes running along the whole sheet. Every frame is
+      the same size, the way a real sheet is printed, and the picture inside keeps its own shape:
+      the two landscape films fill their frame, while the Instagram post and the vertical reel sit
+      letterboxed against the negative instead of being cropped. It is the only option here where
+      all four films are visible at once and none is cut. Posters stay desaturated until you hover,
+      which is how a negative reads, and everything plays inline where it sits.
+    </p>
+    <div class="sheet" data-opt-sheet></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- 3 -->
+  <section class="flab-panel" id="opt3">
+    <div class="flab-panel-head">
+      <span class="flab-num">3</span>
+      <h2>Reel index</h2>
+      <span class="flab-tag">matches the deck album</span>
+    </div>
+    <p class="flab-why">
+      The same shape as your new deck reader: a numbered list on the left, a sticky player on the
+      right. Clapperboard stripes stand in for the film strip. It will feel immediately familiar
+      and it scales to twenty films without redesigning anything. The risk is repetition, since the
+      very next section on the page already looks like this.
+    </p>
+    <div data-opt-index></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- 4 -->
+  <section class="flab-panel" id="opt4">
+    <div class="flab-panel-head">
+      <span class="flab-num">4</span>
+      <h2>Editorial strips</h2>
+      <span class="flab-tag">most room to write</span>
+    </div>
+    <p class="flab-why">
+      Full-width alternating rows, echoing your "path so far" notes, with real 35mm perforations
+      along the top and bottom of each media panel. The films get the largest posters of any option
+      and each one gets space for a proper sentence or two about what it was for, which is the one
+      thing a marketing portfolio actually needs. It is also the longest, so the section becomes a
+      scroll rather than a glance.
+    </p>
+    <div data-opt-strips></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- 5 -->
+  <section class="flab-panel" id="opt5">
+    <div class="flab-panel-head">
+      <span class="flab-num">5</span>
+      <h2>Tape shelf</h2>
+      <span class="flab-tag">different decoration</span>
+    </div>
+    <p class="flab-why">
+      The film strip swapped for home video: a 4:3 CRT with scanlines, and a shelf of VHS cases
+      with handwritten sticker labels underneath. Closer to a real scrapbook object than a film
+      strip is, and it suits personal films more than client work. It is the most opinionated look
+      on the page, which cuts both ways.
+    </p>
+    <div data-opt-vhs></div>
+  </section>
+
+</div>
+
+<script src="js/content.js"></script>
+<script src="js/film-lab.js"></script>
+</body>
+</html>

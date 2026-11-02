@@ -95,27 +95,142 @@
     .join("");
 
   /* --------------------------------------------------------------- album */
-  $("[data-album]").innerHTML =
-    D.design
+  /* The deck reader: a shelf of decks on the left, one slide at a time on the
+     right. Pages are prerendered WebP images (tools/prep_decks.py), so there
+     is no PDF to download and no viewer library to load. */
+  (() => {
+    const list = $("[data-deck-list]");
+    const stage = $("[data-deck-stage]");
+    const pips = $("[data-deck-pips]");
+    const count = $("[data-deck-count]");
+    const pdfLink = $("[data-deck-pdf]");
+    if (!list || !stage) return;
+
+    const slide = (deck, n) => `${deck.slug}/p${String(n).padStart(2, "0")}.webp`;
+    const src = (deck, n) => `assets/design-album/slides/${slide(deck, n)}`;
+
+    let deckIndex = 0;
+    let page = 1;
+
+    /* The shelf. One button per deck, each a little paper card. */
+    list.innerHTML = D.design
       .map(
-        (d, i) => `<article class="deck" data-horizontal-card style="--r:${rot(i + 1, 3)}deg">
-        <span class="tape tape-tl" aria-hidden="true"></span>
-        <img src="${d.image}" alt="${esc(d.title)}" loading="lazy"
-             data-lightbox data-lightbox-group="album" data-caption="${esc(d.title)} — ${esc(d.note)}">
-        <div class="deck-copy">
-          <span class="deck-kind">${esc(d.kind)}</span>
-          <h3>${esc(d.title)}</h3>
-          <p>${esc(d.note)}</p>
-          <a class="button" href="${d.pdf}" target="_blank" rel="noopener" data-magnetic="0.2">open the pdf ↗</a>
-        </div>
-      </article>`
+        (d, i) => `<button class="shelf-item" type="button" role="tab" data-deck="${i}"
+                           style="--r:${rot(i + 1, 1.4)}deg" aria-selected="false">
+          <span class="shelf-thumb"><img src="${src(d, 1)}" alt="" loading="lazy" decoding="async"></span>
+          <span class="shelf-copy">
+            <span class="shelf-kind">${esc(d.kind)}</span>
+            <strong>${esc(d.title)}</strong>
+            <span class="shelf-meta">${d.pages} ${d.pages === 1 ? "page" : "pages"}</span>
+          </span>
+        </button>`
       )
-      .join("") +
-    `<article class="deck deck-end" data-horizontal-card>
-       <h3>that’s the shelf!</h3>
-       <p class="hand">want it all in one file?</p>
-       <a class="button" href="assets/design-portfolio.pdf" download data-magnetic="0.2">download everything ↓</a>
-     </article>`;
+      .join("");
+
+    function showPage(n) {
+      const deck = D.design[deckIndex];
+      if (n < 1 || n > deck.pages) return;
+      page = n;
+      stage.querySelectorAll("[data-slide]").forEach((img, i) =>
+        img.classList.toggle("is-on", i === n - 1)
+      );
+      pips.querySelectorAll("button").forEach((p, i) =>
+        p.setAttribute("aria-current", String(i === n - 1))
+      );
+      count.textContent = `${deck.title} · ${n} of ${deck.pages}`;
+      stage.querySelector("[data-deck-prev]").disabled = n === 1;
+      stage.querySelector("[data-deck-next]").disabled = n === deck.pages;
+    }
+
+    function openDeck(i) {
+      deckIndex = i;
+      const deck = D.design[i];
+
+      list.querySelectorAll("[data-deck]").forEach((b, n) =>
+        b.setAttribute("aria-selected", String(n === i))
+      );
+
+      /* Slides stack in one frame and cross-fade, so paging never reflows the
+         section. Only the first two load eagerly. */
+      stage.innerHTML =
+        deck.pages
+          ? Array.from({ length: deck.pages }, (_, k) => {
+              const n = k + 1;
+              return `<img data-slide data-page="${n}" src="${src(deck, n)}"
+                        alt="${esc(deck.title)}, slide ${n} of ${deck.pages}"
+                        loading="${n <= 2 ? "eager" : "lazy"}" decoding="async"
+                        data-lightbox data-lightbox-group="deck-${deck.slug}"
+                        data-caption="${esc(deck.title)} — slide ${n} of ${deck.pages}">`;
+            }).join("")
+          : "";
+      stage.insertAdjacentHTML(
+        "beforeend",
+        `<button class="reader-nav is-prev" type="button" data-deck-prev aria-label="Previous slide">‹</button>
+         <button class="reader-nav is-next" type="button" data-deck-next aria-label="Next slide">›</button>
+         <span class="reader-hint hand">click to enlarge</span>`
+      );
+
+      pips.innerHTML = Array.from({ length: deck.pages }, (_, k) => {
+        const n = k + 1;
+        return `<button type="button" data-pip="${n}" aria-label="Slide ${n}" aria-current="false">
+                  <img src="${src(deck, n)}" alt="" loading="lazy" decoding="async">
+                </button>`;
+      }).join("");
+
+      /* A slide that fails to arrive gets one retry past the cache, then a
+         quiet label. Without this, one dropped request leaves Chrome's broken
+         image icon and the whole alt sentence sprawled across the stage, and
+         the failure stays cached until a hard reload. */
+      stage.querySelectorAll("img").forEach(watch);
+      pips.querySelectorAll("img").forEach(watch);
+
+      pdfLink.href = deck.pdf;
+      pdfLink.setAttribute("aria-label", `Open ${deck.title} as a PDF`);
+      showPage(1);
+    }
+
+    function watch(img) {
+      img.addEventListener("error", () => {
+        if (!img.dataset.retried) {
+          img.dataset.retried = "1";
+          const url = new URL(img.src, location.href);
+          url.searchParams.set("r", Date.now());
+          img.src = url.pathname + url.search;
+          return;
+        }
+        img.classList.add("is-missing");
+        /* Drop the sentence; the frame itself carries a short note in CSS. */
+        img.alt = "";
+        img.removeAttribute("data-lightbox");
+      });
+    }
+
+    list.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-deck]");
+      if (btn) openDeck(Number(btn.dataset.deck));
+    });
+
+    pips.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-pip]");
+      if (btn) showPage(Number(btn.dataset.pip));
+    });
+
+    stage.addEventListener("click", (e) => {
+      if (e.target.closest("[data-deck-prev]")) showPage(page - 1);
+      if (e.target.closest("[data-deck-next]")) showPage(page + 1);
+    });
+
+    /* Arrow keys page the deck while the album is the section on screen. */
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      if (document.querySelector(".lightbox.is-open")) return;
+      const box = $("#design").getBoundingClientRect();
+      if (box.top > innerHeight * 0.5 || box.bottom < innerHeight * 0.5) return;
+      showPage(page + (e.key === "ArrowRight" ? 1 : -1));
+    });
+
+    openDeck(0);
+  })();
 
   /* ---------------------------------------------------------- bits of me */
   /* Each card has its own photo arrangement and shapes, set in styles.css by key. */
@@ -748,12 +863,36 @@
   }
 
   /* ============================================================ behaviour */
+  /* YouTube answers an embed request that carries no usable referer with
+     "Video player configuration error (153)". That happens when the page is
+     opened straight off disk (file://), and the nocookie host is stricter about
+     it than the main one. So: play through www.youtube.com with an explicit
+     origin when we are on http(s), and send the viewer to YouTube itself when
+     there is no origin to send. */
+  const isYouTube = (src) => /(?:^|\.)youtube(?:-nocookie)?\.com\/embed\//.test(src);
+  const hasOrigin = window.location.origin && window.location.origin !== "null";
+
+  function playableSrc(src) {
+    if (!isYouTube(src)) return src;
+    const url = new URL(src);
+    url.hostname = "www.youtube.com";
+    url.searchParams.set("origin", window.location.origin);
+    url.searchParams.set("widget_referrer", window.location.origin);
+    return url.toString();
+  }
+
   document.querySelectorAll("[data-embed]").forEach((frame) => {
     frame.addEventListener("click", () => {
+      const src = frame.dataset.embed;
+      if (isYouTube(src) && !hasOrigin) {
+        const away = frame.parentElement && frame.parentElement.querySelector(".reel-meta a");
+        window.open(away ? away.href : src, "_blank", "noopener");
+        return;
+      }
       if (frame.dataset.loaded) return;
       frame.dataset.loaded = "1";
       const iframe = document.createElement("iframe");
-      iframe.src = frame.dataset.embed;
+      iframe.src = playableSrc(src);
       iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen";
       iframe.allowFullscreen = true;
       iframe.title = "Embedded player";

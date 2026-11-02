@@ -33,17 +33,17 @@ window.MINKO = {
     name: "assets/hero/name.svg",
     subject: "assets/hero/subject.webp",
     subjectFallback: "assets/hero/subject.png",
-    nameBox: [287.2, 174.2, 1640.4, 407.8],
+    nameBox: [287.2, 144.2, 1640.4, 377.8],
     subjectBox: [758.1, 43.2, 1254.1, 1056.6],
     splitLetters: true,
     letters: [
-      { src: "assets/hero/name-01.svg", box: [287.2, 202.5, 506.8, 374.4] },
-      { src: "assets/hero/name-02.svg", box: [525.8, 192.1, 613.6, 343.3] },
-      { src: "assets/hero/name-03.svg", box: [632.5, 174.2, 782.0, 334.9] },
-      { src: "assets/hero/name-04.svg", box: [816.8, 178.6, 981.9, 326.6] },
-      { src: "assets/hero/name-05.svg", box: [1001.6, 182.1, 1145.0, 335.0] },
-      { src: "assets/hero/name-06.svg", box: [1238.1, 198.3, 1446.6, 361.9] },
-      { src: "assets/hero/name-07.svg", box: [1466.2, 245.0, 1640.4, 407.8] }
+      { src: "assets/hero/name-01.svg", box: [287.2, 172.5, 506.8, 344.4] },
+      { src: "assets/hero/name-02.svg", box: [525.8, 162.1, 613.6, 313.3] },
+      { src: "assets/hero/name-03.svg", box: [632.5, 144.2, 782.0, 304.9] },
+      { src: "assets/hero/name-04.svg", box: [816.8, 148.6, 981.9, 296.6] },
+      { src: "assets/hero/name-05.svg", box: [1001.6, 152.1, 1145.0, 305.0] },
+      { src: "assets/hero/name-06.svg", box: [1238.1, 168.3, 1446.6, 331.9] },
+      { src: "assets/hero/name-07.svg", box: [1466.2, 215.0, 1640.4, 377.8] }
     ]
   },
 
@@ -145,7 +145,7 @@ window.MINKO = {
     {
       title: "Spend a Day With Me",
       note: "A day-in-the-life film for UC San Diego.",
-      embed: "https://www.youtube-nocookie.com/embed/q2FydPe0dEs?playsinline=1",
+      embed: "https://www.youtube.com/embed/q2FydPe0dEs?playsinline=1&rel=0",
       source: "https://youtu.be/q2FydPe0dEs",
       host: "YouTube",
       poster: "assets/experience/ucsd-team.jpg"
@@ -176,34 +176,45 @@ window.MINKO = {
     }
   ],
 
+  /* Each deck is read in the page as prerendered WebP slides, so `slug` and
+     `pages` point at assets/design-album/slides/<slug>/pNN.webp. Rerun
+     tools/prep_decks.py after replacing or adding a PDF. */
   design: [
     {
       title: "Marketing Design Portfolio",
       note: "Selected work built in Canva, Photoshop, and Premiere Pro.",
       image: "assets/design-album/design-portfolio-cover.jpg",
       pdf: "assets/design-portfolio.pdf",
-      kind: "Cover"
+      kind: "Cover",
+      slug: "design-portfolio",
+      pages: 12
     },
     {
       title: "Assignment #3",
       note: "Marketing strategy and analysis prepared for coursework.",
       image: "assets/design-album/assignment-3-minko-ma.jpg",
       pdf: "assets/design-album/assignment-3-minko-ma.pdf",
-      kind: "Strategy"
+      kind: "Strategy",
+      slug: "assignment-3",
+      pages: 1
     },
     {
       title: "Shopper Marketing",
       note: "IMC 424: shopper behaviour, retail context, and activation.",
       image: "assets/design-album/imc424-shopper-marketing.jpg",
       pdf: "assets/design-album/imc424-shopper-marketing.pdf",
-      kind: "IMC 424"
+      kind: "IMC 424",
+      slug: "imc424-shopper-marketing",
+      pages: 16
     },
     {
       title: "Chobani Case",
       note: "A brand case study on positioning and growth.",
       image: "assets/design-album/chobani-case-minko-ma.jpg",
       pdf: "assets/design-album/chobani-case-minko-ma.pdf",
-      kind: "Case study"
+      kind: "Case study",
+      slug: "chobani-case",
+      pages: 6
     }
   ],
 

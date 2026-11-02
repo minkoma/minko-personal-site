@@ -58,7 +58,7 @@ NUDGE = [0, 15, 15, 15, 15, 15, 33]
 # over the skyline above her head rather than across her. Measured from her
 # reference screenshot by comparing a render at the same viewport, which avoids
 # having to reason about the cover stage's crop. Pass --box to override.
-NAME_BOX = [287.2, 174.1, 1640.4, 407.9]
+NAME_BOX = [287.2, 144.1, 1640.4, 377.9]
 
 
 # ------------------------------------------------------------------ path data

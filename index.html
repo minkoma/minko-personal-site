@@ -52,7 +52,7 @@
   <section id="hello" class="hello">
     <p class="eyebrow">nice to meet you</p>
     <h2 data-split="words">Hi, I’m Minko</h2>
-    <p class="hello-text" data-highlight data-hl-start="top 95%" data-hl-end="bottom 85%"></p>
+    <p class="hello-text" data-highlight data-hl-start="top 72%" data-hl-end="bottom 58%"></p>
   </section>
 
   <!-- ------------------------------------------------------------- path -->
@@ -77,15 +77,35 @@
   </section>
 
   <!-- ----------------------------------------------------------- design -->
-  <section id="design" class="album" data-horizontal>
+  <section id="design" class="album">
     <div class="album-inner">
       <header class="album-head">
         <p class="eyebrow">flip through</p>
         <h2>The deck album</h2>
-        <p class="hand">keep scrolling — it turns sideways</p>
+        <p class="hand">pick one on the left, then page through it right here</p>
       </header>
-      <div class="album-track" data-horizontal-track data-album></div>
-      <span class="album-progress"><i data-horizontal-progress></i></span>
+
+      <div class="reader">
+        <!-- Left: the shelf. Every deck, with a thumbnail and its length. -->
+        <aside class="reader-shelf" aria-label="choose a deck">
+          <div class="reader-list" data-deck-list role="tablist" aria-orientation="vertical"></div>
+          <a class="button reader-all" href="assets/design-portfolio.pdf" download data-magnetic="0.2">
+            download everything ↓
+          </a>
+        </aside>
+
+        <!-- Right: the deck itself, one slide at a time. -->
+        <div class="reader-main">
+          <div class="reader-stage" data-deck-stage></div>
+          <div class="reader-bar">
+            <span class="reader-count" data-deck-count></span>
+            <a class="button is-small" data-deck-pdf href="#" target="_blank" rel="noopener" data-magnetic="0.2">
+              open the pdf ↗
+            </a>
+          </div>
+          <div class="reader-pips" data-deck-pips></div>
+        </div>
+      </div>
     </div>
   </section>
 

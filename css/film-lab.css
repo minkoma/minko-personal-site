@@ -1,0 +1,661 @@
+/* Film section lab — five layouts for the same four films, each with its own
+   decoration. Scratch page; nothing here is used by the live site. */
+
+.flab-wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(28px, 6vh, 64px) var(--pad) clamp(70px, 10vh, 120px);
+}
+
+.flab-head h1 {
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1.05;
+  margin: 0 0 10px;
+}
+
+.flab-head .hand {
+  font-family: var(--hand);
+  font-size: clamp(19px, 2vw, 26px);
+  color: var(--plum-deep);
+  margin: 0 0 6px;
+}
+
+.flab-head p { max-width: 64ch; color: var(--ink-soft); }
+
+.flab-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 26px 0 0;
+  padding: 12px 14px;
+  background: rgba(246, 239, 227, 0.94);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.flab-nav a {
+  font: 600 13.5px/1 var(--sans);
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 9px 14px;
+}
+
+.flab-nav a:hover { background: var(--plum); border-color: var(--plum-deep); color: #fff; }
+
+.flab-panel { margin-top: clamp(40px, 7vh, 86px); }
+
+.flab-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+  margin-bottom: 6px;
+}
+
+.flab-num {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--plum);
+}
+
+.flab-panel-head h2 { font-size: clamp(22px, 2.7vw, 34px); margin: 0; }
+
+.flab-tag {
+  font-family: var(--hand);
+  font-size: 19px;
+  color: var(--plum-deep);
+  background: var(--paper-2);
+  border-radius: 999px;
+  padding: 3px 12px;
+}
+
+.flab-why {
+  margin: 0 0 20px;
+  max-width: 72ch;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+}
+
+/* A play button and poster treatment shared by every option. */
+.v-frame {
+  position: relative;
+  overflow: hidden;
+  background: #16130f;
+  cursor: var(--cursor-hand);
+}
+
+.v-frame > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 0.5s ease, filter 0.4s ease;
+}
+
+.v-frame:hover > img { scale: 1.04; }
+
+.v-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  z-index: 3;
+}
+
+.v-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  z-index: 2;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-content: center;
+  padding-left: 4px;
+  font-size: 20px;
+  color: #2a2318;
+  background: var(--sun);
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  transition: scale 0.25s ease;
+}
+
+.v-frame:hover .v-play { scale: 1.12; }
+.v-frame.is-playing > img,
+.v-frame.is-playing .v-play { opacity: 0; pointer-events: none; }
+
+/* ==================================================== 1. cinema marquee */
+.marquee {
+  background: #241f1a;
+  border-radius: 20px;
+  padding: clamp(16px, 2.6vw, 30px);
+  box-shadow: var(--shadow);
+}
+
+.marquee-bulbs {
+  display: flex;
+  justify-content: center;
+  gap: 13px;
+  margin-bottom: 14px;
+}
+
+.marquee-bulbs i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 10px 3px rgba(242, 181, 68, 0.55);
+}
+
+.marquee-screen {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0b0908;
+  box-shadow: 0 0 0 10px #171310, 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.marquee-screen.is-vertical { aspect-ratio: 16 / 9; }
+
+.marquee-screen .v-frame {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #0b0908;
+}
+
+/* A vertical reel sits centred on the big screen instead of being cropped. */
+.marquee-screen .v-frame.is-vertical > img,
+.marquee-screen .v-frame.is-vertical iframe {
+  width: auto;
+  height: 100%;
+  aspect-ratio: 9 / 16;
+  position: relative;
+  inset: auto;
+  margin: 0 auto;
+}
+
+.marquee-now {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  margin: 16px 2px 20px;
+  color: #f3ece0;
+}
+
+.marquee-now h3 { margin: 0; font-size: clamp(20px, 2.3vw, 30px); color: #fff; }
+.marquee-now p { margin: 0; font-size: 14px; color: rgba(243, 236, 224, 0.68); }
+.marquee-now a { margin-left: auto; color: var(--sun); font-family: var(--hand); font-size: 19px; }
+
+/* Ticket stubs. The notches and dashed tear line are the decoration. */
+.stubs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.stub {
+  position: relative;
+  text-align: left;
+  padding: 13px 14px 13px 18px;
+  background: var(--paper);
+  border: 0;
+  border-radius: 4px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+  rotate: var(--r, 0deg);
+  transition: rotate 0.25s ease, translate 0.25s ease;
+}
+
+.stub:hover { rotate: 0deg; translate: 0 -4px; }
+
+.stub[aria-pressed="true"] {
+  rotate: 0deg;
+  translate: 0 -6px;
+  background: #fff;
+  outline: 2px solid var(--sun);
+  outline-offset: -2px;
+}
+
+/* The perforated tear edge down the left of each stub. */
+.stub::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background-image: linear-gradient(var(--ink-soft) 50%, transparent 0);
+  background-size: 2px 7px;
+  opacity: 0.5;
+}
+
+.stub-row {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-family: var(--hand);
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+
+.stub strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 15px;
+  line-height: 1.25;
+  margin: 2px 0 3px;
+}
+
+.stub small { font-size: 11.5px; color: var(--ink-soft); }
+
+/* ==================================================== 2. contact sheet */
+.sheet {
+  position: relative;
+  background: #1b1714;
+  border-radius: 14px;
+  padding: 26px clamp(14px, 2.4vw, 26px);
+  box-shadow: var(--shadow);
+}
+
+/* Sprocket holes run along the top and bottom of the whole sheet. */
+.sheet::before,
+.sheet::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background-image: radial-gradient(circle at 10px 8px, var(--paper) 0 4.6px, transparent 5px);
+  background-size: 23px 16px;
+  opacity: 0.9;
+}
+
+.sheet::before { top: 5px; }
+.sheet::after { bottom: 5px; }
+
+.sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* A real contact sheet has identical frames; what varies is the picture
+   inside one. So every cell is 16:9, and a square or vertical film is
+   letterboxed against the negative rather than cropped to fit. */
+.cell {
+  position: relative;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #0d0b09;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.cell .v-frame {
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+}
+
+/* Landscape fills its frame; the other shapes sit centred at full height. */
+.cell .v-frame.is-square > img,
+.cell .v-frame.is-square iframe,
+.cell .v-frame.is-vertical > img,
+.cell .v-frame.is-vertical iframe {
+  position: relative;
+  inset: auto;
+  width: auto;
+  height: 100%;
+  object-fit: contain;
+}
+
+.cell .v-frame.is-square > img { aspect-ratio: 1 / 1; }
+.cell .v-frame.is-vertical > img { aspect-ratio: 9 / 16; }
+.cell .v-frame.is-square iframe { aspect-ratio: 1 / 1; }
+.cell .v-frame.is-vertical iframe { aspect-ratio: 9 / 16; }
+
+.cell .v-frame > img { filter: saturate(0.55) contrast(1.05); }
+.cell .v-frame:hover > img { filter: none; }
+
+.cell-no {
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  z-index: 2;
+  font-family: var(--hand);
+  font-size: 17px;
+  color: var(--sun);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.cell-cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 24px 12px 11px;
+  background: linear-gradient(transparent, rgba(10, 8, 6, 0.9));
+  color: #fff;
+  translate: 0 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease, translate 0.3s ease;
+}
+
+.cell:hover .cell-cap { opacity: 1; translate: 0 0; }
+.cell-cap strong { display: block; font-family: var(--display); font-size: 15px; }
+.cell-cap span { font-size: 12px; color: rgba(255, 255, 255, 0.72); }
+.cell.is-playing .cell-cap,
+.cell.is-playing .cell-no { display: none; }
+
+/* ====================================================== 3. reel index */
+.index-split {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  gap: clamp(18px, 2.6vw, 40px);
+  align-items: start;
+}
+
+.index-list { display: grid; gap: 10px; }
+
+.slate {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  padding: 12px;
+  background: #241f1a;
+  border: 0;
+  border-radius: 5px;
+  color: #efe7da;
+  box-shadow: 0 6px 14px rgba(96, 72, 44, 0.2);
+  transition: translate 0.25s ease, background 0.25s ease;
+}
+
+/* The clapperboard stripe along the top of the active slate. */
+.slate[aria-pressed="true"] {
+  background: #332b23;
+  translate: 4px 0;
+  outline: 2px solid var(--sun);
+  outline-offset: -2px;
+}
+
+.slate-no {
+  display: grid;
+  place-content: center;
+  aspect-ratio: 1;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 15px;
+  color: #241f1a;
+  background: repeating-linear-gradient(135deg, #fff 0 6px, #241f1a 6px 12px);
+  border-radius: 3px;
+}
+
+.slate[aria-pressed="true"] .slate-no { background: var(--sun); }
+.slate-copy { min-width: 0; }
+.slate-copy strong { display: block; font-family: var(--display); font-size: 14.5px; line-height: 1.25; }
+.slate-copy span { font-family: var(--hand); font-size: 16px; color: var(--sun); }
+
+.index-stage {
+  position: sticky;
+  top: clamp(16px, 4vh, 40px);
+  background: var(--card);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+
+.index-screen {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #0d0b09;
+}
+
+.index-screen .v-frame { position: absolute; inset: 0; display: grid; place-items: center; }
+.index-screen .v-frame.is-vertical > img,
+.index-screen .v-frame.is-vertical iframe {
+  position: relative;
+  inset: auto;
+  width: auto;
+  height: 100%;
+  aspect-ratio: 9 / 16;
+}
+
+.index-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  padding: 12px 4px 2px;
+}
+
+.index-bar h3 { margin: 0; font-size: 19px; }
+.index-bar p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+.index-bar a { margin-left: auto; font-family: var(--hand); font-size: 18px; color: var(--plum-deep); }
+
+/* ================================================= 4. editorial strips */
+.strips { display: grid; gap: clamp(26px, 5vh, 58px); }
+
+.strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 46px);
+  align-items: center;
+}
+
+.strip.is-flip > .strip-media { order: 2; }
+
+/* Perforations along the long edges, the way 35mm actually looks. */
+.strip-media {
+  position: relative;
+  padding: 15px 0;
+  background: #1b1714;
+  border-radius: 5px;
+  box-shadow: var(--shadow);
+  rotate: var(--r, 0deg);
+}
+
+.strip-media::before,
+.strip-media::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 11px;
+  background-image: radial-gradient(circle at 9px 5.5px, var(--paper) 0 3.4px, transparent 3.8px);
+  background-size: 21px 11px;
+  opacity: 0.85;
+}
+
+.strip-media::before { top: 2px; }
+.strip-media::after { bottom: 2px; }
+
+.strip-media .v-frame { aspect-ratio: 16 / 9; }
+.strip-media .v-frame.is-vertical { aspect-ratio: 4 / 3; display: grid; place-items: center; }
+.strip-media .v-frame.is-vertical > img,
+.strip-media .v-frame.is-vertical iframe {
+  position: relative;
+  inset: auto;
+  width: auto;
+  height: 100%;
+  aspect-ratio: 9 / 16;
+}
+
+.strip-copy { position: relative; }
+
+.strip-copy .reel-no {
+  font-family: var(--hand);
+  font-size: 20px;
+  color: var(--mint);
+}
+
+.strip-copy h3 { margin: 2px 0 8px; font-size: clamp(22px, 2.5vw, 34px); }
+.strip-copy p { margin: 0 0 14px; color: var(--ink-soft); max-width: 42ch; }
+
+/* ======================================================= 5. tape shelf */
+.vhs-stack {
+  display: grid;
+  gap: clamp(18px, 3vh, 30px);
+}
+
+.vhs-tv {
+  position: relative;
+  max-width: 820px;
+  margin: 0 auto;
+  width: 100%;
+  background: #2f2a26;
+  border-radius: 26px 26px 14px 14px;
+  padding: 22px 22px 54px;
+  box-shadow: var(--shadow), inset 0 2px 0 rgba(255, 255, 255, 0.08);
+}
+
+.vhs-screen {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #0a0908;
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.9);
+}
+
+.vhs-screen .v-frame { position: absolute; inset: 0; display: grid; place-items: center; }
+.vhs-screen .v-frame.is-vertical > img,
+.vhs-screen .v-frame.is-vertical iframe {
+  position: relative;
+  inset: auto;
+  width: auto;
+  height: 100%;
+  aspect-ratio: 9 / 16;
+}
+
+/* Scanlines, the only decoration this option really needs. */
+.vhs-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: repeating-linear-gradient(rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 3px);
+}
+
+.vhs-knobs {
+  position: absolute;
+  right: 26px;
+  bottom: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+.vhs-knobs i {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #6c625a, #221e1a);
+}
+
+.vhs-label {
+  position: absolute;
+  left: 26px;
+  bottom: 18px;
+  font-family: var(--hand);
+  font-size: 19px;
+  color: var(--sun);
+}
+
+.tapes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  padding-top: 6px;
+}
+
+.tape-case {
+  position: relative;
+  text-align: left;
+  padding: 0;
+  border: 0;
+  border-radius: 4px 4px 3px 3px;
+  overflow: hidden;
+  background: #2b2520;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  rotate: var(--r, 0deg);
+  transition: translate 0.25s ease, rotate 0.25s ease;
+}
+
+.tape-case:hover { translate: 0 -5px; rotate: 0deg; }
+.tape-case[aria-pressed="true"] { rotate: 0deg; translate: 0 -7px; outline: 2px solid var(--sun); outline-offset: -2px; }
+
+.tape-window {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #100e0c;
+}
+
+.tape-window img { display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+.tape-case:hover .tape-window img { opacity: 1; }
+
+/* The handwritten sticker label every VHS tape had. */
+.tape-sticker {
+  display: block;
+  margin: 8px;
+  padding: 7px 9px;
+  background: var(--paper);
+  border-radius: 2px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.tape-sticker b {
+  display: block;
+  font-family: var(--hand);
+  font-size: 17px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.tape-sticker span {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--ink-soft);
+  border-top: 1px dashed var(--line);
+  padding-top: 3px;
+}
+
+/* ---------------------------------------------------------------- narrow */
+@media (max-width: 820px) {
+  .index-split { grid-template-columns: minmax(0, 1fr); }
+  .index-stage { position: static; }
+  .strip,
+  .strip.is-flip > .strip-media { grid-template-columns: minmax(0, 1fr); order: 0; }
+  .sheet-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* A finding that applies to every option, called out once at the top. */
+.flab-flag {
+  margin-top: 14px;
+  padding: 12px 15px;
+  border-left: 3px solid var(--sun);
+  background: rgba(242, 181, 68, 0.14);
+  border-radius: 0 8px 8px 0;
+  color: var(--ink);
+  font-size: 14.5px;
+}

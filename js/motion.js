@@ -386,12 +386,13 @@
         }
         gsap.fromTo(
           units,
-          { opacity: 0.16 },
+          { opacity: 0.18 },
           {
             opacity: 1,
-            stagger: 0.4,
+            duration: 0.7,
+            stagger: 0.3,
             ease: "none",
-            scrollTrigger: { trigger: el, start: el.dataset.hlStart || "top 78%", end: el.dataset.hlEnd || "bottom 45%", scrub: true }
+            scrollTrigger: { trigger: el, start: el.dataset.hlStart || "top 72%", end: el.dataset.hlEnd || "bottom 58%", scrub: 0.6 }
           }
         );
       });

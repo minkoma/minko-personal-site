@@ -1,0 +1,40 @@
+{
+  "decks": [
+    {
+      "slug": "design-portfolio",
+      "pdf": "assets/design-portfolio.pdf",
+      "pages": 12,
+      "dir": "assets/design-album/slides/design-portfolio",
+      "width": 1600,
+      "slideBytes": 1090814,
+      "pdfBytes": 7390673
+    },
+    {
+      "slug": "assignment-3",
+      "pdf": "assets/design-album/assignment-3-minko-ma.pdf",
+      "pages": 1,
+      "dir": "assets/design-album/slides/assignment-3",
+      "width": 1600,
+      "slideBytes": 171950,
+      "pdfBytes": 3505063
+    },
+    {
+      "slug": "imc424-shopper-marketing",
+      "pdf": "assets/design-album/imc424-shopper-marketing.pdf",
+      "pages": 16,
+      "dir": "assets/design-album/slides/imc424-shopper-marketing",
+      "width": 1600,
+      "slideBytes": 1414630,
+      "pdfBytes": 18526480
+    },
+    {
+      "slug": "chobani-case",
+      "pdf": "assets/design-album/chobani-case-minko-ma.pdf",
+      "pages": 6,
+      "dir": "assets/design-album/slides/chobani-case",
+      "width": 1600,
+      "slideBytes": 709266,
+      "pdfBytes": 3810228
+    }
+  ]
+}
