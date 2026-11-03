@@ -89,28 +89,170 @@
       if (img.naturalWidth && img.naturalHeight) {
         img.style.setProperty("--ar", `${img.naturalWidth} / ${img.naturalHeight}`);
       }
+      sizeCluster(img.closest("[data-step-photos]"));
     };
     if (img.decode) img.decode().then(fit, fit);
     else img.addEventListener("load", fit);
   });
 
+  /* Knowing each photo's shape is not enough to make a cluster of mixed shapes
+     look deliberate. In equal columns a landscape photo comes out short and a
+     portrait one tall, and the pair reads as an accident — which is why the
+     clusters of three landscape photos always looked settled and the mixed
+     ones did not.
+
+     So the two photos in the top row are given a matched height instead of a
+     matched width. The row's width is then that shared height times the sum of
+     the two ratios, which can be solved for the height the column can afford.
+     A landscape photo ends up wide and short, a portrait one narrow and tall,
+     and their top and bottom edges line up.
+
+     Two consequences worth knowing. The portrait photo goes on the left and
+     the landscape on the right, because a tall frame on the outside edge makes
+     the cluster lean away from the note. And the photo on the stamp side is
+     the one dropped down the page, so the notch the stamp needs is always in
+     the cluster's outer top corner. */
+  function sizeCluster(group) {
+    if (!group) return;
+    const snaps = $$(".snap", group);
+    if (snaps.length < 2) return;
+    const ratios = snaps.map((s) => {
+      const im = $("img", s);
+      return im.naturalWidth && im.naturalHeight ? im.naturalWidth / im.naturalHeight : 0;
+    });
+    if (ratios.slice(0, 2).some((r) => !r)) return;
+    const W = group.clientWidth;
+    if (!W) return;
+
+    const PAD = 20; /* 10px of white either side of a photo */
+    const OVER = 24; /* the fixed sliver one frame laps over the next */
+    const h1 = Math.round((W + OVER - PAD * 2) / (ratios[0] + ratios[1]));
+    /* Bail out when nothing has changed. The observer below watches the whole
+       box, and setting the height changes the box, so without this the first
+       pass would schedule a second one for ever. */
+    if (group.dataset.h1 === String(h1)) return;
+    group.dataset.h1 = String(h1);
+    group.style.setProperty("--h1", `${h1}px`);
+    /* The third photo is deliberately a little smaller than the pair above it,
+       so the cluster has a clear top row rather than three equal frames. */
+    group.style.setProperty("--h2", `${Math.round(h1 * 0.84)}px`);
+
+    const portraitFirst = ratios[1] < ratios[0];
+    const left = portraitFirst ? snaps[1] : snaps[0];
+    const right = portraitFirst ? snaps[0] : snaps[1];
+    left.style.order = 1;
+    right.style.order = 2;
+    const flipped = group.closest(".step")?.classList.contains("is-flip");
+    snaps.forEach((s) => s.classList.remove("is-drop", "is-lap"));
+    right.classList.add("is-lap");
+    (flipped ? left : right).classList.add("is-drop");
+  }
+
+  /* The matched height is in pixels, so it has to be recomputed when the
+     column width changes. */
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver((entries) => entries.forEach((e) => sizeCluster(e.target)));
+    $$("[data-step-photos]").forEach((g) => ro.observe(g));
+  }
+
   /* ---------------------------------------------------------------- film */
-  $("[data-videos]").innerHTML = D.videos
-    .map(
-      (v, i) => `<article class="reel" style="--r:${rot(i, 3)}deg">
-        <div class="reel-holes" aria-hidden="true"></div>
-        <div class="reel-frame" data-embed="${v.embed}">
-          <img src="${v.poster}" alt="" loading="lazy">
-          <span class="reel-play" aria-hidden="true">▶</span>
+  /* Two labelled shelves: the long-form films on top, the vertical reels
+     below. Everything is on screen on arrival. The layout before this put one
+     film on a big screen and the other behind a tab, which meant the section
+     showed one film while claiming two — a tab is for alternative views of one
+     thing, not for separate pieces of work.
+
+     No film is ever cropped: the tile carries the film's own aspect ratio, so
+     a 9:16 reel gets a 9:16 frame and a 16:9 film gets a 16:9 one.
+
+     Every film is a self-hosted MP4 in a real <video>. Nothing is embedded. */
+  (() => {
+    const root = $("[data-shelves]");
+    if (!root) return;
+
+    const ratio = (f) => (f.kind === "film" ? "16 / 9" : "9 / 16");
+    const shape = (f) => (f.kind === "film" ? "16:9" : "9:16");
+
+    /* preload="none" so a visitor who scrolls past pays for none of it: the six
+       MP4s are 168 MB between them. The observer raises it to metadata only
+       when a tile is near the viewport, which is what makes the poster and the
+       duration appear without fetching the film. */
+    const near = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.preload = "metadata";
+            near.unobserve(e.target);
+          }
+        }),
+      { rootMargin: "300px" }
+    );
+
+    const hoverable = matchMedia("(hover: hover)").matches;
+    const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function tile(f) {
+      const el = document.createElement("figure");
+      el.className = "tile tile--" + f.kind;
+      el.style.setProperty("--ratio", ratio(f));
+      el.innerHTML = `
+        <div class="tile-media">
+          <video src="${f.src}" poster="${f.poster}" preload="none" muted loop playsinline
+                 aria-label="${esc(f.title)}"></video>
+          <span class="tile-badge">${shape(f)} · ${esc(f.len)}</span>
+          <button class="tile-play" type="button" aria-label="Watch ${esc(f.title)} with sound">▶</button>
         </div>
-        <div class="reel-meta">
-          <h3>${esc(v.title)}</h3>
-          <p>${esc(v.note)}</p>
-          <a href="${v.source}" target="_blank" rel="noopener">watch on ${esc(v.host)} ↗</a>
-        </div>
-      </article>`
-    )
-    .join("");
+        <figcaption>
+          <strong>${esc(f.title)}</strong>
+          <span>${esc(f.note)}</span>
+        </figcaption>`;
+
+      const v = $("video", el);
+      near.observe(v);
+
+      /* A muted preview on hover is the cheapest way to show a tile is moving
+         footage and not a still. Deliberately not autoplay-on-scroll: six
+         looping videos while someone reads is noise. On touch there is no
+         hover, so the button is the real control. */
+      if (hoverable && !calm) {
+        el.addEventListener("pointerenter", () => {
+          if (v.controls) return;
+          v.muted = true;
+          v.play().catch(() => {});
+        });
+        el.addEventListener("pointerleave", () => {
+          if (v.controls) return;
+          v.pause();
+          v.currentTime = 0;
+        });
+      }
+
+      $(".tile-play", el).onclick = () => {
+        v.muted = false;
+        v.loop = false;
+        v.controls = true;
+        el.classList.add("is-playing");
+        v.play().catch(() => {});
+      };
+
+      return el;
+    }
+
+    [
+      { key: "film", label: "Films", sub: "the long-form work" },
+      { key: "reel", label: "Reels", sub: "short vertical pieces" }
+    ].forEach((g) => {
+      const items = D.films.filter((f) => f.kind === g.key);
+      if (!items.length) return;
+      const shelf = document.createElement("div");
+      shelf.className = "shelf shelf--" + g.label.toLowerCase();
+      shelf.innerHTML = `<p class="shelf-label"><b>${g.label}</b><span>${items.length} · ${g.sub}</span></p>
+                         <div class="shelf-row"></div>`;
+      const row = $(".shelf-row", shelf);
+      items.forEach((f) => row.append(tile(f)));
+      root.append(shelf);
+    });
+  })();
 
   /* --------------------------------------------------------------- album */
   /* The deck reader: a shelf of decks on the left, one slide at a time on the

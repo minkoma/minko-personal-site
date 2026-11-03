@@ -472,7 +472,7 @@ p {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: clamp(70px, 12vh, 150px);
+  gap: clamp(44px, 7vh, 96px);
   padding: 0 var(--pad) clamp(60px, 10vh, 140px);
   max-width: 1360px;
   margin: 0 auto;
@@ -482,7 +482,7 @@ p {
 .step {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  gap: clamp(28px, 4vw, 70px);
+  gap: clamp(20px, 2.6vw, 48px);
   align-items: center;
 }
 
@@ -587,14 +587,19 @@ p {
   position: relative;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(6px, 0.8vw, 12px);
+  /* Columns sized to their content, not to equal fractions: each frame is as
+     wide as its photo needs to be at the row's shared height. */
+  grid-template-columns: auto auto;
+  justify-content: center;
   align-items: start;
+  /* No gap. The frames are placed by their own negative margins, because the
+     overlap has to be a fixed number of pixels at the frame's edge rather than
+     a share of the row. */
+  gap: 0;
 }
 
 .step-photos.count-1 {
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
+  grid-template-columns: auto;
 }
 
 .snap {
@@ -608,9 +613,12 @@ p {
 
 .snap img {
   display: block;
-  width: 100%;
-  /* The fallback only applies for the instant before the image reports its
-     own size, and to a photo that fails to load. */
+  /* Height first, width from the photo's own ratio: that is what matches the
+     two frames in the top row. --h is set per row by sizeCluster in main.js;
+     the fallback keeps the layout sane for the instant before it runs, and for
+     a photo that fails to load. */
+  height: var(--h, 240px);
+  width: auto;
   aspect-ratio: var(--ar, 4 / 3);
   object-fit: cover;
 }
@@ -628,59 +636,68 @@ p {
   width: min(88%, 440px);
 }
 
-/* Two in a row, the second dropped so the tops are not level, and the third
-   centred underneath them. The cluster is deliberately tight: the second photo
-   is pulled left over the first and the third is pulled up over both, so the
-   three frames read as a pile rather than as a grid.
+.count-1 .snap-0 img {
+  height: auto;
+  width: 100%;
+}
+
+/* Two photos in the top row at a matched height, the one on the stamp side
+   dropped so the tops are not level, and the third centred underneath them,
+   pulled up over both. The cluster is deliberately tight: three frames that
+   read as a pile rather than as a grid.
 
    Every overlap is a fixed pixel amount at the frame's edge, never a fraction
    of the picture, and the frame carries 10px of white on each side, so an
    overlap of 24px eats about 14px of the photo underneath. That is what keeps
-   a face from being covered at any column width. The horizontal shift uses a
-   negative margin on one side and a positive one on the other, which moves the
-   frame without changing its width and without touching transform, where the
-   rotation and the GSAP scroll drift live. */
-.count-3 .snap-0 { grid-column: 1; grid-row: 1; }
+   a face from being covered at any column width.
 
-.count-3 .snap-1 {
-  grid-column: 2;
-  grid-row: 1;
-  margin-top: clamp(12px, 2.6vw, 36px);
+   Which photo sits left and which is dropped is decided by sizeCluster in
+   main.js, not here, because it depends on the photos' shapes: order and the
+   is-drop class come from JS, and these rules only say what those mean. */
+.count-2 .snap,
+.count-3 .snap {
+  height: auto;
+}
+
+.count-2 .snap-0 img,
+.count-2 .snap-1 img,
+.count-3 .snap-0 img,
+.count-3 .snap-1 img {
+  --h: var(--h1);
+}
+
+.count-3 .snap-2 img,
+.count-2 .snap-2 img {
+  --h: var(--h2);
+}
+
+/* The right-hand frame in the row laps over the left one by the fixed sliver.
+   The class is set by sizeCluster, because which frame that is depends on the
+   two photos' shapes. */
+.snap.is-lap {
   margin-left: -24px;
-  margin-right: 24px;
   z-index: 2;
 }
 
+/* The frame on the stamp side drops down the page, which is what leaves the
+   notch the year stamp needs in the cluster's outer top corner. */
+.snap.is-drop {
+  margin-top: clamp(12px, 2.6vw, 36px);
+}
+
+/* The third photo sits on its own row, pulled back up over the pair. */
 .count-3 .snap-2 {
+  order: 3;
   grid-column: 1 / span 2;
   grid-row: 2;
   justify-self: center;
-  width: 68%;
   margin-top: -38px;
   z-index: 3;
 }
 
-.count-2 .snap-1 {
-  margin-top: clamp(12px, 2.6vw, 36px);
-  margin-left: -24px;
-  margin-right: 24px;
-  z-index: 2;
-}
-
-/* Mirrored steps put the wide photo on the outside edge, so the second photo
-   has to lean the other way. */
-.is-flip .count-3 .snap-0 { grid-column: 2; }
-
-.is-flip .count-3 .snap-1 {
-  grid-column: 1;
-  margin-left: 24px;
-  margin-right: -24px;
-}
-
-.is-flip .count-2 .snap-1 {
-  margin-left: 24px;
-  margin-right: -24px;
-}
+/* The mirrored-step overrides that used to swap the two grid columns are gone:
+   which photo sits where is now decided from the photos' shapes in main.js,
+   and applies the same way to a mirrored step. */
 
 .year-stamp {
   position: absolute;
