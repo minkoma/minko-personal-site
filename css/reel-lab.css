@@ -1,0 +1,331 @@
+/* Reel lab — six layouts for a mixed set of vertical reels and landscape
+   films. Scratch page; nothing here is used by the live site. */
+
+.rlab-wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(28px, 6vh, 64px) var(--pad) clamp(70px, 10vh, 120px);
+}
+
+.rlab-head h1 { font-size: clamp(34px, 5vw, 64px); line-height: 1.05; margin: 0 0 10px; }
+.rlab-head .hand {
+  font-family: var(--hand);
+  font-size: clamp(19px, 2vw, 26px);
+  color: var(--plum-deep);
+  margin: 0 0 6px;
+}
+.rlab-head p { max-width: 66ch; color: var(--ink-soft); }
+.rlab-flag {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: rgba(242, 181, 68, 0.14);
+  border: 1px solid rgba(242, 181, 68, 0.5);
+  border-radius: 14px;
+  font-size: 14.5px;
+}
+
+/* -------------------------------------------------------------- comparison */
+.rlab-table { width: 100%; border-collapse: collapse; margin: 26px 0 0; font-size: 14px; }
+.rlab-table th,
+.rlab-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.rlab-table th { font: 700 13px/1.3 var(--sans); color: var(--plum-deep); }
+.rlab-table td:first-child { font-weight: 700; white-space: nowrap; }
+
+/* --------------------------------------------------------------------- nav */
+.rlab-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 26px 0 0;
+  padding: 12px 14px;
+  background: rgba(246, 239, 227, 0.94);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+.rlab-nav a {
+  font: 600 13.5px/1 var(--sans);
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 9px 14px;
+}
+.rlab-nav a:hover { background: var(--plum); color: #fff; border-color: var(--plum); }
+
+/* ------------------------------------------------------------------ panels */
+.rlab-panel {
+  margin: 44px 0 0;
+  padding: clamp(18px, 3vw, 34px);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  scroll-margin-top: 78px;
+}
+.rlab-panel-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.rlab-panel-head h2 { font-size: clamp(23px, 2.6vw, 34px); margin: 0; }
+.rlab-num {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--plum);
+  color: #fff;
+  font: 700 17px/1 var(--sans);
+}
+.rlab-tag {
+  font: 600 12px/1 var(--sans);
+  color: var(--plum-deep);
+  background: rgba(124, 92, 196, 0.12);
+  border-radius: 999px;
+  padding: 7px 12px;
+}
+.rlab-why { max-width: 70ch; color: var(--ink-soft); margin: 12px 0 22px; font-size: 15px; }
+.rlab-why b { color: var(--ink); }
+
+/* ------------------------------------------------------------------- tiles */
+.vt { margin: 0; }
+.vt-media {
+  position: relative;
+  aspect-ratio: var(--ar, 16/9);
+  background: #1d1a24;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.vt-video { width: 100%; height: 100%; }
+.fit-cover .vt-video { object-fit: cover; }
+.fit-contain .vt-video { object-fit: contain; }
+
+.vt-badge,
+.vt-len {
+  position: absolute;
+  top: 8px;
+  font: 700 10.5px/1 var(--sans);
+  letter-spacing: 0.4px;
+  color: #fff;
+  background: rgba(29, 26, 36, 0.72);
+  border-radius: 999px;
+  padding: 5px 8px;
+}
+.vt-badge { left: 8px; }
+.vt-len { right: 8px; font-weight: 600; }
+
+.vt-play {
+  position: absolute;
+  inset: auto 10px 10px auto;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--plum-deep);
+  font-size: 13px;
+  display: grid;
+  place-items: center;
+  cursor: var(--cursor-hand);
+  opacity: 0;
+  transition: opacity 0.18s;
+}
+.vt:hover .vt-play,
+.vt:focus-within .vt-play,
+.cell:hover .vt-play { opacity: 1; }
+
+.vt figcaption { display: block; padding: 9px 2px 0; line-height: 1.35; }
+.vt figcaption strong { display: block; font: 700 14px/1.3 var(--sans); }
+.vt figcaption span { font-size: 12.5px; color: var(--ink-soft); }
+
+/* A tile whose mp4 is missing: the poster is the intended still, not a
+   failed load, so say so instead of leaving a dead play button. */
+.is-stillonly .vt-badge::after { content: " · still"; }
+
+/* ------------------------------------------------------------ 1. two tracks */
+.track-switch { display: flex; gap: 8px; margin-bottom: 18px; }
+.track-switch button {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font: 700 13.5px/1 var(--sans);
+  cursor: var(--cursor-hand);
+}
+.track-switch button[aria-selected="true"] { background: var(--plum); color: #fff; border-color: var(--plum); }
+.track-pane { display: none; }
+.track-pane.is-on { display: block; }
+.reel-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); }
+.film-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
+
+/* ------------------------------------------------------------ 2. ratio wall */
+.wall {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-auto-rows: 4px;
+  gap: 0 16px;
+}
+.wall-cell { grid-row: span var(--span, 60); padding-bottom: 16px; }
+.wall-cell .vt-media { height: auto; }
+
+/* --------------------------------------------------------- 3. feature + rail */
+.feature-screen {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  padding: 20px;
+  background: #171420;
+  border-radius: 20px;
+}
+.feature-screen .vt-media { aspect-ratio: 16/9; background: #000; border-radius: 10px; }
+.feature-meta { color: #efe8f7; }
+.feature-meta h3 { font-size: clamp(21px, 2.2vw, 30px); margin: 4px 0 8px; }
+.feature-meta p { margin: 0; font-size: 14.5px; color: #c6bbd6; }
+.feature-kicker { font-family: var(--hand); font-size: 20px; color: var(--sun); margin: 0; }
+.feature-sub { margin-top: 12px !important; font-size: 12.5px !important; letter-spacing: 0.4px; }
+.rail-label { font-family: var(--hand); font-size: 22px; color: var(--plum-deep); margin: 22px 0 8px; }
+.rail {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 4px 2px 14px;
+  scroll-snap-type: x mandatory;
+}
+.rail .vt { flex: 0 0 158px; scroll-snap-align: start; }
+
+/* ----------------------------------------------------------- 4. phone shelf */
+.shelf { padding: 10px 0; }
+.shelf-row { display: flex; flex-wrap: wrap; gap: 26px; align-items: flex-end; justify-content: center; }
+.shelf-row-tv { gap: 46px; }
+.phone {
+  position: relative;
+  width: 168px;
+  padding: 9px 7px 10px;
+  background: #2a2533;
+  border-radius: 24px;
+  box-shadow: 0 14px 26px rgba(60, 44, 30, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+.phone .vt-media { border-radius: 16px; }
+.phone-notch {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 46px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+}
+.phone-label,
+.tvset .phone-label {
+  font-family: var(--hand);
+  font-size: 17px;
+  color: #efe8f7;
+  text-align: center;
+  margin: 8px 0 0;
+}
+.tvset {
+  width: 330px;
+  padding: 14px 14px 10px;
+  background: #ded2bd;
+  border: 1px solid rgba(58, 48, 38, 0.3);
+  border-radius: 18px;
+  box-shadow: 0 14px 26px rgba(60, 44, 30, 0.24);
+}
+.tvset .vt-media { background: #000; border-radius: 8px; border: 4px solid #2a2533; }
+.tvset .phone-label { color: var(--ink); }
+.tv-stand {
+  display: block;
+  width: 70px;
+  height: 9px;
+  margin: 10px auto 0;
+  border-radius: 0 0 8px 8px;
+  background: rgba(58, 48, 38, 0.45);
+}
+.shelf-plank {
+  height: 14px;
+  margin: 14px 0 30px;
+  border-radius: 4px;
+  background: linear-gradient(#c8a97e, #a8864f);
+  box-shadow: 0 10px 18px rgba(60, 44, 30, 0.2);
+}
+
+/* ------------------------------------------------------------- 5. snap feed */
+.feed {
+  height: 560px;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  border-radius: 20px;
+  background: #171420;
+  padding: 0 14px;
+}
+.feed-slide {
+  height: 560px;
+  scroll-snap-align: center;
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 26px;
+  align-items: center;
+}
+.feed-stage .vt-media { aspect-ratio: 9/16; max-height: 480px; background: #000; }
+.feed-side { color: #efe8f7; }
+.feed-side h3 { font-size: clamp(20px, 2.1vw, 28px); margin: 6px 0 8px; }
+.feed-side p { margin: 0; font-size: 14.5px; color: #c6bbd6; }
+.feed-index { font-family: var(--hand); font-size: 20px; color: var(--sun); }
+.feed-sub { margin-top: 12px !important; font-size: 12.5px !important; letter-spacing: 0.4px; }
+
+/* --------------------------------------------------------- 6. contact sheet */
+.sheet2 {
+  padding: 22px 16px;
+  background: #241f2c;
+  border-radius: 18px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.5) 1.6px, transparent 1.7px);
+  background-size: 22px 10px;
+  background-repeat: repeat-x;
+  background-position: center top 8px;
+}
+.sheet2-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 30px 18px;
+  align-items: end;
+  margin-top: 14px;
+}
+.cell { margin: 0; position: relative; }
+.cell-media {
+  position: relative;
+  aspect-ratio: var(--ar);
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  overflow: hidden;
+}
+.cell-media .vt-video { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.55); transition: filter 0.2s; }
+.cell:hover .vt-video { filter: none; }
+.cell-no {
+  position: absolute;
+  top: -16px;
+  left: 1px;
+  font: 600 10.5px/1 var(--sans);
+  color: rgba(255, 255, 255, 0.6);
+}
+.cell figcaption { padding-top: 7px; }
+.cell figcaption strong { display: block; font: 700 12.5px/1.3 var(--sans); color: #efe8f7; }
+.cell figcaption span { font-size: 11px; color: rgba(239, 232, 247, 0.6); }
+
+/* ------------------------------------------------------------------ narrow */
+@media (max-width: 860px) {
+  .feature-screen { grid-template-columns: minmax(0, 1fr); }
+  .feed-slide { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+  .feed, .feed-slide { height: 620px; }
+  .feed-stage .vt-media { max-height: 360px; }
+  .rlab-table { font-size: 13px; }
+  .rlab-table td:first-child { white-space: normal; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vt-play { opacity: 1; transition: none; }
+}

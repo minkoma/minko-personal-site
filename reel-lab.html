@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reel lab — six ways to show vertical and landscape films together</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/reel-lab.css">
+</head>
+<body>
+
+<div class="rlab-wrap">
+
+  <header class="rlab-head">
+    <p class="hand">a scratch page, not part of the site · the earlier one is <a href="film-lab.html">film-lab.html</a></p>
+    <h1>Six ways to show reels and films together</h1>
+    <p>
+      Six layouts for the same mixed set, built on self-hosted MP4 rather than any embed. The set
+      here is deliberately not your current four films: six vertical reels, three landscape films
+      and one 4:5 post, so each layout is judged at the volume you actually have. Four items makes
+      every layout look fine; ten is where they separate.
+    </p>
+    <p>
+      The one decision underneath all six: when a tile's shape and a film's shape disagree, you
+      either <b>crop</b> (fill the tile, lose the edges) or <b>letterbox</b> (keep the whole frame,
+      accept black bars). A vertical reel cropped into a 16:9 tile loses roughly three quarters of
+      the picture, which is what the current strip does. Every option below either gives each shape
+      its own tile or letterboxes honestly, and the note on each one says which.
+    </p>
+    <p class="rlab-flag">
+      Two things to know while you look. <b>The stills are stand-ins:</b> they are photos from the
+      site, not frames from the films, so judge the shape and the arrangement rather than the
+      picture. Playback is wired up for real — every tile is a <code>&lt;video&gt;</code> that
+      fetches nothing until it scrolls into view — so once an MP4 lands at
+      <code>assets/film/&lt;name&gt;.mp4</code> this same page previews it live, hover to play and
+      click for sound. <b>You will need one still per film grabbed at the shape it is shown in.</b>
+      That is a one-command job per film once the files are local, and it is what makes any of these
+      look finished.
+    </p>
+
+    <table class="rlab-table">
+      <thead>
+        <tr><th>Option</th><th>Reads as “a lot of work”</th><th>Mixed shapes</th><th>Watch cost</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 · Two tracks</td><td>Yes, a count per track</td><td>Separated, nothing cropped</td><td>Low</td></tr>
+        <tr><td>2 · Ratio wall</td><td>Strongest — one wall of everything</td><td>Every tile its true shape</td><td>Low</td></tr>
+        <tr><td>3 · Feature + rail</td><td>Yes, but the reels are small</td><td>One film large, reels in a rail</td><td>Lowest</td></tr>
+        <tr><td>4 · Phone shelf</td><td>Moderate — a shelf of devices</td><td>Explicitly, by device</td><td>Low</td></tr>
+        <tr><td>5 · Snap feed</td><td>Only by scrolling</td><td>One column, letterboxed</td><td>Highest</td></tr>
+        <tr><td>6 · Contact sheet</td><td>Yes, in a tidy grid</td><td>Same width, height varies</td><td>Low</td></tr>
+      </tbody>
+    </table>
+  </header>
+
+  <nav class="rlab-nav" aria-label="jump to an option">
+    <a href="#opt1">1 · Two tracks</a>
+    <a href="#opt2">2 · Ratio wall</a>
+    <a href="#opt3">3 · Feature + rail</a>
+    <a href="#opt4">4 · Phone shelf</a>
+    <a href="#opt5">5 · Snap feed</a>
+    <a href="#opt6">6 · Contact sheet</a>
+  </nav>
+
+  <!-- ------------------------------------------------------------- 1 -->
+  <section class="rlab-panel" id="opt1">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">1</span>
+      <h2>Two tracks</h2>
+      <span class="rlab-tag">the safe answer</span>
+    </div>
+    <p class="rlab-why">
+      Reels and films get their own grid behind a switch, so <b>no film is ever cropped or
+      letterboxed</b>: a 9:16 tile holds a 9:16 reel. The switch carries a count, which does the
+      “I have made a lot of these” work without needing everything on screen at once. This is what
+      most working video people do, and it is the easiest to maintain — a new reel is one more line
+      of data and the layout does not shift. The cost is a click: whichever track is second is seen
+      by fewer people, so the order matters.
+    </p>
+    <div data-opt-tracks></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- 2 -->
+  <section class="rlab-panel" id="opt2">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">2</span>
+      <h2>Ratio wall</h2>
+      <span class="rlab-tag">volume, at a glance</span>
+    </div>
+    <p class="rlab-why">
+      One wall, every tile at its own true shape — tall reels run tall, films run wide, nothing is
+      cropped and nothing is letterboxed. It is the only option where the whole body of work is
+      visible in one view, which is exactly the “look how much I made” effect you asked for, and
+      the mix of shapes is what makes it look like a real body of work rather than a template.
+      Built with the grid-row span trick rather than CSS masonry, which still only ships in one
+      browser. The cost is order: a ragged bottom edge is part of the look, and a long title can
+      push a column out of step.
+    </p>
+    <div data-opt-wall></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- 3 -->
+  <section class="rlab-panel" id="opt3">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">3</span>
+      <h2>Feature + rail</h2>
+      <span class="rlab-tag">clearest hierarchy</span>
+    </div>
+    <p class="rlab-why">
+      Your strongest film plays large, letterboxed on a dark screen so it keeps its full frame, and
+      the reels sit underneath as a swipeable rail of phone-shaped cards. A recruiter who watches
+      one thing watches the right thing, and the rail still says there are plenty more. This is the
+      standard showreel pattern, and it is the only option that makes an editorial choice for the
+      viewer. The cost: the reels are small and read as supporting material, so it is the wrong
+      pick if the vertical work <i>is</i> the work.
+    </p>
+    <div data-opt-feature></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- 4 -->
+  <section class="rlab-panel" id="opt4">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">4</span>
+      <h2>Phone shelf</h2>
+      <span class="rlab-tag">most like your site</span>
+    </div>
+    <p class="rlab-why">
+      Reels sit in phone frames on a shelf and films in a little set with a stand, so the vertical
+      shape stops being an awkward fit and becomes the point: <b>this was made for a phone</b>. It
+      matches the scrapbook tone of the rest of the page better than any grid does, and for a
+      marketing portfolio it quietly says you shoot for the platform the client is actually buying.
+      The costs are real: the device frames spend pixels on bezels instead of picture, and mockup
+      framing reads as dated to some people, so it is the most opinionated option here.
+    </p>
+    <div data-opt-shelf></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- 5 -->
+  <section class="rlab-panel" id="opt5">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">5</span>
+      <h2>Snap feed</h2>
+      <span class="rlab-tag">most immersive</span>
+    </div>
+    <p class="rlab-why">
+      A snap-scrolling column, one film at a time, with its note alongside — the TikTok reading
+      habit, borrowed. Vertical work has never looked better than this, because each reel gets the
+      full height of the panel. Two things to weigh. A landscape film in this column has to
+      letterbox, so it comes out small. And it hides volume: you only learn there are ten films by
+      scrolling through all ten, which is the opposite of what option 2 does. Good as a
+      <i>second</i> step — grid to browse, feed to watch.
+    </p>
+    <div data-opt-feed></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- 6 -->
+  <section class="rlab-panel" id="opt6">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">6</span>
+      <h2>Contact sheet</h2>
+      <span class="rlab-tag">most orderly</span>
+    </div>
+    <p class="rlab-why">
+      Every cell is the same width and its height follows the film's own ratio, printed on a
+      sprocketed darkroom sheet with the frames desaturated until you hover. It keeps the film
+      decoration you liked, and because the column width is fixed it stays tidy at any number of
+      films — the grid that breaks least as the set grows. The bottoms line up by row, so tall and
+      wide cells sit together without either being cut. Quieter than option 2 and less personal
+      than option 4; the closest thing here to a professional index.
+    </p>
+    <div data-opt-sheet2></div>
+  </section>
+
+  <section class="rlab-panel" id="next">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">→</span>
+      <h2>If you pick one, what I need from you</h2>
+    </div>
+    <p class="rlab-why">
+      <b>The files.</b> One MP4 per film, H.264 + AAC, <code>faststart</code>, 1080&times;1920 for
+      reels and 1920&times;1080 for films. Keep each one under about 20 MB: GitHub Pages refuses a
+      single file over 100 MB and the repo is already around 115 MB, so a dozen films at 20 MB is
+      the ceiling before this has to move to a real CDN (Bunny Stream from about $1/month,
+      Cloudflare Stream at $5 per 1,000 minutes stored). Self-hosted MP4 starts faster than any
+      embed and has no branding; what it gives up is adaptive bitrate, which does not matter for
+      short films on a laptop.
+    </p>
+    <p class="rlab-why">
+      <b>Nothing else.</b> I can pull a poster frame from each MP4 at the exact shape the layout
+      shows, so the stills stop being repurposed photos. Drop the files in
+      <code>assets/film/</code> with the names in <code>js/reel-lab.js</code> and reload this page;
+      every option becomes live and you can judge them with the real work in them.
+    </p>
+  </section>
+
+</div>
+
+<script src="js/reel-lab.js"></script>
+</body>
+</html>
