@@ -6,7 +6,17 @@
    Scratch page; index.html does not load this. */
 (() => {
   const D = window.MINKO;
-  const BITS = D.interests;
+
+  /* The set shown on this page, trimmed on Minko's instruction: Forky and the
+     latte are out, and the food bit keeps only the one photo that sat at the
+     bottom of the original plate cluster (土豆丝 + 水煮牛肉). Seven bits, 21
+     photos. js/content.js is untouched — this filter is local to the lab. */
+  const DROP = ["forky", "coffee"];
+  const KEEP_ONE = { food: "assets/aboutme/web/foodie5.jpg" };
+  const BITS = D.interests
+    .filter((b) => !DROP.includes(b.key))
+    .map((b) => (KEEP_ONE[b.key] ? { ...b, photos: [KEEP_ONE[b.key]] } : b));
+
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) =>
     String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -271,6 +281,57 @@
     return out;
   }
 
+  /* ====================================================== 0 · what you have
+     The live board, rendered from the same markup and the same styles.css
+     rules index.html uses, so it sits on this page as a true baseline rather
+     than from memory. Shapes and hint text copied from js/main.js. */
+  function current() {
+    const SHAPES = {
+      twins: ["circle", "circle", "heart"],
+      ballet: ["arch", "circle", "arch"],
+      travel: ["stamp", "stamp", "stamp", "stamp", "stamp"],
+      cats: ["blob", "circle", "circle", "heart"],
+      food: ["plate", "plate", "plate", "plate", "plate"],
+      crafts: ["hoop", "stamp", "stamp", "circle"],
+      forky: ["heart"],
+      coffee: ["blob"],
+      bear: ["cloud"]
+    };
+    const HINTS = {
+      twins: "tap to see double",
+      ballet: "tap for a pirouette",
+      travel: "tap to open the map",
+      cats: "tap to let them out",
+      food: "tap if you’re hungry",
+      crafts: "tap to unspool",
+      bear: "tap for bedtime"
+    };
+    const rotOld = (i, a) => (((i * 37) % 100) / 100 - 0.5) * 2 * a;
+
+    $("[data-o0]").innerHTML = BITS.map(
+      (it, i) => `
+      <article class="bit bit-${it.key}" style="--r:${rotOld(i, 3)}deg">
+        <span class="tape ${i % 2 ? "tape-br" : "tape-tl"}" aria-hidden="true"></span>
+        <div class="gal gal-${it.key}">
+          ${it.photos
+            .map(
+              (p, j) =>
+                `<span class="ph ph-${j} sh-${(SHAPES[it.key] || [])[j] || "circle"}"><img src="${p}" alt="" loading="lazy"></span>`
+            )
+            .join("")}
+        </div>
+        <div class="bit-copy">
+          <span class="bit-emoji" aria-hidden="true">${it.emoji}</span>
+          <h3>${esc(it.title)}</h3>
+          <p class="bit-head">${esc(it.headline)}</p>
+          <p class="bit-story">${esc(it.story)}</p>
+        </div>
+        <span class="bit-tap" aria-hidden="true">${esc(HINTS[it.key] || "tap me")} ✨</span>
+      </article>`
+    ).join("");
+  }
+
+  current();
   cards("[data-o1]", "pl-path", pathLayout, { tape: true });
   cards("[data-o2]", "pl-fan", fanLayout, { tape: true });
   cards("[data-o3]", "pl-anchor", anchorLayout);
