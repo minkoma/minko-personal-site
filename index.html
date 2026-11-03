@@ -23,10 +23,14 @@
 
 <span class="progress-bar" data-progress aria-hidden="true"></span>
 
-<!-- The ribbon is drawn as you scroll and ties the whole page together. -->
+<!-- The ribbon is drawn as you scroll and ties the whole page together. Its
+     geometry is generated in js/main.js — path, viewBox and height — because
+     it has to match the page's height and the element's own width. What is
+     here is only a fallback for a no-JS render. -->
 <svg class="ribbon" viewBox="0 0 100 2600" preserveAspectRatio="none" aria-hidden="true">
-  <path data-ribbon d="M50 0 C12 220 88 420 50 640 C12 860 88 1060 50 1280 C12 1500 88 1700 50 1920 C12 2140 88 2340 50 2600"
-        fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="4 10"></path>
+  <path data-ribbon d="M50 0 C12 220 88 420 50 640 S12 1060 50 1280 S88 1700 50 1920 S12 2340 50 2560"
+        fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="4 10"
+        vector-effect="non-scaling-stroke"></path>
 </svg>
 
 <main id="main">

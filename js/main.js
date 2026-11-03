@@ -191,54 +191,83 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       $$("[data-step-photos]").forEach(sizeCluster);
-      fitRibbon();
+      scheduleRibbon();
     }, 150);
   });
 
   /* The ribbon runs from the bottom of the hero to the bottom of the page, and
-     the page's height is not something CSS can hand to an absolutely
-     positioned element: its containing block is the viewport, so `height:100%`
-     would be one screen. It used to carry a hard 2600px, which reached the
-     bottom when it was written and stopped short of the last few years as the
-     page grew.
+     neither its height nor its shape can be written by hand: the height has to
+     match a page whose length depends on how the photos lay out, and the shape
+     has to match the element's own width.
 
-     So both the height and the path are written here. The wave is built one
-     640-unit cycle at a time until the cycles cover the page, and the viewBox
-     is set to that many units while the element is set to the same number of
-     pixels — a 1:1 vertical mapping, so a longer page gets more waves rather
-     than the same four waves stretched flat. */
+     Two things were wrong with the hand-written path, and both are structural.
+
+     It had a corner at every join. Each segment ran `C 12 … 88 … 50 <next>`,
+     so the curve arrived at an anchor heading one way and left it heading
+     another. For a cubic to flow through an anchor, the control point before it
+     and the control point after it must be mirror images through that anchor.
+     That is exactly what SVG's `S` command does — it reflects the previous
+     control point for you — so every segment after the first is an `S`, and the
+     joins are smooth by construction rather than by careful typing.
+
+     And it was stretched. A 100-unit-wide viewBox drawn into 1180px scales
+     x by 11.8 and y by 1, which bends the curve out of shape and smears the
+     stroke into a wedge: that is the thick, uneven band in the screenshot.
+     So the viewBox is now the element's real pixel size, 1:1 in both axes, and
+     the stroke carries vector-effect="non-scaling-stroke" as well.
+
+     The wave is built one half-period at a time, alternating which side it
+     bulges to, until the halves cover the page. A longer page therefore gets
+     more waves of the same shape instead of the same waves pulled flat. */
   function fitRibbon() {
     const svg = $(".ribbon");
     const path = $("[data-ribbon]");
     if (!svg || !path) return;
-    const CYCLE = 640;
-    const height = Math.max(document.body.scrollHeight - window.innerHeight, CYCLE);
-    const cycles = Math.ceil(height / CYCLE);
-    if (svg.dataset.cycles === String(cycles)) return;
-    svg.dataset.cycles = String(cycles);
-    let d = "M50 0";
-    for (let i = 0; i < cycles; i++) {
-      const y = i * CYCLE;
-      /* Alternate which side the curve swings to first, so the wave reads as
-         one continuous ribbon rather than a repeated motif. */
-      const [a, b] = i % 2 ? [88, 12] : [12, 88];
-      d += ` C${a} ${y + 220} ${b} ${y + 420} 50 ${y + CYCLE}`;
+
+    const W = svg.clientWidth;
+    const HALF = 330; /* half a period, in px: one left or right bulge */
+    const need = Math.max(document.body.scrollHeight - window.innerHeight, HALF);
+    const halves = Math.ceil(need / HALF);
+    const H = halves * HALF;
+    if (!W) return;
+    if (svg.dataset.fit === `${W}x${H}`) return;
+    svg.dataset.fit = `${W}x${H}`;
+
+    const cx = W / 2;
+    const amp = Math.min(W * 0.3, 190); /* how far the ribbon swings sideways */
+    /* 0.42 and 0.58 place the control points along the half-period; they are
+       what give the curve its lean rather than making it a stiff arc. */
+    const A = HALF * 0.42;
+    const B = HALF * 0.58;
+
+    /* The first bulge goes left, so the ribbon leaves the hero heading the
+       same way the page's eye travel does. */
+    let d = `M${cx.toFixed(1)} 0 C${(cx - amp).toFixed(1)} ${A.toFixed(1)} ${(cx - amp).toFixed(
+      1
+    )} ${B.toFixed(1)} ${cx.toFixed(1)} ${HALF}`;
+    for (let i = 1; i < halves; i++) {
+      const y = i * HALF;
+      /* Alternate the side. `S` supplies the entering control point as the
+         mirror of the previous one, which is what keeps the join smooth. */
+      const x = i % 2 ? cx + amp : cx - amp;
+      d += ` S${x.toFixed(1)} ${(y + B).toFixed(1)} ${cx.toFixed(1)} ${y + HALF}`;
     }
+
     path.setAttribute("d", d);
-    svg.setAttribute("viewBox", `0 0 100 ${cycles * CYCLE}`);
-    svg.style.height = `${cycles * CYCLE}px`;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.style.height = `${H}px`;
     return true;
   }
 
   /* The page keeps getting taller while the photos load, so the ribbon is
      refitted as they arrive rather than once at startup. The scroll animation
-     reads the path's length, so it is told to recalculate whenever the path
-     actually changed. */
+     measures the path, so it is rebuilt whenever the path actually changed. */
   let ribbonTimer = null;
+  let onRibbonChange = null;
   function scheduleRibbon() {
     clearTimeout(ribbonTimer);
     ribbonTimer = setTimeout(() => {
-      if (fitRibbon() && window.ScrollTrigger) window.ScrollTrigger.refresh();
+      if (fitRibbon() && onRibbonChange) onRibbonChange();
     }, 200);
   }
 
@@ -1190,16 +1219,26 @@
   );
 
   if (motion) {
-    /* The dotted ribbon draws itself down the page. */
+    /* The ribbon draws itself down the page. It is rebuilt rather than just
+       refreshed whenever fitRibbon changes the path, because the dash lengths
+       that produce the drawing effect are the path's own length: a longer path
+       with the old dash values would appear already finished. */
     const ribbon = $("[data-ribbon]");
+    let ribbonTween = null;
+    const drawRibbon = () => {
+      const len = ribbon.getTotalLength();
+      ribbonTween?.scrollTrigger?.kill();
+      ribbonTween?.kill();
+      gsap.set(ribbon, { strokeDasharray: len, strokeDashoffset: len });
+      ribbonTween = gsap.to(ribbon, {
+        strokeDashoffset: 0,
+        ease: "none",
+        scrollTrigger: { trigger: "main", start: "top top", end: "bottom bottom", scrub: 0.6 }
+      });
+    };
     fitRibbon();
-    const len = ribbon.getTotalLength();
-    gsap.set(ribbon, { strokeDasharray: len, strokeDashoffset: len });
-    gsap.to(ribbon, {
-      strokeDashoffset: 0,
-      ease: "none",
-      scrollTrigger: { trigger: "main", start: "top top", end: "bottom bottom", scrub: 0.6 }
-    });
+    drawRibbon();
+    onRibbonChange = drawRibbon;
 
     /* Path photos slap onto the page as each step arrives, then drift slightly
        at different speeds while you scroll past. */
