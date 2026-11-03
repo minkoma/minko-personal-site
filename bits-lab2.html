@@ -29,13 +29,15 @@
       against the real thing.
     </p>
     <p class="bl2-set">
-      <b>The set here is trimmed, as you asked:</b> Forky and the latte are gone, and the food bit
-      keeps only the dish at the bottom of the old plate cluster, the 土豆丝 and 水煮牛肉. Seven
-      bits, 21 photos. <code>js/content.js</code> is untouched — the filter lives in
+      <b>The set here is trimmed, as you asked:</b> Forky, the latte and the travel stamps are
+      gone, and the food bit keeps only the dish at the bottom of the old plate cluster, the 土豆丝
+      and 水煮牛肉. Six bits, 16 photos, which is what makes every option below tighter than it was
+      a round ago: no bit now carries more than four photos, and six bits fill a three-column board
+      in two clean rows. <code>js/content.js</code> is untouched — the filter lives in
       <code>js/bits-lab2.js</code>, so nothing on the live site has changed yet.
     </p>
     <p>
-      <b>All 21 photos are visible at rest.</b> No clicking, no hovering required, nothing hidden
+      <b>All 16 photos are visible at rest.</b> No clicking, no hovering required, nothing hidden
       behind anything else. <b>Every photo keeps its own shape.</b> No circles, no hearts, no arches,
       no squares; the picture decides its box, measured from the file at runtime, the same way the
       timeline photos work. <b>Mixed sizes and a tilt.</b> Each pile has a big photo and small ones
@@ -101,7 +103,7 @@
       the cloud are all here. Two things are worth watching for as you scroll down from it: the
       number of different outlines competing in one glance, and how much of each portrait photo the
       mask has cut away. Note that the column spans in <code>styles.css</code> were tuned for nine
-      bits, so with seven the rows no longer fill exactly — that is this page, not a fault in the
+      bits, so with six the rows no longer fill exactly — that is this page, not a fault in the
       live board.
     </p>
     <div class="scatter blab-scatter" data-o0></div>
@@ -119,9 +121,9 @@
       Two loose columns, each new photo dropped so no two tops are ever level, every photo overlapping
       the one above it by a fixed sliver at the white edge. Because it is the layout already running
       on the timeline, the two sections would finally look like they belong to the same scrapbook,
-      and the code is already written and already tested at mixed shapes. The one weakness: with five
-      photos the two columns get long, so the travel bit is noticeably taller than the
-      single-photo ones.
+      and the code is already written and already tested at mixed shapes. Trimming the set fixed its
+      one weakness: at five photos the two columns ran long, and with nothing above four the tallest
+      pile is now about twice the height of the shortest rather than four times.
     </p>
     <div class="bl2-board cols-3" data-o1></div>
   </section>
@@ -156,9 +158,10 @@
       difference does all the work: the eye lands on the big picture, then finds the others around it,
       so a five-photo bit no longer competes with itself. It is the only option where the sizes are
       genuinely <b>mixed</b> rather than merely varied, which is what makes a collage feel handmade
-      instead of arranged. It also degrades gracefully: the two bits with one photo each (the food dish and the bear)
-      simply get a big photo and look intentional rather than empty, which is a real problem in
-      options 2 and 6.
+      instead of arranged. It also degrades gracefully: the two bits with one photo each (the food
+      dish and the bear) simply get a big photo and look intentional rather than empty, which is a
+      real problem in options 2 and 6. With no bit above four photos the hero now dominates every
+      pile, which is exactly what this layout wants.
     </p>
     <div class="bl2-board cols-3" data-o3></div>
   </section>
@@ -193,8 +196,8 @@
       of the one above with a generous overlap. The zigzag means a photo is never directly behind
       another, so the overlap is always at a corner. This is the option that survives a four-column
       board and a phone screen unchanged, because the pile is naturally narrow. The cost is height:
-      with five photos the travel bit becomes a long vertical ribbon, and the section is the tallest
-      of the six.
+      at four photos a pile is still a long vertical ribbon, and the section is the tallest of the
+      six.
     </p>
     <div class="bl2-board cols-3" data-o5></div>
   </section>
@@ -211,7 +214,7 @@
       reads as a single diagonal streak and a stack of bits reads as a rhythm down the page. Wide and
       short, and the most obviously playful arrangement here. Two honest problems: the diagonal needs
       the full page width to work, so this one only reads at one bit per row, and a bit with a single
-      photo has no diagonal to make, which leaves two of the seven looking like a different design.
+      photo has no diagonal to make, which leaves two of the six looking like a different design.
     </p>
     <div class="bl2-board cols-1" data-o6></div>
   </section>
@@ -219,7 +222,7 @@
   <footer class="rlab-head blab-end">
     <h2>What I would do</h2>
     <p>
-      Take <b>3</b> for the five bits with several photos and let the two single-photo bits be one
+      Take <b>3</b> for the four bits with several photos and let the two single-photo bits be one
       large tilted print, which option 3 already does. If you would rather the section matched the
       timeline exactly, take <b>1</b> instead: it is literally the same layout code, so the two
       sections become one visual language and there is less to maintain. Either way the critters, the

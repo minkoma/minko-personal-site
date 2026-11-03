@@ -7,11 +7,12 @@
 (() => {
   const D = window.MINKO;
 
-  /* The set shown on this page, trimmed on Minko's instruction: Forky and the
-     latte are out, and the food bit keeps only the one photo that sat at the
-     bottom of the original plate cluster (土豆丝 + 水煮牛肉). Seven bits, 21
-     photos. js/content.js is untouched — this filter is local to the lab. */
-  const DROP = ["forky", "coffee"];
+  /* The set shown on this page, trimmed on Minko's instruction: Forky, the
+     latte and the travel stamps are out, and the food bit keeps only the dish
+     at the bottom of the old plate cluster (土豆丝 + 水煮牛肉). Six bits, 16
+     photos, which fills a three-column board in two clean rows.
+     js/content.js is untouched — this filter is local to the lab. */
+  const DROP = ["forky", "coffee", "travel"];
   const KEEP_ONE = { food: "assets/aboutme/web/foodie5.jpg" };
   const BITS = D.interests
     .filter((b) => !DROP.includes(b.key))
