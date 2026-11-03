@@ -27,7 +27,9 @@
       meta: e.period + " · " + e.place,
       place: e.place,
       body: [e.detail],
-      photos: [e.photo]
+      /* A school can carry a set like a job does; `photo` is the single-image
+         shorthand for one that only has the one. */
+      photos: e.photos || [e.photo]
     }))
     .concat(
       D.work.map((w) => ({

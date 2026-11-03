@@ -61,6 +61,11 @@ window.MINKO = {
       degree: "M.S. Integrated Marketing Communications",
       period: "Sep 2025 – Dec 2026 (expected)",
       detail: "Current GPA 3.98 / 4.0",
+      photos: [
+        "assets/experience/nu-graduation-1.jpg",
+        "assets/experience/nu-graduation-2.jpg",
+        "assets/experience/nu-graduation-3.jpg"
+      ],
       photo: "assets/experience/northwestern.jpg",
       year: "2025"
     },
@@ -70,6 +75,11 @@ window.MINKO = {
       degree: "B.A. Communication · B.A. International Studies (International Business)",
       period: "Sep 2021 – Jun 2024",
       detail: "Cumulative GPA 3.81 / 4.0 · Provost Honors Recipient",
+      photos: [
+        "assets/experience/first-year-1.jpg",
+        "assets/experience/first-year-2.jpg",
+        "assets/experience/first-year-3.jpg"
+      ],
       photo: "assets/experience/ucsd-graduation.jpg",
       year: "2021"
     }
@@ -119,9 +129,12 @@ window.MINKO = {
       place: "La Jolla, CA",
       year: "2022",
       photos: [
+        "assets/experience/storyteller-filming.jpg",
+        "assets/experience/storyteller-reel.jpg",
+        "assets/experience/alumni-awards-event.jpg",
+        "assets/experience/storyteller-sixth.jpg",
         "assets/experience/ucsd-team.jpg",
-        "assets/experience/ucsd-awards.jpg",
-        "assets/experience/ucsd-graduation.jpg"
+        "assets/experience/ucsd-awards.jpg"
       ],
       tags: ["Video production", "Brand storytelling", "Community growth"],
       points: [
