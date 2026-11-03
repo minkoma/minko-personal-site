@@ -583,6 +583,10 @@
           ? Array.from(document.querySelectorAll("[data-lightbox-group='" + scopeSel + "']"))
           : [node];
         show(group.indexOf(node));
+        /* No arrows for a single photo. */
+        const solo = group.length < 2;
+        box.querySelector(".lightbox-prev").hidden = solo;
+        box.querySelector(".lightbox-next").hidden = solo;
         box.classList.add("is-open");
         box.setAttribute("aria-hidden", "false");
         document.documentElement.classList.add("is-locked");
@@ -605,8 +609,12 @@
       box.querySelector(".lightbox-close").addEventListener("click", close);
       box.querySelector(".lightbox-next").addEventListener("click", () => show(index + 1));
       box.querySelector(".lightbox-prev").addEventListener("click", () => show(index - 1));
+      /* Clicking anywhere that is not a control closes it, the enlarged photo
+         included: a photo that opened on a click should close on the next one.
+         The enlarged image carries no data-lightbox attribute, so the delegated
+         opener above does not see this click and cannot reopen it. */
       box.addEventListener("click", (e) => {
-        if (e.target === box) close();
+        if (!e.target.closest("button")) close();
       });
       document.addEventListener("keydown", (e) => {
         if (!box.classList.contains("is-open")) return;

@@ -68,7 +68,9 @@
             .map(
               (p, j) => `<figure class="snap snap-${j}" style="--r:${rot(i * 3 + j + 1, 5)}deg">
                 <span class="tape ${j % 2 ? "tape-br" : "tape-tl"}" aria-hidden="true"></span>
-                <img src="${p}" alt="${esc(e.title)}" loading="lazy">
+                <img src="${p}" alt="${esc(e.title)}" loading="lazy"
+                     data-lightbox data-lightbox-group="step-${i}"
+                     data-caption="${esc(e.title)} · ${esc(e.place)} · ${esc(e.year)}">
               </figure>`
             )
             .join("")}
