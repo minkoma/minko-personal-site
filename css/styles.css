@@ -437,11 +437,13 @@ p {
 }
 
 /* ------------------------------------------------------------------- hello */
+/* Sized by its own content. It used to be min-height:100vh with the content
+   centred, which on a 900px-tall viewport left 185px of dead space above the
+   eyebrow and the same below, because the heading and the one paragraph only
+   need about 530px. The padding alone gives the section its breathing room. */
 .hello {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
-  min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
