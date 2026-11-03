@@ -472,22 +472,42 @@ p {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: clamp(44px, 7vh, 96px);
-  padding: 0 var(--pad) clamp(60px, 10vh, 140px);
-  max-width: 1360px;
+  gap: clamp(32px, 5vh, 64px);
+  padding: 0 var(--pad) clamp(48px, 7vh, 100px);
+  max-width: 1620px;
   margin: 0 auto;
+  /* How far a photo cluster is allowed to run out into the page's side
+     padding. It stops 26px short of the padding, because the frames are
+     rotated and a tilted corner reaches further than the box does; bleeding
+     the full padding put a corner off the edge of the window. Capped at 56px
+     so the overhang stays deliberate rather than whatever 5vw happens to be
+     on a wide monitor. */
+  --bleed: clamp(0px, calc(var(--pad) - 26px), 56px);
 }
 
-/* Note on one side, a big taped photo collage on the other, alternating. */
+/* Note on one side, a big taped photo collage on the other, alternating. The
+   photo column is the wider of the two and is allowed to overhang the page
+   padding on its outer edge, which is where the extra size comes from: wider
+   costs nothing, taller costs scrolling. */
 .step {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.45fr);
   gap: clamp(20px, 2.6vw, 48px);
   align-items: center;
 }
 
 .step.is-flip {
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.86fr);
+}
+
+.step .step-photos {
+  margin-right: calc(-1 * var(--bleed));
+  margin-left: auto;
+}
+
+.step.is-flip .step-photos {
+  margin-right: auto;
+  margin-left: calc(-1 * var(--bleed));
 }
 
 .step.is-flip .step-note {
@@ -685,7 +705,7 @@ p {
   grid-row: 2;
   justify-self: center;
   width: var(--third-w, 46%);
-  margin-top: -38px;
+  margin-top: -62px;
   z-index: 3;
 }
 

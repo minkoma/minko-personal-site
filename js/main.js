@@ -149,12 +149,27 @@
     shareLeft = Math.min(Math.max(shareLeft, FLOOR), 1 - FLOOR);
     group.style.gridTemplateColumns = `${shareLeft.toFixed(4)}fr ${(1 - shareLeft).toFixed(4)}fr`;
 
+    /* The row's height, as a fraction of the cluster's width. A row of
+       landscape photos is short, so it can be very wide for free; a row with a
+       tall portrait in it gets tall as fast as it gets wide. That is why the
+       clusters are allowed to run out into the page's side padding but the row
+       height is capped: past the cap the cluster stops widening instead of
+       growing taller, so a photo set with an extreme shape cannot add hundreds
+       of pixels of scrolling on its own. */
+    const rowH = shareLeft / arLeft;
+    const MAX_ROW = 430;
+    group.style.maxWidth = "";
+    const avail = group.clientWidth;
+    if (avail * rowH > MAX_ROW) {
+      group.style.maxWidth = `${Math.round(MAX_ROW / rowH)}px`;
+    }
+
     /* The third frame, in units of the cluster's width: the row's height times
-       the third photo's own ratio, at 72%, and never wider than 60% or
-       narrower than 30% of the row. */
+       the third photo's own ratio, at 58%, and never wider than 60% or
+       narrower than 24% of the row. Because the factor applies to the height,
+       a portrait third and a landscape third come out the same height. */
     if (ratios[2]) {
-      const rowH = shareLeft / arLeft;
-      const third = Math.min(Math.max(rowH * 0.72 * ratios[2], 0.3), 0.6);
+      const third = Math.min(Math.max(rowH * 0.58 * ratios[2], 0.24), 0.6);
       group.style.setProperty("--third-w", `${(third * 100).toFixed(1)}%`);
     }
 
@@ -163,6 +178,16 @@
     right.classList.add("is-lap");
     (flipped ? left : right).classList.add("is-drop");
   }
+
+  /* The fr shares survive any window width on their own, but the row-height
+     cap is in pixels, so it has to be redone after a resize. A debounced
+     listener rather than a ResizeObserver: the cap changes the cluster's own
+     width, which an observer would see as a reason to run again. */
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => $$("[data-step-photos]").forEach(sizeCluster), 150);
+  });
 
   /* ---------------------------------------------------------------- film */
   /* Two labelled shelves: the long-form films on top, the vertical reels
