@@ -37,6 +37,11 @@ SVG_NS = "{http://www.w3.org/2000/svg}"
 HERE = os.path.dirname(os.path.abspath(__file__))
 HERO = os.path.join(os.path.dirname(HERE), "assets", "hero")
 SOURCE = os.path.join(HERO, "Minko Ma (3).svg")
+# A later Canva export of the same wordmark with the curve baked into the
+# vector paths: each glyph is rotated along the arc and its translate carries
+# the vertical rise. Minko prefers this arch to the one solve_radius() builds,
+# so --curved reads this file and skips both the bend and the tracking nudge.
+SOURCE_CURVED = os.path.join(HERO, "Minko Ma name curved.svg")
 
 LETTERS = "MINKOMA"
 # The Canva canvas is 1440x810 user units shown at 1920x1080. js/content.js
@@ -151,12 +156,12 @@ def read_glyphs(path):
         m = re.match(r"translate\(([-\d.]+),\s*([-\d.]+)\)", inner.get("transform", ""))
         if not m:
             continue
-        x = float(m.group(1))
+        x, y = float(m.group(1)), float(m.group(2))
         node = inner.find(f"./{SVG_NS}g/{SVG_NS}path")
         if node is None:
             gap = x
         else:
-            glyphs.append((x, parse_path(node.get("d"))))
+            glyphs.append((x, y, parse_path(node.get("d"))))
     glyphs.sort(key=lambda t: t[0])
     if len(glyphs) != 7:
         raise SystemExit(f"expected 7 glyph outlines, found {len(glyphs)}")
@@ -212,29 +217,39 @@ def main():
                     default=NAME_BOX,
                     help="where to place the wordmark, in 1920x1080 units; "
                          "defaults to the design position, not the plate's")
+    ap.add_argument("--curved", action="store_true",
+                    help="read the pre-curved Canva export instead, taking its "
+                         "arch and letterfit exactly as drawn (no bend, no nudge)")
     ap.add_argument("--letters", action="store_true",
                     help="also write name-01..07.svg for per-letter animation")
     args = ap.parse_args()
 
-    glyphs, gap = read_glyphs(SOURCE)
-    nudge = [0.0] * 7 if args.no_nudge else [n / UNIT for n in NUDGE]
-    glyphs = [(x + nudge[i], segs) for i, (x, segs) in enumerate(glyphs)]
+    glyphs, gap = read_glyphs(SOURCE_CURVED if args.curved else SOURCE)
     layers = json.load(open(os.path.join(HERO, "layers.json")))
     plate = [v * 1920 / layers["frame"][0] for v in layers["name"]["box"]]
     target = list(args.box)
     print(f"placing into {[round(v, 1) for v in target]}"
           f"   (the plate's own box is {[round(v, 1) for v in plate]})")
 
-    straight = bbox([p for x, segs in glyphs
-                     for p in path_points(segs, lambda a, b: (a, b))])
-    span = max(x for x, _ in glyphs) - min(x for x, _ in glyphs)
-    centre_x = (min(x for x, _ in glyphs) + max(x for x, _ in glyphs)) / 2
-    radius = solve_radius(span / 2, args.rise / UNIT)
-    print(f"{len(glyphs)} glyphs, word gap at {gap:.1f}, straight span {span:.1f} units")
-    print(f"arch: rise {args.rise:.0f} (1920 units) -> radius {radius:.0f} units")
+    if args.curved:
+        # The arch is already in the paths: each glyph is drawn rotated and its
+        # translate carries the rise, so applying that translate is all it takes.
+        bent = [(x, segs, (lambda dx, dy: lambda a, b: (dx + a, dy + b))(x, y))
+                for x, y, segs in glyphs]
+        print(f"{len(glyphs)} glyphs from the pre-curved export, "
+              f"word gap at {gap:.1f}; arch and letterfit taken as drawn")
+    else:
+        nudge = [0.0] * 7 if args.no_nudge else [n / UNIT for n in NUDGE]
+        glyphs = [(x + nudge[i], segs) for i, (x, y, segs) in enumerate(glyphs)]
+        span = max(x for x, _ in glyphs) - min(x for x, _ in glyphs)
+        centre_x = (min(x for x, _ in glyphs) + max(x for x, _ in glyphs)) / 2
+        radius = solve_radius(span / 2, args.rise / UNIT)
+        print(f"{len(glyphs)} glyphs, word gap at {gap:.1f}, "
+              f"straight span {span:.1f} units")
+        print(f"arch: rise {args.rise:.0f} (1920 units) -> radius {radius:.0f} units")
+        bent = [(x, segs, bend(x, radius, centre_x)) for x, segs in glyphs]
 
-    # bend every glyph, then measure the wordmark as a whole
-    bent = [(x, segs, bend(x, radius, centre_x)) for x, segs in glyphs]
+    # measure the wordmark as a whole
     all_pts = [p for x, segs, fn in bent for p in path_points(segs, fn)]
     box = bbox(all_pts)
 
