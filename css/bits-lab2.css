@@ -186,3 +186,31 @@
   border-radius: 14px;
   font-size: 14.5px;
 }
+
+/* Option 0 only. styles.css positions .ph-0 to .ph-2 for the twins cluster
+   and .ph-0 to .ph-2 for ballet, because those bits had three photos each
+   when it was written. The lab set gives both a fourth, and an absolutely
+   positioned frame with no coordinates would pile up in the top-left corner.
+   These two rules place the fourth photo; they are scoped to .blab-scatter so
+   the live stylesheet is untouched. */
+.blab-scatter .gal-twins {
+  aspect-ratio: 4 / 3.5;
+}
+
+.blab-scatter .gal-twins .ph-3 {
+  width: 34%;
+  left: 4%;
+  bottom: 0;
+  z-index: 3;
+}
+
+.blab-scatter .gal-ballet {
+  aspect-ratio: 3 / 4.6;
+}
+
+.blab-scatter .gal-ballet .ph-3 {
+  width: 42%;
+  right: 2%;
+  bottom: 0;
+  z-index: 4;
+}
