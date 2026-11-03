@@ -25,12 +25,14 @@
 
 <!-- The ribbon is drawn as you scroll and ties the whole page together. Its
      geometry is generated in js/main.js — path, viewBox and height — because
-     it has to match the page's height and the element's own width. What is
-     here is only a fallback for a no-JS render. -->
+     it has to match the page's height and the element's own width. The viewBox
+     is deliberately narrower than the element: the stretch is what makes the
+     band thick through the straights and thin at the bends, so the stroke
+     width below is the THIN end of the ribbon, not its average. What is here
+     is only a fallback for a no-JS render. -->
 <svg class="ribbon" viewBox="0 0 100 2600" preserveAspectRatio="none" aria-hidden="true">
   <path data-ribbon d="M50 0 C12 220 88 420 50 640 S12 1060 50 1280 S88 1700 50 1920 S12 2340 50 2560"
-        fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="4 10"
-        vector-effect="non-scaling-stroke"></path>
+        fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 10"></path>
 </svg>
 
 <main id="main">

@@ -200,21 +200,25 @@
      match a page whose length depends on how the photos lay out, and the shape
      has to match the element's own width.
 
-     Two things were wrong with the hand-written path, and both are structural.
+     The hand-written path had a corner at every join. Each segment ran
+     `C 12 … 88 … 50 <next>`, so the curve arrived at an anchor heading one way
+     and left it heading another. For a cubic to flow through an anchor, the
+     control point before it and the control point after it must be mirror
+     images through that anchor. That is exactly what SVG's `S` command does —
+     it reflects the previous control point for you — so every segment after
+     the first is an `S`, and the joins are smooth by construction rather than
+     by careful typing.
 
-     It had a corner at every join. Each segment ran `C 12 … 88 … 50 <next>`,
-     so the curve arrived at an anchor heading one way and left it heading
-     another. For a cubic to flow through an anchor, the control point before it
-     and the control point after it must be mirror images through that anchor.
-     That is exactly what SVG's `S` command does — it reflects the previous
-     control point for you — so every segment after the first is an `S`, and the
-     joins are smooth by construction rather than by careful typing.
-
-     And it was stretched. A 100-unit-wide viewBox drawn into 1180px scales
-     x by 11.8 and y by 1, which bends the curve out of shape and smears the
-     stroke into a wedge: that is the thick, uneven band in the screenshot.
-     So the viewBox is now the element's real pixel size, 1:1 in both axes, and
-     the stroke carries vector-effect="non-scaling-stroke" as well.
+     The thickness that varies along the ribbon is deliberate, and it is the
+     one part of the old drawing worth keeping. It comes from drawing into a
+     viewBox narrower than the element and letting it stretch: under a scale of
+     STRETCH across and 1 down, a stroke of width w measures w * STRETCH where
+     the ribbon runs vertically and w where it runs flat, so the band swells
+     through the straights and tapers at the bends like a brush stroke. The old
+     path got that by accident, from a 100-unit viewBox in a 1180px box — a
+     stretch of nearly 12, which is why it read as a thick wedge rather than a
+     line. Here it is two named numbers instead: STRETCH sets the ratio between
+     the thick and thin parts, and the CSS stroke-width sets the thin end.
 
      The wave is built one half-period at a time, alternating which side it
      bulges to, until the halves cover the page. A longer page therefore gets
