@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bits lab — six ways to present the Bits of me photos</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/reel-lab.css">
+<link rel="stylesheet" href="css/bits-lab.css">
+</head>
+<body>
+
+<div class="rlab-wrap">
+
+  <header class="rlab-head">
+    <p class="hand">a scratch page, not part of the site · siblings: <a href="reel-lab.html">reel-lab.html</a>, <a href="film-lab.html">film-lab.html</a></p>
+    <h1>Six ways to present the Bits of me photos</h1>
+    <p>
+      Same nine bits, same 27 photos, same stories. Only the photo presentation changes. The
+      critters, the hidden surprises and the counter are untouched by all six: every option below
+      leaves a card or a row that an egg can still be attached to, and option 6 gives the critter
+      more room than it has now.
+    </p>
+    <p>
+      What is wrong with the current board is not the shapes, it is the <b>count</b>. Nine cards
+      show all 27 photos at once, at six different silhouettes (circle, heart, arch, stamp, blob,
+      plate, hoop, cloud), each one cropping a portrait phone photo into something that is not its
+      own shape. So the eye gets 27 competing outlines and no single photo large enough to read.
+      Every option below fixes that by changing one of two things: <b>how many photos are visible
+      at rest</b>, or <b>whether a photo keeps its own rectangle</b>.
+    </p>
+    <p class="rlab-flag">
+      All six use your real photos from <code>js/content.js</code>, and all six read each photo's
+      true width and height at runtime and let the picture set its box. Nothing here is squeezed
+      into a square unless the note says so (option 6's covers, on purpose). Hover and click are
+      wired up — these are working layouts, not mockups.
+    </p>
+
+    <table class="rlab-table">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>Photos visible at rest</th>
+          <th>Keeps the photo's shape</th>
+          <th>Busy-ness</th>
+          <th>Still scrapbook?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1 · Photo deck</td><td>9 of 27</td><td>Yes</td><td>Low</td><td>Yes — polaroids</td></tr>
+        <tr><td>2 · Bento tiles</td><td>9 of 27</td><td>No, cropped to the tile</td><td>Lowest</td><td>No — modern, clean</td></tr>
+        <tr><td>3 · Sticker sheet</td><td>All 27</td><td>Yes</td><td>Medium</td><td>Yes — most of all</td></tr>
+        <tr><td>4 · Contact strips</td><td>All 27, in rows</td><td>Yes, shared height</td><td>Low</td><td>Half — editorial</td></tr>
+        <tr><td>5 · The list</td><td>None until you hover</td><td>Yes</td><td>Lowest</td><td>No — gallery-ish</td></tr>
+        <tr><td>6 · Pinboard + panel</td><td>9 covers, then one full set</td><td>Covers no, panel yes</td><td>Low</td><td>Yes — corkboard</td></tr>
+      </tbody>
+    </table>
+
+    <p class="blab-note">my pick: 1 or 6. 1 if you want one scroll; 6 if you want the photos big.</p>
+  </header>
+
+  <nav class="rlab-nav" aria-label="jump to an option">
+    <a href="#opt1">1 · Photo deck</a>
+    <a href="#opt2">2 · Bento tiles</a>
+    <a href="#opt3">3 · Sticker sheet</a>
+    <a href="#opt4">4 · Contact strips</a>
+    <a href="#opt5">5 · The list</a>
+    <a href="#opt6">6 · Pinboard + panel</a>
+  </nav>
+
+  <!-- --------------------------------------------------------------- 1 -->
+  <section class="rlab-panel" id="opt1">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">1</span>
+      <h2>Photo deck</h2>
+      <span class="rlab-tag">closest to what you have</span>
+    </div>
+    <p class="rlab-why">
+      Each bit becomes <b>one polaroid with the rest of its photos stacked behind it</b>. You see
+      nine pictures instead of 27, each one four times the size it is now, and the travel bit still
+      announces that it holds five. Click the stack and the top photo goes to the back, so all 27
+      are still reachable without any of them fighting for attention. The white border, the
+      rotation and the shadow are the parts of the current card you said you like, kept exactly.
+      The trade is that a photo further down the deck is only seen by someone who clicks.
+    </p>
+    <div class="blab-stage dk-grid" data-deck></div>
+  </section>
+
+  <!-- --------------------------------------------------------------- 2 -->
+  <section class="rlab-panel" id="opt2">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">2</span>
+      <h2>Bento tiles</h2>
+      <span class="rlab-tag">the calm one</span>
+    </div>
+    <p class="rlab-why">
+      The current cards, with everything decorative removed: one rounded rectangle per bit at three
+      sizes, title on the photo, story only on hover. This is the layout most 2025 portfolio sites
+      use, and it is the quietest option on this page. It is also the only one that
+      <b>crops</b> — a tall ballet photo in a wide tile loses its top and bottom, which is the thing
+      you rejected in the timeline collage. Extra photos cross-fade while the pointer sits on a
+      tile, so a tile with five photos does not pretend to have one. Worth looking at mainly to see
+      how much calmer plain rectangles read; it costs the scrapbook character.
+    </p>
+    <div class="blab-stage bn-grid" data-bento></div>
+  </section>
+
+  <!-- --------------------------------------------------------------- 3 -->
+  <section class="rlab-panel" id="opt3">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">3</span>
+      <h2>Sticker sheet</h2>
+      <span class="rlab-tag">one sheet, no cards</span>
+    </div>
+    <p class="rlab-why">
+      Drop the nine cards entirely and spill every photo onto <b>one sheet</b>. Each photo is its own
+      sticker at its own shape with a small white edge and a slight tilt; the first photo of each bit
+      carries a handwritten label, and the rest are unlabelled, so the sheet reads as one collection
+      rather than nine boxes. It is still busy — 27 photos is 27 photos — but the busy-ness now comes
+      from the photos themselves rather than from nine different outlines, which is a different and
+      much more pleasant kind of full. The cost: the stories have nowhere to live, so they would move
+      into a hover or a tap, and the surprises would need to hang off the labels.
+    </p>
+    <div class="blab-stage st-sheet" data-stickers></div>
+  </section>
+
+  <!-- --------------------------------------------------------------- 4 -->
+  <section class="rlab-panel" id="opt4">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">4</span>
+      <h2>Contact strips</h2>
+      <span class="rlab-tag">everything, calmly</span>
+    </div>
+    <p class="rlab-why">
+      One row per bit: the title and story on the left, then every photo of that bit at
+      <b>one shared height and its own natural width</b>. Because the height is constant, a portrait
+      photo is simply narrow and a landscape photo is simply wide, and nothing is cropped or masked.
+      All 27 photos stay visible, yet the section is calm, because the eye follows nine straight
+      lines instead of nine clusters. This is the best option if you want every photo to count and
+      the stories to stay readable. It is also the tallest, so the section becomes a scroll.
+    </p>
+    <div class="blab-stage" data-strips></div>
+  </section>
+
+  <!-- --------------------------------------------------------------- 5 -->
+  <section class="rlab-panel" id="opt5">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">5</span>
+      <h2>The list</h2>
+      <span class="rlab-tag">quietest, most grown-up</span>
+    </div>
+    <p class="rlab-why">
+      Nine lines of large type, no photos at all until you point at one — then that bit's photos
+      appear under the cursor and follow it. From a standing start the section is just a tidy index,
+      which is the complete opposite of the current board, and it makes the photos feel like a
+      reward. Two honest problems: it needs a mouse, so on a phone it degrades to a plain list and
+      the photos have to be shown some other way, and someone who never hovers never sees a single
+      picture. Included because it is the clearest answer to “too busy”, not because I think it suits
+      a fun-facts section.
+    </p>
+    <div class="blab-stage ls" data-list></div>
+  </section>
+
+  <!-- --------------------------------------------------------------- 6 -->
+  <section class="rlab-panel" id="opt6">
+    <div class="rlab-panel-head">
+      <span class="rlab-num">6</span>
+      <h2>Pinboard + panel</h2>
+      <span class="rlab-tag">biggest photos</span>
+    </div>
+    <p class="rlab-why">
+      Split the glance from the look. Nine small pinned covers sit on a board; clicking one opens a
+      wide panel below it with <b>that bit's full photo set at proper size</b>, the story, and a
+      dedicated space for the critter — which currently has to share a card with three photos. The
+      resting state is nine small squares, so the section is about a third of its current height, and
+      the photos are the largest of any option here once a bit is open. The covers are the one place
+      on this page where a photo is cropped to a square, and that is deliberate: a uniform grid of
+      covers is what makes the board quiet. The surprise counter works unchanged, one egg per panel.
+    </p>
+    <div class="blab-stage" data-board></div>
+  </section>
+
+  <footer class="rlab-head blab-end">
+    <h2>If you want to narrow it down</h2>
+    <p>
+      Pick by what you want the section to do. If it should still feel like a scrapbook page and you
+      want one scroll, that is <b>1</b>. If every photo must be visible and the stories must stay
+      readable, that is <b>4</b>. If you want the photos as large as possible and a shorter section,
+      that is <b>6</b>. <b>3</b> is the most fun and the least organised; <b>2</b> and <b>5</b> are
+      the calm extremes and both give up the handmade feeling. Any of them can take a mixed
+      approach — for instance 1's deck for the bits with many photos and 6's panel for the three
+      single-photo bits.
+    </p>
+  </footer>
+
+</div>
+
+<script src="js/content.js"></script>
+<script src="js/bits-lab.js"></script>
+</body>
+</html>
