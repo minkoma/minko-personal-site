@@ -576,21 +576,29 @@ p {
   color: var(--rose);
 }
 
+/* A cluster of polaroids, each at its OWN aspect ratio. It used to be an
+   absolutely positioned stack where every photo was cropped to 4:3, which
+   turned Minko's portrait phone shots into a square-ish band and hid parts of
+   one photo behind another. Now the images keep their real shape (--ar, set
+   from naturalWidth/naturalHeight in main.js) and the cluster is a two-column
+   grid, so a tall photo makes a tall cell instead of being cut. The scrapbook
+   feel comes from the rotation, tape and shadow rather than from overlap. */
 .step-photos {
   position: relative;
   width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 1.4vw, 20px);
+  align-items: start;
 }
 
 .step-photos.count-1 {
-  aspect-ratio: 5 / 4.4;
-}
-
-.step-photos.count-3 {
-  aspect-ratio: 1 / 1.02;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
 }
 
 .snap {
-  position: absolute;
+  position: relative;
   margin: 0;
   background: #fff;
   padding: 10px 10px 0;
@@ -601,7 +609,9 @@ p {
 .snap img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  /* The fallback only applies for the instant before the image reports its
+     own size, and to a photo that fails to load. */
+  aspect-ratio: var(--ar, 4 / 3);
   object-fit: cover;
 }
 
@@ -615,50 +625,39 @@ p {
 }
 
 .count-1 .snap-0 {
-  width: 90%;
-  left: 5%;
-  top: 4%;
+  width: min(88%, 440px);
 }
 
-.count-1 .snap-0 img {
-  aspect-ratio: 5 / 4;
-}
+/* Two in a row, the second dropped so the tops are not level, and the third
+   centred underneath them, slightly overlapping so the pile still reads as a
+   pile. The overlap is a fixed 18px at the frame's edge, never a fraction of
+   the picture. */
+.count-3 .snap-0 { grid-column: 1; grid-row: 1; }
 
-.count-3 .snap-0 {
-  width: 72%;
-  left: 0;
-  top: 0;
+.count-3 .snap-1 {
+  grid-column: 2;
+  grid-row: 1;
+  margin-top: clamp(16px, 3.5vw, 48px);
   z-index: 2;
 }
 
-.count-3 .snap-1 {
-  width: 50%;
-  right: 0;
-  top: 34%;
+.count-3 .snap-2 {
+  grid-column: 1 / span 2;
+  grid-row: 2;
+  justify-self: center;
+  width: 64%;
+  margin-top: -18px;
   z-index: 3;
 }
 
-.count-3 .snap-2 {
-  width: 46%;
-  left: 12%;
-  bottom: 0;
-  z-index: 1;
+.count-2 .snap-1 {
+  margin-top: clamp(16px, 3.5vw, 48px);
+  z-index: 2;
 }
 
-.is-flip .count-3 .snap-0 {
-  left: auto;
-  right: 0;
-}
-
-.is-flip .count-3 .snap-1 {
-  right: auto;
-  left: 0;
-}
-
-.is-flip .count-3 .snap-2 {
-  left: auto;
-  right: 12%;
-}
+/* Mirrored steps put the wide photo on the outside edge. */
+.is-flip .count-3 .snap-0 { grid-column: 2; }
+.is-flip .count-3 .snap-1 { grid-column: 1; }
 
 .year-stamp {
   position: absolute;
@@ -684,15 +683,18 @@ p {
   left: 2%;
 }
 
+/* The second photo is dropped down the page, which leaves an empty notch in
+   the cluster's top outer corner. The stamp goes there, so it never lands on
+   a face — it used to sit over whichever photo happened to be tallest. */
 .count-3 .year-stamp {
   bottom: auto;
-  top: 2%;
-  right: 4%;
+  top: -10px;
+  right: -6px;
 }
 
 .is-flip .count-3 .year-stamp {
   right: auto;
-  left: 4%;
+  left: -6px;
 }
 
 @media (max-width: 880px) {

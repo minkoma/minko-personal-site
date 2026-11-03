@@ -78,6 +78,22 @@
     )
     .join("");
 
+  /* Each polaroid is sized by its photo's real shape, so a portrait phone shot
+     stays portrait instead of being cropped to a uniform frame. The ratio is
+     only knowable once the image has loaded, hence this rather than a number
+     in the data: it keeps working when a photo is swapped for one of another
+     shape. decode() also resolves for an already-cached image, where a load
+     listener would never fire. */
+  $$(".snap img").forEach((img) => {
+    const fit = () => {
+      if (img.naturalWidth && img.naturalHeight) {
+        img.style.setProperty("--ar", `${img.naturalWidth} / ${img.naturalHeight}`);
+      }
+    };
+    if (img.decode) img.decode().then(fit, fit);
+    else img.addEventListener("load", fit);
+  });
+
   /* ---------------------------------------------------------------- film */
   $("[data-videos]").innerHTML = D.videos
     .map(
@@ -971,7 +987,7 @@
       );
       snaps.forEach((s, j) =>
         gsap.to(s, {
-          y: () => -(30 + j * 26),
+          y: () => -(12 + j * 13),
           ease: "none",
           scrollTrigger: { trigger: group, start: "top bottom", end: "bottom top", scrub: 1, invalidateOnRefresh: true }
         })
