@@ -675,13 +675,16 @@ p {
   margin-top: clamp(12px, 2.6vw, 36px);
 }
 
-/* The third photo sits on its own row, pulled back up over the pair. */
+/* The third photo sits on its own row, pulled back up over the pair. Its width
+   comes from sizeCluster, which derives it from the row's height so that a
+   portrait third and a landscape third end up a similar height rather than a
+   similar width. */
 .count-3 .snap-2 {
   order: 3;
   grid-column: 1 / span 2;
   grid-row: 2;
   justify-self: center;
-  width: 62%;
+  width: var(--third-w, 46%);
   margin-top: -38px;
   z-index: 3;
 }

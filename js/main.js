@@ -110,6 +110,18 @@
      arithmetic, at every window width, with no measuring and no resize
      listener.
 
+     With one correction the library does not need. Matching heights exactly
+     means a 9:16 phone photo beside a 16:9 one gets 24% of the row, which is
+     a sliver — too small to see what is in it. So the narrower frame has a
+     floor of 34% of the row. Below that floor the two heights no longer match
+     exactly, and that is the better trade: a 1.3x height stagger reads as
+     hand-placed, a photo too small to read does not.
+
+     The third frame is sized from the row's height rather than given a fixed
+     share of the width, so it comes out consistently a little shorter than the
+     pair above it whatever its shape. A fixed width share made a portrait
+     third tower over the row and a landscape third look incidental.
+
      Two consequences worth knowing. The portrait photo goes on the left and
      the landscape on the right, because a tall frame on the outside edge makes
      the cluster lean away from the note. And the photo on the stamp side is
@@ -131,7 +143,20 @@
     const arRight = portraitFirst ? ratios[0] : ratios[1];
     left.style.order = 1;
     right.style.order = 2;
-    group.style.gridTemplateColumns = `${arLeft.toFixed(3)}fr ${arRight.toFixed(3)}fr`;
+
+    const FLOOR = 0.34; /* no frame narrower than a third of the row */
+    let shareLeft = arLeft / (arLeft + arRight);
+    shareLeft = Math.min(Math.max(shareLeft, FLOOR), 1 - FLOOR);
+    group.style.gridTemplateColumns = `${shareLeft.toFixed(4)}fr ${(1 - shareLeft).toFixed(4)}fr`;
+
+    /* The third frame, in units of the cluster's width: the row's height times
+       the third photo's own ratio, at 72%, and never wider than 60% or
+       narrower than 30% of the row. */
+    if (ratios[2]) {
+      const rowH = shareLeft / arLeft;
+      const third = Math.min(Math.max(rowH * 0.72 * ratios[2], 0.3), 0.6);
+      group.style.setProperty("--third-w", `${(third * 100).toFixed(1)}%`);
+    }
 
     const flipped = group.closest(".step")?.classList.contains("is-flip");
     snaps.forEach((s) => s.classList.remove("is-drop", "is-lap"));
