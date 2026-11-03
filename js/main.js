@@ -230,6 +230,7 @@
 
     const W = svg.clientWidth;
     const HALF = 330; /* half a period, in px: one left or right bulge */
+    const STRETCH = 5; /* how many times thicker the vertical parts read */
     const need = Math.max(document.body.scrollHeight - window.innerHeight, HALF);
     const halves = Math.ceil(need / HALF);
     const H = halves * HALF;
@@ -237,28 +238,30 @@
     if (svg.dataset.fit === `${W}x${H}`) return;
     svg.dataset.fit = `${W}x${H}`;
 
-    const cx = W / 2;
-    const amp = Math.min(W * 0.3, 190); /* how far the ribbon swings sideways */
+    /* Horizontal user units are STRETCH times smaller than pixels; vertical
+       ones are 1:1, so every y below is already a pixel measurement. */
+    const vbW = W / STRETCH;
+    const cx = vbW / 2;
+    const amp = vbW * 0.3; /* how far the ribbon swings sideways */
     /* 0.42 and 0.58 place the control points along the half-period; they are
        what give the curve its lean rather than making it a stiff arc. */
     const A = HALF * 0.42;
     const B = HALF * 0.58;
+    const n = (v) => v.toFixed(1);
 
     /* The first bulge goes left, so the ribbon leaves the hero heading the
        same way the page's eye travel does. */
-    let d = `M${cx.toFixed(1)} 0 C${(cx - amp).toFixed(1)} ${A.toFixed(1)} ${(cx - amp).toFixed(
-      1
-    )} ${B.toFixed(1)} ${cx.toFixed(1)} ${HALF}`;
+    let d = `M${n(cx)} 0 C${n(cx - amp)} ${n(A)} ${n(cx - amp)} ${n(B)} ${n(cx)} ${HALF}`;
     for (let i = 1; i < halves; i++) {
       const y = i * HALF;
       /* Alternate the side. `S` supplies the entering control point as the
          mirror of the previous one, which is what keeps the join smooth. */
       const x = i % 2 ? cx + amp : cx - amp;
-      d += ` S${x.toFixed(1)} ${(y + B).toFixed(1)} ${cx.toFixed(1)} ${y + HALF}`;
+      d += ` S${n(x)} ${n(y + B)} ${n(cx)} ${y + HALF}`;
     }
 
     path.setAttribute("d", d);
-    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("viewBox", `0 0 ${n(vbW)} ${H}`);
     svg.style.height = `${H}px`;
     return true;
   }
