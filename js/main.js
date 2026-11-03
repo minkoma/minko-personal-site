@@ -90,6 +90,7 @@
         img.style.setProperty("--ar", `${img.naturalWidth} / ${img.naturalHeight}`);
       }
       sizeCluster(img.closest("[data-step-photos]"));
+      scheduleRibbon();
     };
     if (img.decode) img.decode().then(fit, fit);
     else img.addEventListener("load", fit);
@@ -165,11 +166,13 @@
     }
 
     /* The third frame, in units of the cluster's width: the row's height times
-       the third photo's own ratio, at 58%, and never wider than 60% or
-       narrower than 24% of the row. Because the factor applies to the height,
-       a portrait third and a landscape third come out the same height. */
+       the third photo's own ratio. The factor is near 1, so the third photo
+       comes out roughly as tall as the row above it — a peer rather than
+       either a centrepiece or an afterthought. It was a fixed share of the
+       width before, which made a portrait third tower over the row and a
+       landscape third look incidental. */
     if (ratios[2]) {
-      const third = Math.min(Math.max(rowH * 0.58 * ratios[2], 0.24), 0.6);
+      const third = Math.min(Math.max(rowH * 0.95 * ratios[2], 0.36), 0.56);
       group.style.setProperty("--third-w", `${(third * 100).toFixed(1)}%`);
     }
 
@@ -186,8 +189,61 @@
   let resizeTimer = null;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => $$("[data-step-photos]").forEach(sizeCluster), 150);
+    resizeTimer = setTimeout(() => {
+      $$("[data-step-photos]").forEach(sizeCluster);
+      fitRibbon();
+    }, 150);
   });
+
+  /* The ribbon runs from the bottom of the hero to the bottom of the page, and
+     the page's height is not something CSS can hand to an absolutely
+     positioned element: its containing block is the viewport, so `height:100%`
+     would be one screen. It used to carry a hard 2600px, which reached the
+     bottom when it was written and stopped short of the last few years as the
+     page grew.
+
+     So both the height and the path are written here. The wave is built one
+     640-unit cycle at a time until the cycles cover the page, and the viewBox
+     is set to that many units while the element is set to the same number of
+     pixels — a 1:1 vertical mapping, so a longer page gets more waves rather
+     than the same four waves stretched flat. */
+  function fitRibbon() {
+    const svg = $(".ribbon");
+    const path = $("[data-ribbon]");
+    if (!svg || !path) return;
+    const CYCLE = 640;
+    const height = Math.max(document.body.scrollHeight - window.innerHeight, CYCLE);
+    const cycles = Math.ceil(height / CYCLE);
+    if (svg.dataset.cycles === String(cycles)) return;
+    svg.dataset.cycles = String(cycles);
+    let d = "M50 0";
+    for (let i = 0; i < cycles; i++) {
+      const y = i * CYCLE;
+      /* Alternate which side the curve swings to first, so the wave reads as
+         one continuous ribbon rather than a repeated motif. */
+      const [a, b] = i % 2 ? [88, 12] : [12, 88];
+      d += ` C${a} ${y + 220} ${b} ${y + 420} 50 ${y + CYCLE}`;
+    }
+    path.setAttribute("d", d);
+    svg.setAttribute("viewBox", `0 0 100 ${cycles * CYCLE}`);
+    svg.style.height = `${cycles * CYCLE}px`;
+    return true;
+  }
+
+  /* The page keeps getting taller while the photos load, so the ribbon is
+     refitted as they arrive rather than once at startup. The scroll animation
+     reads the path's length, so it is told to recalculate whenever the path
+     actually changed. */
+  let ribbonTimer = null;
+  function scheduleRibbon() {
+    clearTimeout(ribbonTimer);
+    ribbonTimer = setTimeout(() => {
+      if (fitRibbon() && window.ScrollTrigger) window.ScrollTrigger.refresh();
+    }, 200);
+  }
+
+  fitRibbon();
+  window.addEventListener("load", scheduleRibbon);
 
   /* ---------------------------------------------------------------- film */
   /* Two labelled shelves: the long-form films on top, the vertical reels
@@ -1136,6 +1192,7 @@
   if (motion) {
     /* The dotted ribbon draws itself down the page. */
     const ribbon = $("[data-ribbon]");
+    fitRibbon();
     const len = ribbon.getTotalLength();
     gsap.set(ribbon, { strokeDasharray: len, strokeDashoffset: len });
     gsap.to(ribbon, {

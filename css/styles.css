@@ -215,6 +215,10 @@ p {
 }
 
 /* -------------------------------------------------------------- ribbon svg */
+/* The ribbon is as tall as the page below the hero. Its height and its path are
+   both written by js/main.js, because the page's height is not knowable from
+   CSS: this used to be a hard 2600px, which was right when it was written and
+   stopped reaching the last few years as the page grew. */
 .ribbon {
   position: absolute;
   top: 100vh;
@@ -486,18 +490,20 @@ p {
 }
 
 /* Note on one side, a big taped photo collage on the other, alternating. The
-   photo column is the wider of the two and is allowed to overhang the page
-   padding on its outer edge, which is where the extra size comes from: wider
-   costs nothing, taller costs scrolling. */
+   note's column is a fixed width, not a share of the row, so the text block
+   measures the same whatever the window is doing; all the extra space goes to
+   the photos. The photo column also overhangs the page padding on its outer
+   edge, which is where the rest of the size comes from: wider costs nothing,
+   taller costs scrolling. */
 .step {
   display: grid;
-  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.45fr);
+  grid-template-columns: minmax(0, 545px) minmax(0, 1fr);
   gap: clamp(20px, 2.6vw, 48px);
   align-items: center;
 }
 
 .step.is-flip {
-  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.86fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 545px);
 }
 
 .step .step-photos {
