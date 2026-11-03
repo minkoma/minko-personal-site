@@ -1,9 +1,19 @@
 /* Film lab — renders the same four films into five layouts so they can be
-   compared. Reads window.MINKO.videos; changes nothing on the live site. */
+   compared. Reads window.MINKO.films; changes nothing on the live site. */
 (() => {
   "use strict";
 
-  const V = (window.MINKO && window.MINKO.videos) || [];
+  /* The data moved from MINKO.videos to MINKO.films when the live section was
+     rebuilt as feature + rail. This page is a comparison of the OLD options,
+     so it adapts the new shape back rather than being rewritten: a self-hosted
+     film has no `embed`, so its mp4 stands in for one and the host label
+     becomes where the file actually lives. */
+  const V = ((window.MINKO && window.MINKO.films) || []).map((f) => ({
+    ...f,
+    embed: f.embed || f.src,
+    source: f.source || f.src,
+    host: f.host || "this site"
+  }));
   const esc = (s) =>
     String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   /* Deterministic tilt, so a reload never reshuffles the paper. */

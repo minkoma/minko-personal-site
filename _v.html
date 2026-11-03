@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0">
+<iframe id="f" src="/index.html?static=1" style="width:1440px;height:950px;border:0;display:block"></iframe>
+<script>
+const p=new URLSearchParams(location.search);
+document.getElementById('f').onload=()=>setTimeout(()=>{
+  const w=document.getElementById('f').contentWindow, d=w.document;
+  if(p.get('sel')){const t=d.querySelector(p.get('sel')); t&&t.scrollIntoView({block:'center'});}
+  else w.scrollTo(0, Number(p.get('y')||0));
+},1600);
+</script>

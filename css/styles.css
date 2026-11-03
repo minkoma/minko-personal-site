@@ -762,104 +762,119 @@ p {
   }
 }
 
-/* -------------------------------------------------------------------- film */
-.reel-row {
-  overflow: hidden;
-  padding: 10px 0 24px;
-}
+/* -------------------------------------------------------------------- film
+   Two labelled shelves. Everything Minko has made is on screen at once: the
+   long-form films on the top shelf, the vertical reels on the shelf below,
+   each shape in a frame of its own so nothing is cropped or letterboxed.
 
-.reel-track {
-  display: flex;
-  gap: clamp(18px, 2.4vw, 34px);
+   This replaced a feature screen with a tab per film. The tab hid half the
+   work — on arrival the section claimed two films and showed one — and tabs
+   are for alternative views of one thing, not for a body of work. */
+.shelves {
+  width: min(1480px, 100%);
+  margin: 0 auto;
   padding: 0 var(--pad);
-  width: max-content;
 }
 
-.reel {
-  flex: 0 0 clamp(270px, 32vw, 440px);
-  background: #2a2420;
-  border-radius: 8px;
-  padding: 10px;
-  transform: rotate(var(--r, 0deg));
-  box-shadow: var(--shadow);
-  color: #f7f1e6;
+.shelf + .shelf { margin-top: clamp(32px, 4vh, 54px); }
+
+.shelf-label {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(60, 45, 38, 0.16);
 }
 
-.reel-holes {
-  height: 12px;
-  background: repeating-linear-gradient(90deg, #f6efe3 0 10px, transparent 10px 22px);
-  border-radius: 3px;
-  margin-bottom: 8px;
-  opacity: 0.85;
+.shelf-label b {
+  font: 800 clamp(17px, 1.5vw, 21px)/1 var(--sans);
+  color: var(--plum-deep);
 }
 
-.reel-frame {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  background: #000;
-  border-radius: 4px;
-  overflow: hidden;
+.shelf-label span {
+  font-family: var(--hand);
+  font-size: clamp(16px, 1.4vw, 20px);
+  color: var(--ink-soft);
 }
 
-.reel-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s, opacity 0.4s;
-  opacity: 0.88;
-}
-
-.reel-frame:hover img {
-  transform: scale(1.05);
-  opacity: 1;
-}
-
-.reel-frame iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-.reel-frame.is-playing img,
-.reel-frame.is-playing .reel-play {
-  display: none;
-}
-
-.reel-play {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 60px;
-  height: 60px;
+/* Two columns for the 16:9 films, four for the 9:16 reels. At these widths
+   both shelves come out a similar height, which is what makes the pair read
+   as one block rather than two unrelated rows. */
+.shelf--films .shelf-row {
   display: grid;
-  place-items: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 26px);
+}
+
+.shelf--reels .shelf-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 1.6vw, 22px);
+}
+
+/* One tile, both shelves. --ratio carries the film's own shape, so the frame
+   matches the footage and object-fit: cover has nothing to crop. */
+.tile { margin: 0; }
+
+.tile-media {
+  position: relative;
+  aspect-ratio: var(--ratio, 16 / 9);
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.tile-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Once it is playing with controls, switch to contain: the viewer is watching
+   now, so the whole frame matters more than filling the tile. */
+.tile.is-playing .tile-media video { object-fit: contain; }
+
+.tile-badge {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  font: 600 11px/1 var(--sans);
+  letter-spacing: 0.4px;
+  color: #fff;
+  background: rgba(29, 26, 36, 0.7);
+  border-radius: 999px;
+  padding: 5px 9px;
+}
+
+.tile-play {
+  position: absolute;
+  inset: auto 10px 10px auto;
+  width: 40px;
+  height: 40px;
+  border: 0;
   border-radius: 50%;
   background: var(--sun);
   color: #2a2420;
-  font-size: 19px;
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+  cursor: var(--cursor-hand);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
 }
 
-.reel-meta {
-  padding: 14px 8px 8px;
+.tile-play:hover { transform: scale(1.08); }
+.tile.is-playing .tile-play { display: none; }
+
+.tile figcaption { padding: 10px 2px 0; }
+.tile figcaption strong { display: block; font: 700 clamp(14px, 1.2vw, 16px)/1.3 var(--sans); }
+.tile figcaption span { font-size: 12.5px; color: var(--ink-soft); }
+
+@media (max-width: 880px) {
+  .shelf--films .shelf-row { grid-template-columns: minmax(0, 1fr); }
+  .shelf--reels .shelf-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-.reel-meta h3 {
-  font-size: 21px;
-}
-
-.reel-meta p {
-  font-size: 13.5px;
-  color: rgba(247, 241, 230, 0.68);
-  margin: 6px 0 10px;
-}
-
-.reel-meta a {
-  font-family: var(--hand);
-  font-size: 19px;
-  color: var(--sun);
-  text-decoration: none;
+@media (prefers-reduced-motion: reduce) {
+  .tile-play { transition: none; }
 }
 
 /* ------------------------------------------------------------------- album
@@ -1495,8 +1510,13 @@ p {
 .gal-coffee { aspect-ratio: 1 / 1.1; }
 .gal-coffee .ph-0 { width: 100%; height: 100%; left: 0; top: 0; }
 
-.gal-bear { aspect-ratio: 1 / 0.8; }
-.gal-bear .ph-0 { width: 100%; height: 100%; left: 0; top: 0; }
+/* Two photos now: the cloud-shaped one fills the cell and the graduation one
+   is tucked onto its lower corner, overlapping it. Written here because
+   styles.css positions these clusters per bit, and a second photo with no
+   coordinates would stack in the top-left corner. */
+.gal-bear { aspect-ratio: 1 / 0.95; }
+.gal-bear .ph-0 { width: 80%; height: 82%; left: 0; top: 0; }
+.gal-bear .ph-1 { width: 42%; right: 0; bottom: 0; z-index: 2; }
 
 /* ----------------------------------------------------------------- contact */
 .contact {

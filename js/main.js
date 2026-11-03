@@ -531,7 +531,7 @@
     crafts: ["hoop", "stamp", "stamp", "circle"],
     forky: ["heart"],
     coffee: ["blob"],
-    bear: ["cloud"]
+    bear: ["cloud", "stamp"]
   };
   const HINTS = {
     twins: "tap to see double",
@@ -1151,43 +1151,6 @@
   }
 
   /* ============================================================ behaviour */
-  /* YouTube answers an embed request that carries no usable referer with
-     "Video player configuration error (153)". That happens when the page is
-     opened straight off disk (file://), and the nocookie host is stricter about
-     it than the main one. So: play through www.youtube.com with an explicit
-     origin when we are on http(s), and send the viewer to YouTube itself when
-     there is no origin to send. */
-  const isYouTube = (src) => /(?:^|\.)youtube(?:-nocookie)?\.com\/embed\//.test(src);
-  const hasOrigin = window.location.origin && window.location.origin !== "null";
-
-  function playableSrc(src) {
-    if (!isYouTube(src)) return src;
-    const url = new URL(src);
-    url.hostname = "www.youtube.com";
-    url.searchParams.set("origin", window.location.origin);
-    url.searchParams.set("widget_referrer", window.location.origin);
-    return url.toString();
-  }
-
-  document.querySelectorAll("[data-embed]").forEach((frame) => {
-    frame.addEventListener("click", () => {
-      const src = frame.dataset.embed;
-      if (isYouTube(src) && !hasOrigin) {
-        const away = frame.parentElement && frame.parentElement.querySelector(".reel-meta a");
-        window.open(away ? away.href : src, "_blank", "noopener");
-        return;
-      }
-      if (frame.dataset.loaded) return;
-      frame.dataset.loaded = "1";
-      const iframe = document.createElement("iframe");
-      iframe.src = playableSrc(src);
-      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen";
-      iframe.allowFullscreen = true;
-      iframe.title = "Embedded player";
-      frame.appendChild(iframe);
-      frame.classList.add("is-playing");
-    });
-  });
 
   M.autoInit();
   M.copyEmail("[data-copy]", D.profile.email);

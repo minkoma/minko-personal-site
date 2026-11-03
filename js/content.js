@@ -93,7 +93,7 @@ window.MINKO = {
       period: "Jun 2026 – Aug 2026",
       place: "Evanston, IL",
       year: "2026",
-      photos: ["assets/experience/bagel.jpg"],
+      photos: ["assets/experience/bagel.jpg", "assets/experience/bagel2.jpg"],
       tags: ["Loyalty & CRM", "Segmentation", "Growth strategy"],
       points: [
         "Analysed loyalty transaction and RFM segmentation data across 1.39M registered loyalty members, consolidating 11 Paytronix segments into 4 strategic decision groups and uncovering a structural incentive misalignment that shaped a “Reinvigorating the Next Wave of Growth” strategy.",
@@ -154,38 +154,71 @@ window.MINKO = {
     { group: "Analytics", items: ["Google Analytics", "Sprout Social", "Tableau", "Brandwatch", "Later", "Excel"] }
   ],
 
-  videos: [
+  /* Films, in the order they appear. `kind: "film"` is landscape and plays on
+     the big screen; `kind: "reel"` is vertical and lives in the rail below it.
+     The first film is the one loaded on arrival.
+
+     Everything with a `src` is self-hosted MP4 built by tools/prep_films.py
+     from the masters in ~/Movies/minko-portfolio-masters, which stay out of
+     the repo. Every `poster` on those is a real frame of its own film, pulled
+     from the encoded file — not a photo standing in for one. Nothing is
+     embedded any more: the two Instagram reels and the YouTube film that used
+     to be here are all self-hosted now, so no player phones home, no login
+     prompt appears, and every film keeps its own poster frame. */
+  films: [
     {
+      kind: "film",
+      title: "Taste of Home",
+      note: "The story of Fan-Fan: food, memory, and belonging on campus.",
+      src: "assets/film/taste-of-home.mp4",
+      poster: "assets/film/taste-of-home-poster.jpg",
+      len: "4:59",
+      year: "2024"
+    },
+    {
+      kind: "film",
       title: "Spend a Day With Me",
       note: "A day-in-the-life film for UC San Diego.",
-      embed: "https://www.youtube.com/embed/q2FydPe0dEs?playsinline=1&rel=0",
-      source: "https://youtu.be/q2FydPe0dEs",
-      host: "YouTube",
-      poster: "assets/experience/ucsd-team.jpg"
+      src: "assets/film/spend-a-day.mp4",
+      poster: "assets/film/spend-a-day-poster.jpg",
+      len: "2:43",
+      year: "2023"
     },
     {
-      title: "Taste of Home",
-      note: "Food, memory, and belonging on campus.",
-      embed: "https://drive.google.com/file/d/1fqWAGMzZHsRLnFVDzHd3WNh04QCnRGBP/preview",
-      source: "https://drive.google.com/file/d/1fqWAGMzZHsRLnFVDzHd3WNh04QCnRGBP/view",
-      host: "Google Drive",
-      poster: "assets/aboutme/web/foodie1.jpg"
+      kind: "reel",
+      title: "Graduation recap",
+      note: "Class of 2024, cap in the air.",
+      src: "assets/film/graduation.mp4",
+      poster: "assets/film/graduation-poster.jpg",
+      len: "1:29",
+      year: "2024"
     },
     {
+      kind: "reel",
       title: "New York Alumni Awards",
       note: "Event coverage for the alumni community.",
-      embed: "https://www.instagram.com/p/C5o5H6OPJcL/embed/",
-      source: "https://www.instagram.com/p/C5o5H6OPJcL/",
-      host: "Instagram",
-      poster: "assets/experience/ucsd-awards.jpg"
+      src: "assets/film/alumni-awards.mp4",
+      poster: "assets/film/alumni-awards-poster.jpg",
+      len: "1:03",
+      year: "2024"
     },
     {
+      kind: "reel",
       title: "UCSD Farmers’ Market",
-      note: "A short reel on a Wednesday ritual.",
-      embed: "https://www.instagram.com/reel/C5RECJtOtdj/embed/",
-      source: "https://www.instagram.com/reel/C5RECJtOtdj/",
-      host: "Instagram",
-      poster: "assets/aboutme/web/foodie3.jpg"
+      note: "A Wednesday ritual on campus.",
+      src: "assets/film/farmers-market.mp4",
+      poster: "assets/film/farmers-market-poster.jpg",
+      len: "0:38",
+      year: "2024"
+    },
+    {
+      kind: "reel",
+      title: "Skydiving on Thanksgiving",
+      note: "A jump over Oceanside, start to landing.",
+      src: "assets/film/skydiving.mp4",
+      poster: "assets/film/skydiving-poster.jpg",
+      len: "0:57",
+      year: "2024"
     }
   ],
 
@@ -324,7 +357,7 @@ window.MINKO = {
       title: "Fifteen years of goodnight",
       headline: "Some things you never outgrow.",
       story: "My Disney ShellieMay bear has been by my side for 15 years. I still hug her to sleep every night — my longest-running bedtime tradition.",
-      photos: ["assets/aboutme/web/shelliemay-bear.jpg"]
+      photos: ["assets/aboutme/web/shelliemay-bear.jpg", "assets/aboutme/web/shelliemay-bear2.jpg"]
     }
   ]
 };
