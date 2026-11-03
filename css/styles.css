@@ -587,58 +587,68 @@ p {
   position: relative;
   width: 100%;
   display: grid;
-  /* Columns sized to their content, not to equal fractions: each frame is as
-     wide as its photo needs to be at the row's shared height. */
-  grid-template-columns: auto auto;
-  justify-content: center;
+  /* Each column is as wide as its photo's aspect ratio, which is what makes
+     the two photos in the row the same height. The fr values are written by
+     sizeCluster once the photos report their shapes; this fallback is what you
+     see for the instant before that. */
+  grid-template-columns: 1fr 1fr;
   align-items: start;
   /* No gap. The frames are placed by their own negative margins, because the
      overlap has to be a fixed number of pixels at the frame's edge rather than
      a share of the row. */
   gap: 0;
+  /* A reserved strip across the top for the year stamp, and one across the
+     bottom for the place. Nothing with text is inside the pile any more, so no
+     amount of overlap can cover a word. */
+  padding: 34px 0 0;
 }
 
 .step-photos.count-1 {
-  grid-template-columns: auto;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
 }
 
 .snap {
   position: relative;
   margin: 0;
   background: #fff;
-  padding: 10px 10px 0;
+  /* The bottom border is wider than the sides, which is what makes a frame
+     read as a polaroid. It used to be a figcaption holding the place name;
+     the place now sits under the whole pile instead, because a frame pulled up
+     over another frame covered it. */
+  padding: 10px 10px 16px;
   box-shadow: 0 18px 40px rgba(96, 72, 44, 0.22);
   transform: rotate(var(--r, 0deg));
 }
 
 .snap img {
   display: block;
-  /* Height first, width from the photo's own ratio: that is what matches the
-     two frames in the top row. --h is set per row by sizeCluster in main.js;
-     the fallback keeps the layout sane for the instant before it runs, and for
-     a photo that fails to load. */
-  height: var(--h, 240px);
-  width: auto;
+  width: 100%;
+  /* The fallback only applies for the instant before the image reports its
+     own size, and to a photo that fails to load. */
   aspect-ratio: var(--ar, 4 / 3);
   object-fit: cover;
 }
 
-.snap figcaption {
+.step-place {
+  /* order has to be set explicitly: the two frames in the row are given order
+     1 and 2 and the third frame order 3, so anything left at the default 0
+     would be laid out before them and take the row's first cell. */
+  order: 4;
+  grid-column: 1 / -1;
   font-family: var(--hand);
   font-size: clamp(17px, 1.5vw, 23px);
   color: var(--ink-soft);
   text-align: center;
-  min-height: 34px;
-  padding: 6px 4px 8px;
+  margin: 10px 0 0;
+  /* Above every frame, so it stays legible even where a tilted corner reaches
+     into the line. */
+  position: relative;
+  z-index: 7;
 }
 
 .count-1 .snap-0 {
   width: min(88%, 440px);
-}
-
-.count-1 .snap-0 img {
-  height: auto;
-  width: 100%;
 }
 
 /* Two photos in the top row at a matched height, the one on the stamp side
@@ -653,34 +663,14 @@ p {
 
    Which photo sits left and which is dropped is decided by sizeCluster in
    main.js, not here, because it depends on the photos' shapes: order and the
-   is-drop class come from JS, and these rules only say what those mean. */
-.count-2 .snap,
-.count-3 .snap {
-  height: auto;
-}
-
-.count-2 .snap-0 img,
-.count-2 .snap-1 img,
-.count-3 .snap-0 img,
-.count-3 .snap-1 img {
-  --h: var(--h1);
-}
-
-.count-3 .snap-2 img,
-.count-2 .snap-2 img {
-  --h: var(--h2);
-}
-
-/* The right-hand frame in the row laps over the left one by the fixed sliver.
-   The class is set by sizeCluster, because which frame that is depends on the
-   two photos' shapes. */
+   is-lap and is-drop classes come from JS, and these rules only say what they
+   mean. */
 .snap.is-lap {
   margin-left: -24px;
   z-index: 2;
 }
 
-/* The frame on the stamp side drops down the page, which is what leaves the
-   notch the year stamp needs in the cluster's outer top corner. */
+/* The frame on the stamp side drops down the page. */
 .snap.is-drop {
   margin-top: clamp(12px, 2.6vw, 36px);
 }
@@ -691,6 +681,7 @@ p {
   grid-column: 1 / span 2;
   grid-row: 2;
   justify-self: center;
+  width: 62%;
   margin-top: -38px;
   z-index: 3;
 }
@@ -699,12 +690,17 @@ p {
    which photo sits where is now decided from the photos' shapes in main.js,
    and applies the same way to a mirrored step. */
 
+/* The stamp lives in the 34px strip reserved at the top of the cluster, in
+   whichever outer corner is away from the note. Because the strip is padding
+   on the cluster rather than space a photo happens to leave, the stamp can
+   never land on a photo, whatever shapes the photos turn out to be. That used
+   to depend on the second photo being dropped far enough, and it was not. */
 .year-stamp {
   position: absolute;
   z-index: 6;
-  right: 2%;
-  bottom: 4%;
-  width: clamp(70px, 7vw, 96px);
+  top: -6px;
+  right: -4px;
+  width: clamp(62px, 5.4vw, 80px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -720,22 +716,11 @@ p {
 
 .is-flip .year-stamp {
   right: auto;
-  left: 2%;
+  left: -4px;
 }
 
-/* The second photo is dropped down the page, which leaves an empty notch in
-   the cluster's top outer corner. The stamp goes there, so it never lands on
-   a face — it used to sit over whichever photo happened to be tallest. */
-.count-3 .year-stamp {
-  bottom: auto;
-  top: -10px;
-  right: -6px;
-}
-
-.is-flip .count-3 .year-stamp {
-  right: auto;
-  left: -6px;
-}
+/* The old .count-3 overrides are gone: the stamp's strip is reserved for every
+   cluster now, so there is nothing per-count left to correct. */
 
 @media (max-width: 880px) {
   .step,

@@ -62,17 +62,17 @@
           <ul class="note-points">${e.body.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>
         </div>
         <div class="step-photos count-${Math.min(e.photos.length, 3)}" data-step-photos>
+          <span class="year-stamp" aria-hidden="true">${esc(e.year)}</span>
           ${e.photos
             .slice(0, 3)
             .map(
               (p, j) => `<figure class="snap snap-${j}" style="--r:${rot(i * 3 + j + 1, 5)}deg">
                 <span class="tape ${j % 2 ? "tape-br" : "tape-tl"}" aria-hidden="true"></span>
                 <img src="${p}" alt="${esc(e.title)}" loading="lazy">
-                <figcaption>${j === 0 ? esc(e.place.toLowerCase()) : ""}</figcaption>
               </figure>`
             )
             .join("")}
-          <span class="year-stamp" aria-hidden="true">${esc(e.year)}</span>
+          <p class="step-place">${esc(e.place.toLowerCase())}</p>
         </div>
       </article>`
     )
@@ -101,17 +101,19 @@
      clusters of three landscape photos always looked settled and the mixed
      ones did not.
 
-     So the two photos in the top row are given a matched height instead of a
-     matched width. The row's width is then that shared height times the sum of
-     the two ratios, which can be solved for the height the column can afford.
-     A landscape photo ends up wide and short, a portrait one narrow and tall,
-     and their top and bottom edges line up.
+     The fix is the standard justified-gallery rule, the one behind Flickr's
+     justified-layout: in a row of photos, each photo's width is proportional
+     to its aspect ratio, which makes every photo in the row the same height.
+     Flickr's library solves it in pixels; CSS can express the same thing
+     directly, because fr units distribute space in proportion. So the row
+     becomes `grid-template-columns: <ar0>fr <ar1>fr` and the browser does the
+     arithmetic, at every window width, with no measuring and no resize
+     listener.
 
      Two consequences worth knowing. The portrait photo goes on the left and
      the landscape on the right, because a tall frame on the outside edge makes
      the cluster lean away from the note. And the photo on the stamp side is
-     the one dropped down the page, so the notch the stamp needs is always in
-     the cluster's outer top corner. */
+     the one dropped down the page. */
   function sizeCluster(group) {
     if (!group) return;
     const snaps = $$(".snap", group);
@@ -121,38 +123,20 @@
       return im.naturalWidth && im.naturalHeight ? im.naturalWidth / im.naturalHeight : 0;
     });
     if (ratios.slice(0, 2).some((r) => !r)) return;
-    const W = group.clientWidth;
-    if (!W) return;
-
-    const PAD = 20; /* 10px of white either side of a photo */
-    const OVER = 24; /* the fixed sliver one frame laps over the next */
-    const h1 = Math.round((W + OVER - PAD * 2) / (ratios[0] + ratios[1]));
-    /* Bail out when nothing has changed. The observer below watches the whole
-       box, and setting the height changes the box, so without this the first
-       pass would schedule a second one for ever. */
-    if (group.dataset.h1 === String(h1)) return;
-    group.dataset.h1 = String(h1);
-    group.style.setProperty("--h1", `${h1}px`);
-    /* The third photo is deliberately a little smaller than the pair above it,
-       so the cluster has a clear top row rather than three equal frames. */
-    group.style.setProperty("--h2", `${Math.round(h1 * 0.84)}px`);
 
     const portraitFirst = ratios[1] < ratios[0];
     const left = portraitFirst ? snaps[1] : snaps[0];
     const right = portraitFirst ? snaps[0] : snaps[1];
+    const arLeft = portraitFirst ? ratios[1] : ratios[0];
+    const arRight = portraitFirst ? ratios[0] : ratios[1];
     left.style.order = 1;
     right.style.order = 2;
+    group.style.gridTemplateColumns = `${arLeft.toFixed(3)}fr ${arRight.toFixed(3)}fr`;
+
     const flipped = group.closest(".step")?.classList.contains("is-flip");
     snaps.forEach((s) => s.classList.remove("is-drop", "is-lap"));
     right.classList.add("is-lap");
     (flipped ? left : right).classList.add("is-drop");
-  }
-
-  /* The matched height is in pixels, so it has to be recomputed when the
-     column width changes. */
-  if (window.ResizeObserver) {
-    const ro = new ResizeObserver((entries) => entries.forEach((e) => sizeCluster(e.target)));
-    $$("[data-step-photos]").forEach((g) => ro.observe(g));
   }
 
   /* ---------------------------------------------------------------- film */
