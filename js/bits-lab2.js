@@ -8,15 +8,15 @@
   const D = window.MINKO;
 
   /* The set shown on this page, trimmed and extended on Minko's instruction.
-     Out: Forky, the latte, the travel stamps, and Marsala from the kittens.
-     In: a new twins photo at the harbour and a new ballet photo in costume.
+     Out: Forky, the latte and the travel stamps. In: a new twins photo at the
+     harbour and a new ballet photo in costume. Marsala stays.
      The food bit keeps only the dish at the bottom of the old plate cluster
-     (土豆丝 + 水煮牛肉). Six bits, 17 photos.
+     (土豆丝 + 水煮牛肉). Six bits, 18 photos.
      js/content.js is untouched — every edit here is local to the lab, so the
      live board is unchanged until a layout is chosen. */
   const DROP = ["forky", "coffee", "travel"];
   const KEEP_ONE = { food: "assets/aboutme/web/foodie5.jpg" };
-  const DROP_PHOTO = ["assets/aboutme/web/foster-marsala.jpg"];
+  const DROP_PHOTO = [];
   const ADD_PHOTO = {
     twins: ["assets/aboutme/web/twin4.jpg"],
     ballet: ["assets/aboutme/web/ballet4.jpg"]
