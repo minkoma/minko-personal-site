@@ -1,0 +1,170 @@
+/* Bits lab, round 2 — six overlapping photo piles.
+   Shared shell, so only the pile arrangement differs between options.
+   Page chrome (.rlab-*) comes from css/reel-lab.css. */
+
+/* -------------------------------------------------------------- the board */
+.bl2-board {
+  display: grid;
+  gap: clamp(20px, 2.6vw, 40px);
+  margin-top: 10px;
+}
+
+.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cols-1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 900px) {
+  .cols-3,
+  .cols-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------- a card */
+.bc {
+  position: relative;
+  margin: 0;
+}
+
+.bc.is-tilted {
+  rotate: var(--r, 0deg);
+}
+
+/* Washi tape, same as the live cards. */
+.bc-tape {
+  position: absolute;
+  left: 50%;
+  top: -12px;
+  z-index: 40;
+  width: 92px;
+  height: 24px;
+  translate: -50% 0;
+  rotate: -3deg;
+  background: rgba(244, 196, 120, 0.72);
+  box-shadow: 0 2px 6px rgba(90, 70, 40, 0.14);
+}
+
+.bc-copy {
+  padding: 14px 6px 0;
+}
+
+.bc-emoji {
+  font-size: 23px;
+  display: inline-block;
+  transition: rotate 0.4s, scale 0.4s;
+}
+
+.bc:hover .bc-emoji {
+  rotate: -14deg;
+  scale: 1.22;
+}
+
+.bc-copy h3 {
+  margin: 2px 0 2px;
+  font-size: clamp(19px, 1.5vw, 24px);
+}
+
+.bc-copy .hand {
+  font-family: var(--hand);
+  font-size: 19px;
+  color: var(--plum);
+  margin: 0;
+  line-height: 1.22;
+}
+
+.bc-story {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin: 6px 0 0;
+  line-height: 1.55;
+}
+
+/* ---------------------------------------------------------------- a pile
+   The pile is sized by the engine (aspect-ratio set in JS once the photos
+   report their shapes). Frames are absolutely placed inside it. */
+.pile {
+  position: relative;
+  width: 100%;
+}
+
+.pf {
+  position: absolute;
+  margin: 0;
+  padding: 6px 6px 7px;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 10px 22px rgba(96, 72, 44, 0.24);
+  transition: rotate 0.45s cubic-bezier(0.34, 1.4, 0.64, 1),
+    translate 0.45s cubic-bezier(0.34, 1.4, 0.64, 1), scale 0.45s cubic-bezier(0.34, 1.4, 0.64, 1),
+    box-shadow 0.4s;
+}
+
+.pf img {
+  display: block;
+  width: 100%;
+  /* The fallback applies only for the instant before the file reports its own
+     size, and to a photo that fails to load. */
+  aspect-ratio: var(--ar, 4 / 5);
+  object-fit: cover;
+  border-radius: 1px;
+}
+
+/* The one established fix for an overlapping pile: hovering a photo
+   straightens it and lifts it above the rest, so a covered corner is one
+   pointer-move away rather than a click away. */
+.pf:hover {
+  z-index: 60 !important;
+  rotate: 0deg !important;
+  scale: 1.06;
+  translate: 0 -6px;
+  box-shadow: 0 20px 38px rgba(96, 72, 44, 0.32);
+}
+
+/* -------------------------------------------------- 2 · fan spreads open */
+.pl-fan:hover .pf {
+  translate: calc((var(--sp, 0) - 0.5) * 26px) -4px;
+}
+
+/* ----------------------------------------------------- per-option tuning */
+.pl-cascade .pf {
+  box-shadow: 0 12px 26px rgba(96, 72, 44, 0.26);
+}
+
+.pl-toss .pf {
+  padding: 7px 7px 8px;
+}
+
+/* ------------------------------------------------------------ small notes */
+.bl2-pick {
+  font-family: var(--hand);
+  font-size: 19px;
+  color: var(--plum-deep);
+  margin: 16px 0 0;
+}
+
+.bl2-src {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 10px 0 0;
+}
+
+.bl2-src a {
+  color: var(--plum-deep);
+}
+
+.blab-end {
+  margin-top: 46px;
+}
+
+.blab-end h2 {
+  font-size: clamp(24px, 2.8vw, 36px);
+  margin: 0 0 8px;
+}
