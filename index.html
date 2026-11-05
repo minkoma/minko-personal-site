@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/depth-lab.css">
 </head>
 <body>
 <script>document.documentElement.classList.remove('no-js')</script>
@@ -70,6 +71,18 @@
     <div class="path-list" data-timeline></div>
   </section>
 
+  <!-- ----------------------------------------------------------- skills -->
+  <!-- Trays on a table: one tray per group of tools, tilted, with its name on
+       a sticky label. Sits between the timeline and the films because it reads
+       as the toolkit behind both. -->
+  <section id="skills" class="toolkit">
+    <header class="section-head">
+      <p class="eyebrow">what I work in</p>
+      <h2 data-split="words">Tools on the table</h2>
+    </header>
+    <div class="trays" data-trays></div>
+  </section>
+
   <!-- ------------------------------------------------------------- film -->
   <section id="film" class="film">
     <header class="section-head">
@@ -93,9 +106,6 @@
         <!-- Left: the shelf. Every deck, with a thumbnail and its length. -->
         <aside class="reader-shelf" aria-label="choose a deck">
           <div class="reader-list" data-deck-list role="tablist" aria-orientation="vertical"></div>
-          <a class="button reader-all" href="assets/design-portfolio.pdf" download data-magnetic="0.2">
-            download everything ↓
-          </a>
         </aside>
 
         <!-- Right: the deck itself, one slide at a time. -->
@@ -119,10 +129,32 @@
     <header class="section-head">
       <p class="eyebrow">the fun pages</p>
       <h2 data-split="words">Bits of me</h2>
-      <p class="hand">every page hides a little surprise. tap one!</p>
-      <p class="egg-count" data-egg-count>surprises found: <b>0</b> / 9</p>
+      <p class="hand">every photo hides a little surprise. tap one!</p>
+      <p class="egg-count" data-egg-count>surprises found: <b>0</b> / <span data-egg-total>6</span></p>
     </header>
-    <div class="scatter" data-interests></div>
+
+    <!-- The scrapbook board is now the depth gallery: a pinned 3D wall of
+         polaroids, driven by how far the page has scrolled through this
+         section rather than by hijacking the wheel. The old .scatter cards
+         still render, visually hidden, because the easter eggs are bound to
+         them; clicking a polaroid forwards the click to its card. -->
+    <div class="bits-depth" data-depth-section>
+      <div class="bits-depth-pin">
+        <div class="depth-stage" data-depth></div>
+        <div class="depth-ui">
+          <div class="depth-foot">
+            <div class="depth-story">
+              <p class="depth-count"><b data-index>01</b><span>/</span><span data-total>12</span></p>
+              <p class="depth-line" data-line></p>
+              <p class="depth-body" data-story></p>
+            </div>
+          </div>
+          <div class="depth-vel" data-vel aria-hidden="true"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scatter is-egg-source" data-interests></div>
   </section>
 
   <!-- ---------------------------------------------------------- contact -->
@@ -144,7 +176,11 @@
 <script src="assets/vendor/Draggable.min.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
 <script src="js/content.js"></script>
+<script src="js/photo-moods.js"></script>
 <script src="js/motion.js"></script>
 <script src="js/main.js"></script>
+<!-- The Bits of me gallery. A module, so it has to come after main.js has
+     rendered the egg cards it forwards clicks to. -->
+<script type="module" src="js/depth-lab.js"></script>
 </body>
 </html>

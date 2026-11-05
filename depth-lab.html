@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" class="depth-page">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Depth lab — a scroll-reactive 3D wall of the Bits of me photos</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/depth-lab.css">
+</head>
+<body>
+
+<div class="depth-stage" data-depth></div>
+
+<!-- The editorial layer. Depth already drives the planes and the background,
+     so the text answers to the same value, which keeps the three from
+     disagreeing. Laid out as the reference does it: a short title on the left,
+     the story on the right, everything small and white with nothing behind it. -->
+<div class="depth-ui">
+  <header class="depth-brand">
+    <p class="depth-eyebrow">bits of me</p>
+  </header>
+
+  <!-- Title and colour chip are both gone from here: the title is printed into
+       each polaroid's bottom border, and the chip's four notations were more
+       numbers than this page needs. What is left is the headline and the
+       story. -->
+  <div class="depth-foot">
+    <div class="depth-story">
+      <p class="depth-count"><b data-index>01</b><span>/</span><span data-total>12</span></p>
+      <p class="depth-line" data-line></p>
+      <p class="depth-body" data-story></p>
+    </div>
+  </div>
+
+  <div class="depth-vel" data-vel aria-hidden="true"><i></i></div>
+</div>
+
+<script src="js/content.js"></script>
+<script src="js/photo-moods.js"></script>
+<script type="module" src="js/depth-lab.js"></script>
+<noscript>
+  <p style="padding:40px;font:16px/1.6 system-ui">
+    This page is a 3D gallery and needs JavaScript. The same photos are on
+    <a href="index.html#beyond">the main page</a>.
+  </p>
+</noscript>
+</body>
+</html>

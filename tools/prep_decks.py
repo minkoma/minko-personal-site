@@ -36,9 +36,14 @@ QUALITY = 82
 
 SOURCES = [
     ("design-portfolio", ROOT / "assets" / "design-portfolio.pdf"),
-    ("assignment-3", ALBUM / "assignment-3-minko-ma.pdf"),
-    ("imc424-shopper-marketing", ALBUM / "imc424-shopper-marketing.pdf"),
-    ("chobani-case", ALBUM / "chobani-case-minko-ma.pdf"),
+    # The six decks Minko picked, replacing the three coursework pieces that
+    # used to sit here (assignment-3, imc424-shopper-marketing, chobani-case).
+    ("augmented-reality", ALBUM / "augmented-reality.pdf"),
+    ("blick", ALBUM / "blick.pdf"),
+    ("blue-moon", ALBUM / "blue-moon.pdf"),
+    ("dossier", ALBUM / "dossier.pdf"),
+    ("single-page-slides", ALBUM / "single-page-slides.pdf"),
+    ("spotify", ALBUM / "spotify.pdf"),
 ]
 
 

@@ -46,14 +46,26 @@ FILMS = [
     # the feature: a real 5-minute film, 4K master
     dict(name="taste-of-home", src="Taste of Home_ Story of Fan-Fan_Final.mp4",
          w=1920, h=1080, fps=30, crf=28, maxrate="2.0M", preset="medium", poster_w=1920),
-    # the second landscape film, 1080p50 master off YouTube's download
-    dict(name="spend-a-day", src="Spend a Day With Me.mp4",
+    # the second landscape film, 1080p50 master off YouTube's download.
+    # start=3 drops the white title card it opens on. 2.0 was the first cut and
+    # left about 0.7s of it behind: measured on the master, the card runs to
+    # roughly 2.7s (mean luma 244 at t=2.6, 120 at t=2.8).
+    dict(name="spend-a-day", src="Spend a Day With Me.mp4", start=3.0,
          w=1920, h=1080, fps=30, crf=28, maxrate="2.0M", preset="medium", poster_w=1920),
-    # the reels, all shot vertical on a phone
-    dict(name="farmers-market", src="Farmers Market.MOV", w=1080, h=1920, fps=30, crf=28, maxrate="2.6M", poster_w=720),
-    dict(name="alumni-awards", src="Alumni Awards.MOV", w=1080, h=1920, fps=30, crf=28, maxrate="2.6M", poster_w=720),
-    dict(name="graduation", src="Graduation.MOV", w=1080, h=1920, fps=30, crf=28, maxrate="2.6M", poster_w=720),
-    dict(name="skydiving", src="Skydiving.MOV", w=1080, h=1920, fps=30, crf=28, maxrate="2.6M", poster_w=720),
+    # The reels, all shot vertical on a phone, and all HLG HDR. hdr=True sends
+    # them through the 3D LUT; without it they keep the HLG curve and the
+    # BT.2020 matrix while claiming to be BT.709, which is what made them look
+    # bright and washed out.
+    # Farmers Market gets its own grade. It is the brightest, most saturated
+    # clip of the four (an outdoor market in full sun) and the shared LUT left
+    # it 18 points of luma darker than the reference film, measured in the
+    # browser across five timestamps. white=0.88 brings it to within 0.8.
+    dict(name="farmers-market", src="Farmers Market.MOV", hdr=True,
+         lut="hlg-to-bt709-bright.cube",
+         w=1080, h=1920, fps=30, crf=28, maxrate="2.6M", poster_w=720),
+    dict(name="alumni-awards", src="Alumni Awards.MOV", hdr=True, w=1080, h=1920, fps=30, crf=28, maxrate="2.6M", poster_w=720),
+    dict(name="graduation", src="Graduation.MOV", hdr=True, w=1080, h=1920, fps=30, crf=28, maxrate="2.6M", poster_w=720),
+    dict(name="skydiving", src="Skydiving.MOV", hdr=True, w=1080, h=1920, fps=30, crf=28, maxrate="2.6M", poster_w=720),
 ]
 
 POSTER_TIMES = [0, 0.6, 1.5, 3.0, 6.0]  # tried in order until one is real footage
@@ -102,11 +114,34 @@ def encode(item, dry):
     vf = (f"scale={item['w']}:{item['h']}:force_original_aspect_ratio=decrease,"
           "scale=trunc(iw/2)*2:trunc(ih/2)*2,"
           f"fps={item['fps']}")
+
+    # HLG HDR -> BT.709 SDR, through the LUT built by tools/make_hlg_lut.py.
+    # format=gbrp16le is what takes the frame from YUV to RGB, and because the
+    # master is correctly tagged bt2020nc that step uses the right matrix. The
+    # LUT then does the transfer curve and the gamut in one lookup. setparams
+    # stamps the result BT.709: passing -color_trc/-colorspace to the encoder
+    # alone did NOT stick, which is how the files ended up with three
+    # contradictory tags.
+    if item.get("hdr"):
+        # A film may name its own LUT. Farmers Market needed one: it is the
+        # brightest, most saturated clip of the four and the shared grade
+        # pushed it noticeably dark.
+        lut = os.path.join(HERE, item.get("lut", "hlg-to-bt709.cube")).replace("\\", "/")
+        vf += (
+            ",format=gbrp16le"
+            f",lut3d=file='{lut}':interp=tetrahedral"
+            ",format=yuv420p"
+            ",setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709"
+        )
     # A CRF alone let a grainy phone clip reach 6 Mbps; the cap keeps each file
     # predictable, which is what matters against a hard 100 MB limit. bufsize is
     # two seconds of the cap, the usual choice.
     cap = float(item["maxrate"].rstrip("M"))
-    run(["ffmpeg", "-y", "-v", "error", "-i", src,
+    # -ss BEFORE -i seeks without decoding the skipped part, and because the
+    # output is re-encoded anyway the cut lands on the exact frame rather than
+    # the nearest keyframe.
+    seek = ["-ss", str(item["start"])] if item.get("start") else []
+    run(["ffmpeg", "-y", "-v", "error"] + seek + ["-i", src,
          "-vf", vf,
          "-c:v", "libx264", "-preset", item.get("preset", "slow"), "-crf", str(item["crf"]),
          "-maxrate", item["maxrate"], "-bufsize", f"{cap * 2:g}M",

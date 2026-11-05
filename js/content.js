@@ -61,6 +61,29 @@ window.MINKO = {
       degree: "M.S. Integrated Marketing Communications",
       period: "Sep 2025 – Dec 2026 (expected)",
       detail: "Current GPA 3.98 / 4.0",
+      /* Coursework is grouped where there is enough of it to group; a group
+         with no `group` label renders as one unlabelled run of chips. */
+      coursework: [
+        {
+          group: "Core marketing & IMC",
+          items: ["Consumer Insight", "Marketing Research", "Marketing Strategy", "Financial Accounting",
+                  "IMC Strategic Process", "Marketing Technology", "Marketing Metrics"]
+        },
+        {
+          group: "Brand strategy",
+          items: ["Brand Management Foundations", "Digital Marketing Activation", "Shopper Marketing",
+                  "Consumer Psychology & Brand Narrative", "Customer Value Innovation"]
+        },
+        {
+          group: "Data & analytics",
+          items: ["Data Science Foundations", "Data Management and Visualization", "Data Storytelling"]
+        },
+        {
+          group: "Media strategy",
+          items: ["Media Foundations", "Media Marketplaces"]
+        }
+      ],
+      involvement: ["Cause Marketing Initiatives (CMI) — Marketing Consultant, Big Brothers Big Sisters (BBBS)"],
       photos: [
         "assets/experience/nu-graduation-1.jpg",
         "assets/experience/nu-graduation-2.jpg",
@@ -72,13 +95,23 @@ window.MINKO = {
     {
       school: "University of California, San Diego",
       place: "La Jolla, CA",
-      degree: "B.A. Communication · B.A. International Studies (International Business)",
+      /* An array renders one line per item, which keeps the two UCSD majors
+         from wrapping mid-title. */
+      degree: ["B.A. Communication", "B.A. International Studies — International Business"],
       period: "Sep 2021 – Jun 2024",
       detail: "Cumulative GPA 3.81 / 4.0 · Provost Honors Recipient",
+      coursework: [
+        {
+          items: ["Product Marketing & Management", "Applied Market Research", "Global Business Strategy",
+                  "Advertising Studies: Cultural Production", "Principles of Data Science",
+                  "Business & Organizational Leadership", "Financial Accounting", "Practice of Social Research"]
+        }
+      ],
+      involvement: ["Women in Business (WIB)", "Undergraduate Communication Society (UCS)"],
       photos: [
         "assets/experience/first-year-1.jpg",
         "assets/experience/first-year-2.jpg",
-        "assets/experience/first-year-3.jpg"
+        "assets/experience/first-year-halloween.jpg"
       ],
       photo: "assets/experience/ucsd-graduation.jpg",
       year: "2021"
@@ -131,9 +164,9 @@ window.MINKO = {
       photos: [
         "assets/experience/storyteller-filming.jpg",
         "assets/experience/storyteller-reel.jpg",
-        "assets/experience/alumni-awards-event.jpg",
-        "assets/experience/storyteller-sixth.jpg",
         "assets/experience/ucsd-team.jpg",
+        "assets/experience/storyteller-sixth.jpg",
+        "assets/experience/alumni-awards-event.jpg",
         "assets/experience/ucsd-awards.jpg"
       ],
       tags: ["Video production", "Brand storytelling", "Community growth"],
@@ -181,7 +214,7 @@ window.MINKO = {
       note: "A day-in-the-life film for UC San Diego.",
       src: "assets/film/spend-a-day.mp4",
       poster: "assets/film/spend-a-day-poster.jpg",
-      len: "2:43",
+      len: "2:40",
       year: "2023"
     },
     {
@@ -225,44 +258,122 @@ window.MINKO = {
   /* Each deck is read in the page as prerendered WebP slides, so `slug` and
      `pages` point at assets/design-album/slides/<slug>/pNN.webp. Rerun
      tools/prep_decks.py after replacing or adding a PDF. */
+  /* Tools, as five trays on a table. `logo: true` means a real full-colour SVG
+     sits at assets/tools/<slug>.svg, fetched by tools/prep_tool_logos.py.
+     The nine without one are not published in any of the free colour-logo
+     collections (checked against gilbarbara/logos, 2068 marks, and
+     vectorlogo.zone), so they fall back to a tile in the brand's own colour
+     until a real file is dropped in. */
+  tools: [
+    {
+      group: "Video",
+      items: [
+        { name: "Premiere Pro", slug: "premiere-pro", c: "#9999FF", file: "premiere-pro.svg" },
+        { name: "Final Cut Pro", slug: "final-cut-pro", c: "#1B1B1F", file: "final-cut-pro.png" },
+        { name: "CapCut", slug: "capcut", c: "#000000", file: "capcut.png" },
+        { name: "iMovie", slug: "imovie", c: "#8E54E9", file: "imovie.png" },
+        { name: "Vimeo", slug: "vimeo", c: "#1AB7EA", file: "vimeo.svg" }
+      ]
+    },
+    {
+      group: "Design",
+      items: [
+        { name: "Canva", slug: "canva", c: "#00C4CC", file: "canva.svg" },
+        { name: "Photoshop", slug: "photoshop", c: "#31A8FF", file: "photoshop.svg" },
+        { name: "Figma", slug: "figma", c: "#F24E1E", file: "figma.svg" }
+      ]
+    },
+    {
+      group: "Web & commerce",
+      items: [
+        { name: "WordPress", slug: "wordpress", c: "#21759B", file: "wordpress.svg" },
+        { name: "Wix", slug: "wix", c: "#0C6EFC", file: "wix.svg" },
+        { name: "Shopify", slug: "shopify", c: "#7AB55C", file: "shopify.svg" },
+        { name: "GitHub", slug: "github", c: "#181717", file: "github.svg" }
+      ]
+    },
+    {
+      group: "Paid & lifecycle",
+      items: [
+        { name: "Meta Ads", slug: "meta-ads", c: "#0467DF", file: "meta-ads.svg" },
+        { name: "Google Ads", slug: "google-ads", c: "#4285F4", file: "google-ads.svg" },
+        { name: "HubSpot", slug: "hubspot", c: "#FF7A59", file: "hubspot.svg" },
+        { name: "SEMrush", slug: "semrush", c: "#FF642D", file: "semrush.png" },
+        { name: "Keap", slug: "keap", c: "#3CB371", file: "keap.png" }
+      ]
+    },
+    {
+      group: "Analytics",
+      items: [
+        { name: "Google Analytics", slug: "google-analytics", c: "#E37400", file: "google-analytics.svg" },
+        { name: "Tableau", slug: "tableau", c: "#E97627", file: "tableau.svg" },
+        { name: "Sprout Social", slug: "sprout-social", c: "#75DD66", file: "sprout-social.png" },
+        { name: "Brandwatch", slug: "brandwatch", c: "#2B2A8C", file: "brandwatch.png" },
+        { name: "Later", slug: "later", c: "#1A1A1A", file: "later.png" },
+        { name: "Excel", slug: "excel", c: "#217346", file: "excel.png" }
+      ]
+    }
+  ],
+
   design: [
     {
       title: "Marketing Design Portfolio",
       note: "Selected work built in Canva, Photoshop, and Premiere Pro.",
-      image: "assets/design-album/design-portfolio-cover.jpg",
       pdf: "assets/design-portfolio.pdf",
       kind: "Cover",
       slug: "design-portfolio",
       pages: 12
     },
     {
-      title: "Assignment #3",
-      note: "Marketing strategy and analysis prepared for coursework.",
-      image: "assets/design-album/assignment-3-minko-ma.jpg",
-      pdf: "assets/design-album/assignment-3-minko-ma.pdf",
-      kind: "Strategy",
-      slug: "assignment-3",
-      pages: 1
+      title: "Spotify",
+      note: "",
+      pdf: "assets/design-album/spotify.pdf",
+      kind: "Deck",
+      slug: "spotify",
+      pages: 15
     },
     {
-      title: "Shopper Marketing",
-      note: "IMC 424: shopper behaviour, retail context, and activation.",
-      image: "assets/design-album/imc424-shopper-marketing.jpg",
-      pdf: "assets/design-album/imc424-shopper-marketing.pdf",
-      kind: "IMC 424",
-      slug: "imc424-shopper-marketing",
+      title: "Blick",
+      note: "",
+      pdf: "assets/design-album/blick.pdf",
+      kind: "Deck",
+      slug: "blick",
+      pages: 12
+    },
+    {
+      title: "Blue Moon",
+      note: "",
+      pdf: "assets/design-album/blue-moon.pdf",
+      kind: "Deck",
+      slug: "blue-moon",
+      pages: 37
+    },
+    {
+      title: "Augmented Reality",
+      note: "",
+      pdf: "assets/design-album/augmented-reality.pdf",
+      kind: "Deck",
+      slug: "augmented-reality",
       pages: 16
     },
     {
-      title: "Chobani Case",
-      note: "A brand case study on positioning and growth.",
-      image: "assets/design-album/chobani-case-minko-ma.jpg",
-      pdf: "assets/design-album/chobani-case-minko-ma.pdf",
-      kind: "Case study",
-      slug: "chobani-case",
-      pages: 6
+      title: "Dossier",
+      note: "",
+      pdf: "assets/design-album/dossier.pdf",
+      kind: "Deck",
+      slug: "dossier",
+      pages: 11
+    },
+    {
+      title: "Single page slides",
+      note: "",
+      pdf: "assets/design-album/single-page-slides.pdf",
+      kind: "Deck",
+      slug: "single-page-slides",
+      pages: 4
     }
   ],
+
 
   interests: [
     {
@@ -271,7 +382,12 @@ window.MINKO = {
       title: "Two of a kind",
       headline: "Two minutes ahead. Ten centimetres behind.",
       story: "My twin sister is two minutes younger than me — and 10 cm taller. I’ll always have seniority, even if she has the better view.",
-      photos: ["assets/aboutme/web/twin1.jpg", "assets/aboutme/web/twin2.jpg", "assets/aboutme/web/twin3.jpg"]
+      photos: [
+        "assets/aboutme/web/twin1.jpg",
+        "assets/aboutme/web/twin2.jpg",
+        "assets/aboutme/web/twin3.jpg",
+        "assets/aboutme/web/twin4.jpg"
+      ]
     },
     {
       key: "ballet",
@@ -279,20 +395,11 @@ window.MINKO = {
       title: "A little room to dance",
       headline: "My favourite way to get out of my head.",
       story: "Ballet is where I slow down, let go, and explore who I am through movement. I love getting completely lost in a dance.",
-      photos: ["assets/aboutme/web/ballet.jpg", "assets/aboutme/web/ballet2.jpg", "assets/aboutme/web/ballet3.jpg"]
-    },
-    {
-      key: "travel",
-      emoji: "🌍",
-      title: "Just one more stamp",
-      headline: "15+ countries, and still curious.",
-      story: "I love going somewhere new. After exploring more than 15 countries, I’m always ready for another place to discover and another memory to bring home.",
       photos: [
-        "assets/aboutme/web/travel.jpg",
-        "assets/aboutme/web/travel2.jpg",
-        "assets/aboutme/web/travel3.jpg",
-        "assets/aboutme/web/travel4.jpg",
-        "assets/aboutme/web/travel5.jpg"
+        "assets/aboutme/web/ballet.jpg",
+        "assets/aboutme/web/ballet2.jpg",
+        "assets/aboutme/web/ballet3.jpg",
+        "assets/aboutme/web/ballet4.jpg"
       ]
     },
     {
@@ -334,22 +441,6 @@ window.MINKO = {
         "assets/aboutme/web/cross-stitch2.jpg",
         "assets/aboutme/web/calligraphy.jpg"
       ]
-    },
-    {
-      key: "forky",
-      emoji: "🍴",
-      title: "My kind of character",
-      headline: "A soft spot for a very unusual toy.",
-      story: "Forky is my favourite cartoon character. A little quirky and completely lovable — he always makes me smile.",
-      photos: ["assets/aboutme/web/me-forky.jpg"]
-    },
-    {
-      key: "coffee",
-      emoji: "☕",
-      title: "But first, a latte",
-      headline: "Home café. Occasional chaos.",
-      story: "I like starting the morning by making myself a latte. Some days it comes together beautifully; other days, the barista is still learning. Either way, it’s my little morning ritual.",
-      photos: ["assets/aboutme/web/make-coffee.jpg"]
     },
     {
       key: "bear",

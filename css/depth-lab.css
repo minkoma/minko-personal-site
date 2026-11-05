@@ -1,0 +1,473 @@
+/* Depth lab. The standalone page (depth-lab.html) deliberately does NOT load
+   base.css or styles.css: there the scene owns the whole viewport and the page
+   must not scroll, so the site's page chrome would only fight it.
+
+   index.html loads this file TOO, for the Bits of me section, on top of
+   styles.css. So every rule that belongs to the standalone page only — the
+   font and ink variables, the unscrollable body, the fixed full-viewport stage
+   and UI — is scoped to html.depth-page, which only depth-lab.html carries.
+   Unscoped, they overrode the site's type variables and left index.html
+   blank: a fixed stage over an html,body{overflow:hidden} page. */
+
+html.depth-page {
+  --sans: "Nunito", system-ui, sans-serif;
+  --display: "Baloo 2", var(--sans);
+  --hand: "Caveat", cursive;
+  --ink: #2f2a28;
+}
+
+* { box-sizing: border-box; }
+
+html.depth-page,
+html.depth-page body {
+  margin: 0;
+  height: 100%;
+  /* The scene consumes wheel events itself; the document must not also scroll
+     or the two fight and the gallery stutters. */
+  overflow: hidden;
+  /* matches the generated palettes so there is no flash before the scene paints */
+  background: #f7eff3;
+  color: #2f2a28;
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+html.depth-page .depth-stage { position: fixed; inset: 0; }
+.depth-stage canvas { display: block; width: 100%; height: 100%; }
+
+/* ------------------------------------------------------------- editorial */
+/* Small white type on the dark field, nothing behind it. No panels: the frosted
+   boxes the first pass used were what made it look like a web page sitting on
+   top of a photograph instead of one thing. White works now only because the
+   palettes are dark shades rather than pale tints; the two changes go together.
+
+   A text-shadow rather than a box does the legibility work. It is invisible
+   against the background and only shows up where a photo passes behind the
+   type, which is exactly when it is needed. */
+.depth-ui {
+  pointer-events: none;
+  padding: clamp(20px, 2.8vw, 40px) clamp(20px, 3.2vw, 56px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  /* Ink and halo both come from the register. On the light field the type is
+     the site's plum-ink with a white halo; on the dark field it is white with a
+     black halo. The halo is what lets small type survive a photo passing
+     behind it without putting a box around the words. */
+  color: var(--ink-on, #2f2a28);
+  text-shadow: var(--halo, 0 1px 10px rgba(255, 255, 255, 0.8), 0 0 2px rgba(255, 255, 255, 0.9));
+}
+
+html.depth-page .depth-ui { position: fixed; inset: 0; z-index: 2; }
+
+html.depth-page.mood-dark body { background: #1d1913; }
+html.mood-dark .depth-ui {
+  --scrim: linear-gradient(to top, rgba(10, 8, 7, 0.62), rgba(10, 8, 7, 0));
+  --ink-on: #fff;
+  --halo: 0 1px 14px rgba(0, 0, 0, 0.55), 0 0 2px rgba(0, 0, 0, 0.35);
+}
+
+/* A soft gradient along the bottom, not a box. The type sits in the bottom
+   band and a bright photo passing behind it was still washing out 11px white
+   text even with the shadow. This darkens only the band the text lives in and
+   has no edges to notice. */
+.depth-ui::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 34vh;
+  background: var(--scrim, linear-gradient(to top, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0)));
+  pointer-events: none;
+  z-index: -1;
+}
+
+.depth-ui a {
+  color: inherit;
+  pointer-events: auto;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- top row: two tiny labels, nothing more --- */
+.depth-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.depth-eyebrow,
+.depth-hint {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  opacity: 0.68;
+}
+
+/* --- bottom row: title left, story right --- */
+/* One column, right-aligned: the bottom-left corner stays empty on purpose. */
+.depth-foot {
+  grid-row: 3;
+  display: grid;
+  justify-items: end;
+}
+
+.depth-count {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 0 0 10px;
+  font: 600 10.5px/1 ui-monospace, "SFMono-Regular", Menlo, monospace;
+  letter-spacing: 0.18em;
+  opacity: 0.85;
+}
+.depth-count b { font-weight: 700; }
+
+.depth-story h2 {
+  font-family: var(--display);
+  /* small on purpose: the photograph is the loud element */
+  font-size: clamp(17px, 1.5vw, 22px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  margin: 0 0 12px;
+  max-width: 22ch;
+}
+
+/* Colour chip: the name, then four notations in a label/value grid. Tiny
+   monospace, because the point is that it reads as a spec rather than as copy. */
+.depth-chip {
+  margin: 14px 0 0;
+  display: grid;
+  gap: 2px;
+  font: 500 9.5px/1.5 ui-monospace, "SFMono-Regular", Menlo, monospace;
+  letter-spacing: 0.12em;
+}
+.depth-chip > div {
+  display: grid;
+  grid-template-columns: 3.4em 1fr;
+  gap: 10px;
+}
+.depth-chip-name {
+  display: flex !important;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.depth-chip dt {
+  margin: 0;
+  opacity: 0.45;
+}
+.depth-chip dd {
+  margin: 0;
+  opacity: 0.8;
+}
+.depth-swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px currentColor;
+  opacity: 0.95;
+}
+
+.depth-story {
+  max-width: 36ch;
+  text-align: left;
+  /* Black, not white: the mood field is pale in most of these palettes, and
+     the haze that made white work read as a grey smudge over the photos. */
+  color: #231d2b;
+}
+
+.depth-line {
+  margin: 0 0 7px;
+  font-family: var(--hand);
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.25;
+  opacity: 1;
+}
+
+.depth-body {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+  letter-spacing: 0.015em;
+  opacity: 0.92;
+}
+
+/* Scroll-speed read-out, now a hairline. The article builds this first and for
+   good reason: velocity has no visual output of its own, so without a bar you
+   are tuning the damping blind. */
+.depth-vel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  overflow: hidden;
+  opacity: 0.8;
+}
+.depth-vel { background: var(--rail, rgba(47, 42, 40, 0.1)); }
+.depth-vel i {
+  display: block;
+  height: 100%;
+  width: calc(var(--v, 0) * 100%);
+  background: currentColor;
+  opacity: 0.45;
+}
+
+@media (max-width: 720px) {
+  .depth-foot { justify-items: start; }
+  .depth-story { max-width: 40ch; }
+}
+
+/* ------------------------------------------------------------- fallback */
+/* No WebGL, reduced motion, or ?static=1. The same photos, flat and
+   scrollable, with each one's extracted colour shown as its caption. */
+.depth-stage.is-flat {
+  position: static;
+  inset: auto;
+  overflow: visible;
+}
+html:has(.depth-stage.is-flat),
+body:has(.depth-stage.is-flat) { overflow: auto; height: auto; }
+
+body:has(.depth-stage.is-flat) .depth-ui {
+  position: static;
+  inset: auto;
+  display: block;
+  pointer-events: auto;
+}
+body:has(.depth-stage.is-flat) .depth-label,
+body:has(.depth-stage.is-flat) .depth-vel { display: none; }
+
+.depth-fallback-note {
+  opacity: 0.7;
+  margin: 0;
+  padding: clamp(18px, 3.4vw, 48px) clamp(18px, 3.4vw, 48px) 0;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.depth-flat {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+  padding: 18px clamp(18px, 3.4vw, 48px) 80px;
+}
+.depth-flat figure {
+  margin: 0;
+  background: var(--bg, #221d18);
+  border-radius: 10px;
+  padding: 10px;
+}
+.depth-flat img {
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--ar, 1);
+  object-fit: cover;
+  border-radius: 6px;
+}
+@media (max-width: 720px) {
+  .depth-brand { max-width: 26ch; }
+  .depth-vel { width: 72px; }
+}
+
+/* ---------------------------------------------------------------- debug */
+/* The reference demo's panel: top-right, dark, monospace, closed until D is
+   pressed. Deliberately plain — it is an instrument, not part of the page's
+   visual language, and it must stay legible over any mood colour. */
+.dbg {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 40;
+  width: 292px;
+  max-height: calc(100vh - 28px);
+  overflow-y: auto;
+  padding: 12px 14px 14px;
+  border-radius: 10px;
+  background: rgba(16, 14, 20, 0.86);
+  backdrop-filter: blur(10px);
+  color: #e9e3f2;
+  font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  /* Hidden rather than display:none so the readouts keep their layout and the
+     panel can animate in. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity .18s ease, transform .18s ease, visibility .18s;
+}
+
+.dbg.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.dbg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 10px;
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #b9adc6;
+}
+
+.dbg-x {
+  border: 0;
+  background: none;
+  color: #b9adc6;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.dbg section {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(233, 227, 242, 0.1);
+}
+
+.dbg section:last-of-type {
+  border-bottom: 0;
+}
+
+.dbg h4 {
+  margin: 0 0 7px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .6px;
+  color: #8f84a0;
+}
+
+.dbg-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 36px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+/* Two labels ("Blob Strength", "Velocity Damping") are long enough to wrap and
+   knock their row out of line with the others. */
+.dbg-row > span {
+  white-space: nowrap;
+}
+
+.dbg-val {
+  font-weight: 400;
+  text-align: right;
+  color: #c9bfd8;
+}
+
+.dbg-bool {
+  grid-template-columns: 14px 1fr;
+}
+
+.dbg input[type="range"] {
+  width: 100%;
+  height: 2px;
+  margin: 0;
+  accent-color: #b69bff;
+  cursor: pointer;
+}
+
+.dbg input[type="checkbox"] {
+  margin: 0;
+  accent-color: #b69bff;
+  cursor: pointer;
+}
+
+/* Both readouts are off by default and shown by their own switch, which is
+   what Show FPS and Debug Velocity do in the reference. */
+.dbg-read {
+  display: none;
+  justify-content: space-between;
+  margin: 0;
+  padding-top: 6px;
+  color: #b9adc6;
+}
+
+.dbg.show-fps .dbg-read:nth-last-of-type(2),
+.dbg.show-vel .dbg-read:last-of-type {
+  display: flex;
+}
+
+body:has(.depth-stage.is-flat) .dbg {
+  display: none;
+}
+
+/* ------------------------------------------------- embedded in the page */
+/* The gallery inside index.html's "Bits of me" section. The section is made
+   tall by depth-lab.js (72vh per photo) and this pins one screen of it, so the
+   page scrolls normally while the camera travels. */
+.bits-depth {
+  position: relative;
+  /* Full-bleed: the stage reaches the window edges even though the section
+     around it is padded. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+.bits-depth-pin {
+  /* Not position:sticky — see Scroll.fromSection() in js/depth-lab.js. The
+     stage is absolute at the top of the section, fixed while the section is
+     passing, and parked at its bottom afterwards. */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.bits-depth.is-pinned .bits-depth-pin {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+}
+
+.bits-depth.is-past .bits-depth-pin {
+  top: auto;
+  bottom: 0;
+}
+
+.bits-depth .depth-stage,
+.bits-depth .depth-ui {
+  position: absolute;
+  inset: 0;
+}
+
+.bits-depth .depth-ui {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: clamp(20px, 4vw, 54px);
+  pointer-events: none;
+}
+
+.bits-depth .depth-foot {
+  grid-row: 2;
+}
+
+/* The egg cards still exist for their click handlers and their keyboard
+   access, but they are no longer the board: the polaroids are. Kept in the
+   accessibility tree rather than display:none, so the surprises are still
+   reachable by tab for anyone not using the 3D scene. */
+.scatter.is-egg-source {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

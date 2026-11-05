@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools lab — five ways to present the toolkit</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#332d3b; --ink-soft:#786987; --paper:#fbf7f3;
+  --violet:#5b4a6a; --line:#e3d9ea;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:Nunito,system-ui,sans-serif;font-size:16px;line-height:1.6}
+img,svg{display:block;max-width:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:56px 24px 140px}
+h1{font-family:"Baloo 2",cursive;font-size:clamp(30px,5vw,46px);margin:0 0 14px;line-height:1.1}
+h2{font-family:"Baloo 2",cursive;font-size:clamp(22px,3vw,30px);margin:0 0 6px}
+.hand{font-family:Caveat,cursive;font-size:20px;color:var(--ink-soft);margin:0 0 10px}
+.lede{color:#5d5367;max-width:72ch}
+.opt{margin-top:96px;padding-top:34px;border-top:1px solid var(--line)}
+.opt-note{color:var(--ink-soft);font-size:14.5px;max-width:70ch;margin:0 0 26px}
+.tag{display:inline-block;font-family:Caveat,cursive;font-size:19px;color:#8a6f9e}
+.demo{padding:34px 26px;border-radius:22px;background:#fffdfb;
+  box-shadow:0 10px 30px rgba(89,72,107,.08);border:1px solid #fff}
+
+/* ---------- shared icon atom ---------- */
+/* display:block matters: an inline span ignores width/height, which silently
+   collapses every masked icon that is not a direct child of a flex/grid box. */
+.ic{display:block;width:var(--s,34px);height:var(--s,34px);flex:0 0 auto;
+  background-color:var(--mono,#8d7f9b);
+  -webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat;
+  transition:background-color .25s ease,transform .25s ease}
+.ic.mono-text{-webkit-mask:none;mask:none;background:none;
+  display:grid;place-items:center;border-radius:9px;
+  border:1.5px solid currentColor;color:var(--mono,#8d7f9b);
+  font-family:"Baloo 2",cursive;font-weight:700;letter-spacing:-.02em;
+  font-size:calc(var(--s,34px) * .38);transition:color .25s ease,transform .25s ease,border-color .25s ease}
+
+/* =========================================================== 1 logo wall */
+.wall-group{margin-bottom:30px}
+.wall-group h3{font-family:Caveat,cursive;font-weight:700;font-size:21px;color:#8a6f9e;
+  margin:0 0 14px;letter-spacing:.3px}
+.wall{display:flex;flex-wrap:wrap;gap:10px}
+.wall-cell{width:92px;padding:16px 6px 12px;border-radius:16px;text-align:center;
+  display:grid;justify-items:center;gap:9px;cursor:default;
+  transition:background .25s ease,transform .25s ease}
+.wall-cell .cap{font-size:10.5px;color:#9a8fa6;line-height:1.25;
+  opacity:.45;transition:opacity .25s ease,color .25s ease}
+.wall-cell:hover{background:#f6f0fa;transform:translateY(-3px)}
+.wall-cell:hover .ic{background-color:var(--c);transform:scale(1.1)}
+.wall-cell:hover .ic.mono-text{color:var(--c);border-color:var(--c)}
+.wall-cell:hover .cap{opacity:1;color:#5d5367}
+
+/* =============================================================== 2 trays */
+.trays{display:flex;flex-wrap:wrap;gap:22px;justify-content:center;padding:14px 0}
+.tray{position:relative;width:260px;min-height:170px;padding:34px 18px 18px;
+  background:#fff;border-radius:6px;transform:rotate(var(--r));
+  box-shadow:0 14px 28px rgba(89,72,107,.13);transition:transform .3s ease,box-shadow .3s ease}
+.tray::before{content:"";position:absolute;inset:0;border-radius:6px;
+  background:repeating-linear-gradient(0deg,#00000005 0 1px,transparent 1px 4px);pointer-events:none}
+.tray:hover{transform:rotate(0deg) translateY(-6px);box-shadow:0 20px 38px rgba(89,72,107,.2);z-index:3}
+.tray h3{position:absolute;top:-13px;left:14px;margin:0;padding:3px 12px;
+  font-family:Caveat,cursive;font-size:19px;font-weight:700;color:#5b4a6a;
+  background:#fff6cf;border-radius:3px;transform:rotate(-2deg);box-shadow:0 3px 8px rgba(89,72,107,.12)}
+.tray-items{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;justify-content:center}
+.tray-items .ic{transform:rotate(var(--ir))}
+.tray-item{position:relative}
+.tray-item:hover .ic{background-color:var(--c);transform:rotate(0) scale(1.18)}
+.tray-item:hover .ic.mono-text{color:var(--c);border-color:var(--c)}
+.tray-item .tip{position:absolute;left:50%;top:calc(100% + 6px);translate:-50% 0;
+  white-space:nowrap;font-size:11px;color:#5d5367;background:#fff;padding:2px 7px;border-radius:7px;
+  box-shadow:0 4px 10px rgba(89,72,107,.16);opacity:0;transition:opacity .2s ease;pointer-events:none}
+.tray-item:hover .tip{opacity:1}
+
+/* =========================================================== 3 filmstrip */
+.strip-row{margin-bottom:16px}
+.strip-row h3{font-family:Caveat,cursive;font-size:19px;color:#8a6f9e;margin:0 0 6px}
+.strip{position:relative;overflow:hidden;background:#2b2531;border-radius:5px;
+  padding:13px 0;border-top:1px solid #413a49;border-bottom:1px solid #413a49}
+.strip::before,.strip::after{content:"";position:absolute;left:0;right:0;height:13px;
+  background-image:radial-gradient(circle,#fbf7f3 0 2.6px,transparent 2.8px);
+  background-size:20px 13px;background-position:0 center;z-index:2}
+.strip::before{top:0}.strip::after{bottom:0}
+.strip-track{display:flex;gap:0;width:max-content;
+  animation:slide var(--dur,26s) linear infinite;animation-direction:var(--dir,normal)}
+.strip:hover .strip-track{animation-play-state:paused}
+@keyframes slide{to{transform:translateX(-50%)}}
+.frame{width:104px;height:66px;flex:0 0 auto;margin:0 3px;border-radius:3px;
+  background:#1f1a24;display:grid;place-items:center;gap:4px;
+  box-shadow:inset 0 0 0 1px #3a3340;transition:background .25s ease}
+.frame .ic{--mono:#b9adc6}
+.frame .cap{font-size:9.5px;color:#8e8299;letter-spacing:.3px}
+.frame:hover{background:#15111a}
+.frame:hover .ic{background-color:var(--c);transform:scale(1.12)}
+.frame:hover .ic.mono-text{color:var(--c);border-color:var(--c)}
+.frame:hover .cap{color:#e6dff0}
+
+/* ========================================================== 4 letterpress */
+.press{display:flex;flex-wrap:wrap;gap:14px}
+.press-group{width:100%;font-family:Caveat,cursive;font-size:19px;color:#8a6f9e;margin:14px 0 0}
+.stamp{width:104px;height:104px;border-radius:14px;display:grid;place-items:center;gap:7px;
+  background:linear-gradient(160deg,#f3ecf7,#e8dff0);
+  box-shadow:inset 1px 1px 2px #fff,inset -2px -2px 5px #cdbfdb,0 5px 12px rgba(89,72,107,.1);
+  transition:transform .25s ease,box-shadow .25s ease}
+.stamp .ic{--mono:#8878a0;--s:32px;filter:drop-shadow(0 1px 0 #fff)}
+.stamp .cap{font-size:10px;color:#7d6f8c;text-align:center;padding:0 6px;line-height:1.2}
+.stamp:hover{transform:translateY(-4px);
+  box-shadow:inset 1px 1px 2px #fff,inset -2px -2px 5px #cdbfdb,0 12px 22px rgba(89,72,107,.2)}
+
+/* =============================================================== 5 orbit */
+.orbits{display:flex;flex-wrap:wrap;gap:30px;justify-content:center}
+.orbit{position:relative;width:250px;height:250px}
+.orbit-core{position:absolute;inset:0;display:grid;place-items:center;text-align:center;
+  font-family:Caveat,cursive;font-size:20px;color:#5b4a6a;z-index:2;pointer-events:none;padding:0 70px}
+.orbit-ring{position:absolute;inset:0;border-radius:50%;border:1px dashed #e0d4ea}
+.orbit-spin{position:absolute;inset:0;animation:spin var(--dur,34s) linear infinite}
+.orbit:hover .orbit-spin{animation-play-state:paused}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sat{position:absolute;left:50%;top:50%;width:0;height:0;
+  transform:rotate(var(--a)) translateY(calc(-1 * var(--rad,105px)))}
+/* Three layers of transform keep each chip upright: the ring's own spin is
+   cancelled by the reversed animation, and the static --a placement angle is
+   cancelled by the `rotate` property (which composes before `transform`). */
+.sat-in{position:absolute;translate:-50% -50%;rotate:calc(-1 * var(--a));
+  animation:spin-back var(--dur,34s) linear infinite reverse;
+  display:grid;place-items:center}
+@keyframes spin-back{to{transform:rotate(360deg)}}
+.sat .ic{--s:30px}
+.sat-chip{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;
+  box-shadow:0 5px 14px rgba(89,72,107,.14);transition:transform .25s ease,box-shadow .25s ease}
+.sat-chip:hover{transform:scale(1.22);box-shadow:0 10px 22px rgba(89,72,107,.26)}
+.sat-chip:hover .ic{background-color:var(--c)}
+.sat-chip:hover .ic.mono-text{color:var(--c);border-color:var(--c)}
+.sat-chip .ic{--mono:#8d7f9b;--s:26px}
+@media (prefers-reduced-motion:reduce){
+  .strip-track,.orbit-spin,.sat-in{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="hand">a scratch page, not part of the site · siblings: <a href="bits-lab.html">bits-lab.html</a>, <a href="film-lab.html">film-lab.html</a></p>
+  <h1>Five ways to present the toolkit</h1>
+  <p class="lede">
+    Same 23 tools, same five groups, read from the same list that is in
+    <code>js/content.js</code>. Only the presentation changes. Nothing here is interactive beyond
+    hover: this block presents a skill set, it does not claim a proficiency level, so there are no
+    bars, percentages or star ratings anywhere.
+  </p>
+  <p class="lede" style="margin-top:14px">
+    Real brand vectors come from <a href="https://simpleicons.org" target="_blank" rel="noopener">Simple
+    Icons</a> (CC0, single path, recoloured with a CSS mask). Eight tools are not in that set at all
+    (CapCut, Final Cut Pro, iMovie, Keap, Sprout Social, Brandwatch, Later, Excel), so they show as
+    outlined monogram chips. If one option wins, those eight get hand-drawn glyphs so the row reads
+    evenly.
+  </p>
+
+  <!-- 1 -->
+  <section class="opt">
+    <span class="tag">option 1</span>
+    <h2>Logo wall</h2>
+    <p class="opt-note">
+      Flat grid, grouped, resting in one quiet ink tone so the wall reads as texture rather than 23
+      competing logos. Hover brings that one tool to its brand colour and lifts its name out of the
+      fog. Closest to what is on the site now, and the safest to drop into the contact section.
+    </p>
+    <div class="demo" data-wall></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="opt">
+    <span class="tag">option 2</span>
+    <h2>Trays on a table</h2>
+    <p class="opt-note">
+      Five tilted trays, each with its group name on a sticky label, icons scattered inside at small
+      random angles. Hovering a tray straightens it and lifts it off the table. This is the one that
+      matches the paper-and-handwriting collage the rest of the site is built from.
+    </p>
+    <div class="demo" data-trays></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="opt">
+    <span class="tag">option 3</span>
+    <h2>Filmstrip</h2>
+    <p class="opt-note">
+      One strip per group, icons sitting in the frames between the sprocket holes, drifting slowly
+      and in alternating directions. Hover anywhere on a strip stops it. Borrows the language of the
+      film section, and holds any number of tools without getting taller.
+    </p>
+    <div class="demo" data-strips></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="opt">
+    <span class="tag">option 4</span>
+    <h2>Letterpress</h2>
+    <p class="opt-note">
+      Every tool pressed into the same paper in the same colour, no brand colours at all. The most
+      restrained option, and the one that looks least like a badge collection. The cost is
+      recognition: at a glance these read as shapes, not as logos you know.
+    </p>
+    <div class="demo" data-press></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="opt">
+    <span class="tag">option 5</span>
+    <h2>Orbits</h2>
+    <p class="opt-note">
+      Five slow carousels, group name in the middle, tools circling it. Most memorable, most
+      motion, and the furthest from the paper feel of the rest of the page. Hover stops a whole
+      orbit; icons stay upright while the ring turns.
+    </p>
+    <div class="demo" data-orbits></div>
+  </section>
+
+</div>
+
+<script>
+/* The toolkit, with a Simple Icons slug and brand colour where one exists.
+   `mono` means no vector in the set: it renders as an outlined monogram chip. */
+const CDN = "https://cdn.jsdelivr.net/npm/simple-icons@13/icons/";
+const GROUPS = [
+  { group: "Video", items: [
+    { n:"CapCut",       mono:"C",  c:"#000000" },
+    { n:"Final Cut Pro",mono:"FC", c:"#1B1B1F" },
+    { n:"Premiere Pro", s:"adobepremierepro", c:"#9999FF" },
+    { n:"iMovie",       mono:"iM", c:"#8E54E9" },
+    { n:"Vimeo",        s:"vimeo", c:"#1AB7EA" }
+  ]},
+  { group: "Design", items: [
+    { n:"Canva",     s:"canva",          c:"#00C4CC" },
+    { n:"Photoshop", s:"adobephotoshop", c:"#31A8FF" },
+    { n:"Figma",     s:"figma",          c:"#F24E1E" }
+  ]},
+  { group: "Web & commerce", items: [
+    { n:"WordPress", s:"wordpress", c:"#21759B" },
+    { n:"Wix",       s:"wix",       c:"#0C6EFC" },
+    { n:"Shopify",   s:"shopify",   c:"#7AB55C" },
+    { n:"GitHub",    s:"github",    c:"#181717" }
+  ]},
+  { group: "Paid & lifecycle", items: [
+    { n:"Meta Ads",   s:"meta",       c:"#0467DF" },
+    { n:"Google Ads", s:"googleads",  c:"#4285F4" },
+    { n:"SEMrush",    s:"semrush",    c:"#FF642D" },
+    { n:"HubSpot",    s:"hubspot",    c:"#FF7A59" },
+    { n:"Keap",       mono:"K",       c:"#3CB371" }
+  ]},
+  { group: "Analytics", items: [
+    { n:"Google Analytics", s:"googleanalytics", c:"#E37400" },
+    { n:"Sprout Social",    mono:"SS",           c:"#75DD66" },
+    { n:"Tableau",          s:"tableau",         c:"#E97627" },
+    { n:"Brandwatch",       mono:"BW",           c:"#2B2A8C" },
+    { n:"Later",            mono:"L",            c:"#1A1A1A" },
+    { n:"Excel",            mono:"X",            c:"#217346" }
+  ]}
+];
+
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+/* One icon. `extra` adds per-instance custom properties (size, angle). */
+const icon = (t, extra = "") =>
+  t.mono
+    ? `<span class="ic mono-text" style="--c:${t.c};${extra}" aria-hidden="true">${esc(t.mono)}</span>`
+    : `<span class="ic" style="--src:url(${CDN}${t.s}.svg);--c:${t.c};${extra}" aria-hidden="true"></span>`;
+const rot = (i, amp) => (((i * 2654435761) % 1000) / 1000 - 0.5) * 2 * amp;
+
+/* ---------------------------------------------------------------- 1 wall */
+document.querySelector("[data-wall]").innerHTML = GROUPS.map(g => `
+  <div class="wall-group">
+    <h3>${esc(g.group)}</h3>
+    <div class="wall">${g.items.map(t => `
+      <div class="wall-cell">${icon(t, "--s:36px")}<span class="cap">${esc(t.n)}</span></div>`).join("")}
+    </div>
+  </div>`).join("");
+
+/* --------------------------------------------------------------- 2 trays */
+document.querySelector("[data-trays]").innerHTML =
+  `<div class="trays">${GROUPS.map((g, i) => `
+    <div class="tray" style="--r:${rot(i + 3, 2.6).toFixed(2)}deg">
+      <h3>${esc(g.group)}</h3>
+      <div class="tray-items">${g.items.map((t, j) => `
+        <span class="tray-item">
+          ${icon(t, `--s:38px;--ir:${rot(i * 7 + j, 9).toFixed(1)}deg`)}
+          <span class="tip">${esc(t.n)}</span>
+        </span>`).join("")}
+      </div>
+    </div>`).join("")}</div>`;
+
+/* ------------------------------------------------------------- 3 strips */
+document.querySelector("[data-strips]").innerHTML = GROUPS.map((g, i) => {
+  const frames = g.items.map(t =>
+    `<div class="frame">${icon(t, "--s:26px")}<span class="cap">${esc(t.n)}</span></div>`).join("");
+  /* Track is duplicated so the -50% slide loops seamlessly. */
+  const pad = g.items.length < 6 ? frames : "";
+  return `
+  <div class="strip-row">
+    <h3>${esc(g.group)}</h3>
+    <div class="strip">
+      <div class="strip-track" style="--dur:${22 + i * 4}s;--dir:${i % 2 ? "reverse" : "normal"}">
+        ${frames}${pad}${frames}${pad}
+      </div>
+    </div>
+  </div>`;
+}).join("");
+
+/* ---------------------------------------------------------- 4 letterpress */
+document.querySelector("[data-press]").innerHTML =
+  `<div class="press">${GROUPS.map(g => `
+    <p class="press-group">${esc(g.group)}</p>
+    ${g.items.map(t => `
+      <div class="stamp">${icon(t)}<span class="cap">${esc(t.n)}</span></div>`).join("")}
+  `).join("")}</div>`;
+
+/* --------------------------------------------------------------- 5 orbits */
+document.querySelector("[data-orbits]").innerHTML =
+  `<div class="orbits">${GROUPS.map((g, i) => {
+    const dur = 30 + i * 6;
+    const sats = g.items.map((t, j) => `
+      <div class="sat" style="--a:${(360 / g.items.length * j).toFixed(1)}deg">
+        <div class="sat-in" style="--dur:${dur}s">
+          <div class="sat-chip" title="${esc(t.n)}">${icon(t)}</div>
+        </div>
+      </div>`).join("");
+    return `
+    <div class="orbit">
+      <div class="orbit-ring"></div>
+      <div class="orbit-core">${esc(g.group)}</div>
+      <div class="orbit-spin" style="--dur:${dur}s">${sats}</div>
+    </div>`;
+  }).join("")}</div>`;
+</script>
+</body>
+</html>

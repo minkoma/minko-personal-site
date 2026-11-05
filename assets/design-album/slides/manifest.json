@@ -10,31 +10,58 @@
       "pdfBytes": 7390673
     },
     {
-      "slug": "assignment-3",
-      "pdf": "assets/design-album/assignment-3-minko-ma.pdf",
-      "pages": 1,
-      "dir": "assets/design-album/slides/assignment-3",
-      "width": 1600,
-      "slideBytes": 171950,
-      "pdfBytes": 3505063
-    },
-    {
-      "slug": "imc424-shopper-marketing",
-      "pdf": "assets/design-album/imc424-shopper-marketing.pdf",
+      "slug": "augmented-reality",
+      "pdf": "assets/design-album/augmented-reality.pdf",
       "pages": 16,
-      "dir": "assets/design-album/slides/imc424-shopper-marketing",
+      "dir": "assets/design-album/slides/augmented-reality",
       "width": 1600,
-      "slideBytes": 1414630,
-      "pdfBytes": 18526480
+      "slideBytes": 1411356,
+      "pdfBytes": 18534430
     },
     {
-      "slug": "chobani-case",
-      "pdf": "assets/design-album/chobani-case-minko-ma.pdf",
-      "pages": 6,
-      "dir": "assets/design-album/slides/chobani-case",
+      "slug": "blick",
+      "pdf": "assets/design-album/blick.pdf",
+      "pages": 12,
+      "dir": "assets/design-album/slides/blick",
       "width": 1600,
-      "slideBytes": 709266,
-      "pdfBytes": 3810228
+      "slideBytes": 1938724,
+      "pdfBytes": 62576606
+    },
+    {
+      "slug": "blue-moon",
+      "pdf": "assets/design-album/blue-moon.pdf",
+      "pages": 37,
+      "dir": "assets/design-album/slides/blue-moon",
+      "width": 1600,
+      "slideBytes": 3360986,
+      "pdfBytes": 19296110
+    },
+    {
+      "slug": "dossier",
+      "pdf": "assets/design-album/dossier.pdf",
+      "pages": 11,
+      "dir": "assets/design-album/slides/dossier",
+      "width": 1600,
+      "slideBytes": 942852,
+      "pdfBytes": 11600159
+    },
+    {
+      "slug": "single-page-slides",
+      "pdf": "assets/design-album/single-page-slides.pdf",
+      "pages": 4,
+      "dir": "assets/design-album/slides/single-page-slides",
+      "width": 1600,
+      "slideBytes": 680212,
+      "pdfBytes": 17902250
+    },
+    {
+      "slug": "spotify",
+      "pdf": "assets/design-album/spotify.pdf",
+      "pages": 15,
+      "dir": "assets/design-album/slides/spotify",
+      "width": 1600,
+      "slideBytes": 1124936,
+      "pdfBytes": 18015712
     }
   ]
 }

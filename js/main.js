@@ -18,6 +18,34 @@
   $("[data-year]").textContent = new Date().getFullYear();
 
   /* ------------------------------------------------------------- my path */
+  /* Coursework and campus involvement, for the school notes only. Courses are
+     chips rather than a bullet list: there are up to seventeen of them, and a
+     bullet each would make the note taller than its photos. */
+  const chips = (items) =>
+    `<ul class="note-chips">${items.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`;
+
+  const eduExtra = (e) => {
+    if (!e.coursework && !e.involvement) return "";
+    const courses = e.coursework
+      ? `<div class="note-block">
+           <p class="note-label">relevant coursework</p>
+           ${e.coursework
+             .map(
+               (g) =>
+                 (g.group ? `<p class="note-sublabel">${esc(g.group)}</p>` : "") + chips(g.items)
+             )
+             .join("")}
+         </div>`
+      : "";
+    const involved = e.involvement
+      ? `<div class="note-block note-block--ruled">
+           <p class="note-label">campus involvement</p>
+           ${chips(e.involvement)}
+         </div>`
+      : "";
+    return `<div class="note-extra">${courses}${involved}</div>`;
+  };
+
   const entries = D.education
     .map((e) => ({
       kind: "school",
@@ -27,6 +55,8 @@
       meta: e.period + " · " + e.place,
       place: e.place,
       body: [e.detail],
+      coursework: e.coursework,
+      involvement: e.involvement,
       /* A school can carry a set like a job does; `photo` is the single-image
          shorthand for one that only has the one. */
       photos: e.photos || [e.photo]
@@ -56,10 +86,11 @@
             <span class="note-kind">${esc(e.kind)}</span>
           </div>
           <h3>${esc(e.title)}</h3>
-          <p class="note-sub">${esc(e.sub)}</p>
+          <p class="note-sub">${[].concat(e.sub).map(esc).join("<br>")}</p>
           <p class="note-meta">${esc(e.meta)}</p>
           ${e.tags ? `<ul class="note-tags">${e.tags.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
           <ul class="note-points">${e.body.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>
+          ${eduExtra(e)}
         </div>
         <div class="step-photos count-${Math.min(e.photos.length, 3)}" data-step-photos>
           <span class="year-stamp" aria-hidden="true">${esc(e.year)}</span>
@@ -282,6 +313,48 @@
 
   fitRibbon();
   window.addEventListener("load", scheduleRibbon);
+
+  /* -------------------------------------------------------------- skills */
+  /* Trays on a table. Five tilted paper trays, each with its group name on a
+     sticky label and its tools scattered inside at small angles. Hovering a
+     tray straightens it and lifts it off the table; hovering one tool brings
+     it upright and names it.
+
+     Every logo is the brand's real full-colour mark, served from assets/tools/
+     and drawn with no filter, mask or tint. The earlier version drew from
+     simple-icons, which only ships single-colour silhouettes, and that is what
+     made them read as generic vector icons rather than the actual logos.
+     Fourteen are SVG from a colour-logo collection; the nine that collection
+     does not publish are the official App Store app icons as PNG, which is
+     why the filename comes from the data rather than being built from the
+     slug. */
+  (() => {
+    const root = $("[data-trays]");
+    if (!root || !D.tools) return;
+
+    root.innerHTML = D.tools
+      .map(
+        (g, gi) => `<div class="tray" style="--r:${rot(gi * 5 + 1, 2.4)}deg">
+          <h3>${esc(g.group)}</h3>
+          <div class="tray-items">
+            ${g.items
+              .map((t, i) => {
+                const spin = `--ir:${rot(gi * 11 + i * 3, 7)}deg`;
+                /* The App Store icons already carry their own rounded square,
+                   so they get a corner radius and the SVG marks do not. */
+                const png = /\.png$/.test(t.file);
+                return `<span class="tool${png ? " is-app" : ""}"
+                              style="--c:${t.c};${spin}" tabindex="0">
+                          <span class="tool-face"><img src="assets/tools/${t.file}" alt="" loading="lazy"></span>
+                          <span class="tool-tip">${esc(t.name)}</span>
+                        </span>`;
+              })
+              .join("")}
+          </div>
+        </div>`
+      )
+      .join("");
+  })();
 
   /* ---------------------------------------------------------------- film */
   /* Two labelled shelves: the long-form films on top, the vertical reels
@@ -523,25 +596,19 @@
   /* ---------------------------------------------------------- bits of me */
   /* Each card has its own photo arrangement and shapes, set in styles.css by key. */
   const SHAPES = {
-    twins: ["circle", "circle", "heart"],
-    ballet: ["arch", "circle", "arch"],
-    travel: ["stamp", "stamp", "stamp", "stamp", "stamp"],
-    cats: ["blob", "circle", "circle", "heart"],
-    food: ["plate", "plate", "plate", "plate", "plate"],
+    twins: ["circle", "heart", "circle", "arch"],
+    ballet: ["arch", "circle", "arch", "stamp"],
+    cats: ["blob", "circle", "heart", "circle"],
+    food: ["plate", "plate", "circle", "plate", "plate"],
     crafts: ["hoop", "stamp", "stamp", "circle"],
-    forky: ["heart"],
-    coffee: ["blob"],
     bear: ["cloud", "stamp"]
   };
   const HINTS = {
     twins: "tap to see double",
     ballet: "tap for a pirouette",
-    travel: "tap to open the map",
     cats: "tap to let them out",
     food: "tap if you’re hungry",
     crafts: "tap to unspool",
-    forky: "tap to say hi",
-    coffee: "tap for a fresh cup",
     bear: "tap for bedtime"
   };
 
@@ -550,14 +617,15 @@
       (it, i) => `<article class="bit bit-${it.key}" data-egg="${it.key}" tabindex="0" role="button"
                    aria-label="${esc(it.title)}. ${esc(HINTS[it.key] || "tap for a surprise")}" style="--r:${rot(i, 3)}deg">
         <span class="tape ${i % 2 ? "tape-br" : "tape-tl"}" aria-hidden="true"></span>
-        <div class="gal gal-${it.key}">
+        <div class="gal gal-${it.key}"><div class="gal-strip">
           ${it.photos
             .map(
               (p, j) =>
-                `<span class="ph ph-${j} sh-${(SHAPES[it.key] || [])[j] || "circle"}"><img src="${p}" alt="" loading="lazy"></span>`
+                `<span class="ph ph-${j} sh-${(SHAPES[it.key] || [])[j] || "circle"}"
+                       style="--t:${rot(i * 7 + j * 3, 6)}deg"><img src="${p}" alt="" loading="lazy"></span>`
             )
             .join("")}
-        </div>
+        </div></div>
         <div class="bit-copy">
           <span class="bit-emoji" aria-hidden="true">${it.emoji}</span>
           <h3>${esc(it.title)}</h3>
@@ -869,6 +937,10 @@
   /* ========================================================== easter eggs */
   const found = new Set();
   const counter = $("[data-egg-count] b");
+  /* Driven off the data, not typed into the markup: the total drifted to a
+     stale "9" when the board was trimmed to six themes. */
+  const eggTotal = $("[data-egg-total]");
+  if (eggTotal) eggTotal.textContent = String(D.interests.length);
 
   const EGGS = {
     /* Two copies of her twin photo appear: the second one 10 cm taller. */
@@ -1185,6 +1257,15 @@
       }
     })
   );
+
+  /* The 3D gallery in the same section has no DOM card to click, so it needs a
+     way in. It cannot simply call card.click(): on desktop the click on these
+     cards belongs to Draggable's onClick, which a synthetic click never
+     reaches. This hands it the real function instead. */
+  window.bitsPlayEgg = (key, x, y) => {
+    const card = cards.find((c) => c.dataset.egg === key);
+    if (card) playEgg(card, x, y);
+  };
 
   document.querySelectorAll("[data-confetti]").forEach((el) =>
     el.addEventListener("click", (e) => burst(e.clientX, e.clientY))
