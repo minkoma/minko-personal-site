@@ -15,6 +15,37 @@ window.MINKO = {
     languages: "Bilingual in Mandarin and English"
   },
 
+  /* The ending section: a live clock in Minko's own timezone plus what she is
+     open to. Everything here is hers to edit.
+
+     `zone` and `place` must agree — the clock is California time because that
+     is where she is, not where she studies.
+
+     `asleep` is a plain hour window in `zone`, 24-hour, start inclusive and
+     end exclusive — so [2, 10] means the status reads "asleep" from 2:00am
+     until 9:59am and "awake" the rest of the day. Change the two numbers and
+     the status row follows; nothing else needs touching.
+
+     `openTo` is split on purpose: `commitment` is the shape of the work and
+     `fields` are the kinds of work. They are two different questions, and the
+     panel styles them differently rather than colouring them at random. */
+  now: {
+    zone: "America/Los_Angeles",
+    place: "San Diego, CA",
+    asleep: [2, 10],
+    /* An optional third state for the small hours: still up, but not someone
+       you should expect a reply from. Set to null to switch it off. */
+    winding: [23, 2],
+    awakeLine: "probably awake — expect a quick reply",
+    windingLine: "still up, but winding down",
+    asleepLine: "asleep right now — I'll reply in the morning",
+    openTo: {
+      commitment: "Full-time",
+      lead: "roles in",
+      fields: ["Marketing", "Social media", "Content creation", "Data & analytics"]
+    }
+  },
+
   /* Hero layer geometry. Boxes stay in 1920x1080 units whatever resolution the
      images actually carry, because they are only ever turned into percentages
      and main.js positions the hotspots in the same space. Measured from the
@@ -130,7 +161,7 @@ window.MINKO = {
       tags: ["Loyalty & CRM", "Segmentation", "Growth strategy"],
       points: [
         "Analysed loyalty transaction and RFM segmentation data across 1.39M registered loyalty members, consolidating 11 Paytronix segments into 4 strategic decision groups and uncovering a structural incentive misalignment that shaped a “Reinvigorating the Next Wave of Growth” strategy.",
-        "Benchmarked menu architecture and competitive positioning across 11 QSR brands, analysed 1,100+ Google reviews for recurring guest-experience friction, and synthesised primary survey research (n=1,277) into growth recommendations.",
+        "Benchmarked menu architecture and competitive positioning across 11 QSR brands, analysed 1,100+ Google reviews for recurring guest-experience friction, and synthesised primary survey research into growth recommendations.",
         "Translated loyalty, segmentation, and customer research into activation strategies spanning loyalty redesign, menu innovation, and campus activation, presented to the CMO and executive leadership."
       ]
     },
@@ -161,6 +192,15 @@ window.MINKO = {
       period: "Oct 2022 – Jun 2024",
       place: "La Jolla, CA",
       year: "2022",
+      /* Two optional per-entry overrides for the photo cluster, both honoured
+         by js/main.js. `photoTilt` replaces the generated rotation, in degrees,
+         one per photo in the order below: the group shot on the right leans
+         right rather than left. `photoBias` is the share of the top row given
+         to the left frame — the left photo here is itself a strip of three
+         stills, so it earns more width than the matched-height rule gives it. */
+      /* Tilts in the reference: the wide base leans one way, the tall strip and
+         the upright above lean the other. */
+      photoTilt: [-1.5, 4, -2.5],
       photos: [
         "assets/experience/storyteller-filming.jpg",
         "assets/experience/storyteller-reel.jpg",
@@ -268,49 +308,49 @@ window.MINKO = {
     {
       group: "Video",
       items: [
-        { name: "Premiere Pro", slug: "premiere-pro", c: "#9999FF", file: "premiere-pro.svg" },
-        { name: "Final Cut Pro", slug: "final-cut-pro", c: "#1B1B1F", file: "final-cut-pro.png" },
-        { name: "CapCut", slug: "capcut", c: "#000000", file: "capcut.png" },
-        { name: "iMovie", slug: "imovie", c: "#8E54E9", file: "imovie.png" },
-        { name: "Vimeo", slug: "vimeo", c: "#1AB7EA", file: "vimeo.svg" }
+        { name: "Premiere Pro", slug: "premiere-pro", c: "#9999FF", file: "premiere-pro.svg", use: "long-form cuts, colour and sound" },
+        { name: "Final Cut Pro", slug: "final-cut-pro", c: "#1B1B1F", file: "final-cut-pro.png", use: "the films I shoot on a real camera" },
+        { name: "CapCut", slug: "capcut", c: "#000000", file: "capcut.png", use: "fast vertical cuts and captions" },
+        { name: "iMovie", slug: "imovie", c: "#8E54E9", file: "imovie.png", use: "quick assemblies on the phone" },
+        { name: "Vimeo", slug: "vimeo", c: "#1AB7EA", file: "vimeo.svg", use: "where the finished films live" }
       ]
     },
     {
       group: "Design",
       items: [
-        { name: "Canva", slug: "canva", c: "#00C4CC", file: "canva.svg" },
-        { name: "Photoshop", slug: "photoshop", c: "#31A8FF", file: "photoshop.svg" },
-        { name: "Figma", slug: "figma", c: "#F24E1E", file: "figma.svg" }
+        { name: "Canva", slug: "canva", c: "#00C4CC", file: "canva.svg", use: "decks, social sets, anything on a deadline" },
+        { name: "Photoshop", slug: "photoshop", c: "#31A8FF", file: "photoshop.svg", use: "retouching and the stills that carry a campaign" },
+        { name: "Figma", slug: "figma", c: "#F24E1E", file: "figma.svg", use: "layouts and handoff before anything gets built" }
       ]
     },
     {
       group: "Web & commerce",
       items: [
-        { name: "WordPress", slug: "wordpress", c: "#21759B", file: "wordpress.svg" },
-        { name: "Wix", slug: "wix", c: "#0C6EFC", file: "wix.svg" },
-        { name: "Shopify", slug: "shopify", c: "#7AB55C", file: "shopify.svg" },
-        { name: "GitHub", slug: "github", c: "#181717", file: "github.svg" }
+        { name: "WordPress", slug: "wordpress", c: "#21759B", file: "wordpress.svg", use: "the sites I maintain, not just launch" },
+        { name: "Wix", slug: "wix", c: "#0C6EFC", file: "wix.svg", use: "fast builds for small brands" },
+        { name: "Shopify", slug: "shopify", c: "#7AB55C", file: "shopify.svg", use: "product pages and the checkout path" },
+        { name: "GitHub", slug: "github", c: "#181717", file: "github.svg", use: "versioning, and this site" }
       ]
     },
     {
       group: "Paid & lifecycle",
       items: [
-        { name: "Meta Ads", slug: "meta-ads", c: "#0467DF", file: "meta-ads.svg" },
-        { name: "Google Ads", slug: "google-ads", c: "#4285F4", file: "google-ads.svg" },
-        { name: "HubSpot", slug: "hubspot", c: "#FF7A59", file: "hubspot.svg" },
-        { name: "SEMrush", slug: "semrush", c: "#FF642D", file: "semrush.png" },
-        { name: "Keap", slug: "keap", c: "#3CB371", file: "keap.png" }
+        { name: "Meta Ads", slug: "meta-ads", c: "#0467DF", file: "meta-ads.svg", use: "paid social, creative testing" },
+        { name: "Google Ads", slug: "google-ads", c: "#4285F4", file: "google-ads.svg", use: "search and demand capture" },
+        { name: "HubSpot", slug: "hubspot", c: "#FF7A59", file: "hubspot.svg", use: "email sequences and the funnel behind them" },
+        { name: "SEMrush", slug: "semrush", c: "#FF642D", file: "semrush.png", use: "keyword and competitor research" },
+        { name: "Keap", slug: "keap", c: "#3CB371", file: "keap.png", use: "lifecycle automation for smaller lists" }
       ]
     },
     {
       group: "Analytics",
       items: [
-        { name: "Google Analytics", slug: "google-analytics", c: "#E37400", file: "google-analytics.svg" },
-        { name: "Tableau", slug: "tableau", c: "#E97627", file: "tableau.svg" },
-        { name: "Sprout Social", slug: "sprout-social", c: "#75DD66", file: "sprout-social.png" },
-        { name: "Brandwatch", slug: "brandwatch", c: "#2B2A8C", file: "brandwatch.png" },
-        { name: "Later", slug: "later", c: "#1A1A1A", file: "later.png" },
-        { name: "Excel", slug: "excel", c: "#217346", file: "excel.png" }
+        { name: "Google Analytics", slug: "google-analytics", c: "#E37400", file: "google-analytics.svg", use: "what people actually did on the site" },
+        { name: "Tableau", slug: "tableau", c: "#E97627", file: "tableau.svg", use: "turning a messy export into one chart" },
+        { name: "Sprout Social", slug: "sprout-social", c: "#75DD66", file: "sprout-social.png", use: "scheduling and social reporting" },
+        { name: "Brandwatch", slug: "brandwatch", c: "#2B2A8C", file: "brandwatch.png", use: "listening, before the brief is written" },
+        { name: "Later", slug: "later", c: "#1A1A1A", file: "later.png", use: "the social calendar" },
+        { name: "Excel", slug: "excel", c: "#217346", file: "excel.png", use: "the first place I look at any dataset" }
       ]
     }
   ],

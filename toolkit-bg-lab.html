@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toolkit backdrop lab — five ways to hold the ribbon back</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
+<!-- The real stylesheets, so every option below is the shipped section with
+     one class changed — not a mock-up that looks close. -->
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  body{background:var(--paper);cursor:auto}
+  .lab-head{padding:46px var(--pad) 10px;max-width:900px}
+  .lab-head h1{font-family:var(--display);font-size:clamp(28px,4vw,42px);margin:0 0 10px;color:var(--ink)}
+  .lab-head p{color:var(--ink-soft);margin:0 0 6px}
+  .lab-back{font-size:14px;color:var(--plum)}
+  .case{position:relative;padding:34px 0 60px}
+  .case-tag{padding:0 var(--pad);font-family:var(--hand);font-size:22px;color:var(--plum);margin:0 0 2px}
+  .case-note{padding:0 var(--pad);color:var(--ink-soft);font-size:14.5px;max-width:74ch;margin:0 0 18px}
+  /* A length of the real ribbon behind every case, at the real colour and
+     dash, so each backdrop is judged against what it has to cover. */
+  .case-ribbon{position:absolute;inset:0;width:min(1180px,94vw);left:50%;transform:translateX(-50%);
+    color:rgba(124,92,196,.3);pointer-events:none;z-index:0}
+  .case .toolkit{padding:0 var(--pad)}
+
+  /* ---------- A: shipped. paper wash + blur ---------- */
+  /* (no override: .lines as it is in styles.css) */
+
+  /* ---------- B: opaque paper card ---------- */
+  .bg-b .lines{background:var(--card);backdrop-filter:none;-webkit-backdrop-filter:none;
+    box-shadow:var(--shadow)}
+
+  /* ---------- C: notebook paper, ruled ---------- */
+  .bg-c .lines{background:
+      repeating-linear-gradient(0deg,rgba(124,92,196,.05) 0 1px,transparent 1px 5px),
+      rgba(255,253,248,.93);
+    backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:4px;
+    box-shadow:0 10px 26px rgba(96,72,44,.1)}
+
+  /* ---------- D: full-bleed band, no corners ---------- */
+  .bg-d{padding-top:0;padding-bottom:0}
+  .bg-d .toolkit{padding:0}
+  .bg-d .lines{width:100%;max-width:none;border-radius:0;
+    padding:clamp(22px,3vw,40px) var(--pad);
+    background:rgba(255,253,248,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    border-top:1px solid rgba(255,255,255,.8);border-bottom:1px solid var(--line)}
+
+  /* ---------- E: no panel, the ribbon is masked instead ---------- */
+  /* The rows keep nothing behind them; a soft paper glow sits under the text
+     only, so the ribbon still shows between the rows. */
+  .bg-e .lines{background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+    box-shadow:none;border-radius:0}
+  .bg-e .tool-btn,.bg-e .line-label{
+    text-shadow:0 0 10px var(--paper),0 0 6px var(--paper),0 0 3px var(--paper)}
+  .bg-e .tool-btn img{filter:drop-shadow(0 0 7px var(--paper)) drop-shadow(0 0 4px var(--paper))}
+  .bg-e .line{border-bottom-color:rgba(58,48,38,.2)}
+</style>
+</head>
+<body>
+<div class="lab-head">
+  <p class="lab-back"><a href="index.html">← back to the site</a></p>
+  <h1>Backdrop for the toolkit rows</h1>
+  <p>The rows have no background of their own, so the dashed ribbon runs behind the tool
+     names. Each option below is the shipped section with one class changed, over a real
+     length of ribbon at its real colour.</p>
+  <p>All five already carry the wider panel, the bigger logos and the bigger names.</p>
+</div>
+
+<section class="case bg-a">
+  <svg class="case-ribbon" viewBox="0 0 100 600" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M50 -40 C12 90 88 210 50 330 S12 520 50 640" fill="none" stroke="currentColor"
+          stroke-width="6" stroke-linecap="round" stroke-dasharray="4 10"></path>
+  </svg>
+  <p class="case-tag">option A — on the site now</p>
+  <p class="case-note">Paper wash at 72% with a 3px blur behind it. The ribbon still reads as a
+    shape passing under the block, but no dash lands on a word. Softest of the five.</p>
+  <div class="toolkit"><div class="lines" data-lines></div></div>
+</section>
+
+<section class="case bg-b">
+  <svg class="case-ribbon" viewBox="0 0 100 600" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M50 -40 C88 90 12 210 50 330 S88 520 50 640" fill="none" stroke="currentColor"
+          stroke-width="6" stroke-linecap="round" stroke-dasharray="4 10"></path>
+  </svg>
+  <p class="case-tag">option B — solid paper card</p>
+  <p class="case-note">Fully opaque, with the site's standard shadow. The ribbon disappears
+    behind it completely. Cleanest to read, but it is a card, which is close to the thing you
+    rejected about the trays.</p>
+  <div class="toolkit"><div class="lines" data-lines></div></div>
+</section>
+
+<section class="case bg-c">
+  <svg class="case-ribbon" viewBox="0 0 100 600" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M50 -40 C12 90 88 210 50 330 S12 520 50 640" fill="none" stroke="currentColor"
+          stroke-width="6" stroke-linecap="round" stroke-dasharray="4 10"></path>
+  </svg>
+  <p class="case-tag">option C — notebook paper</p>
+  <p class="case-note">93% paper with faint ruled lines across it and almost square corners, so
+    it reads as a sheet of lined paper the tools are written on rather than a UI panel. Ties
+    into the scrapbook feel of the rest of the page.</p>
+  <div class="toolkit"><div class="lines" data-lines></div></div>
+</section>
+
+<section class="case bg-d">
+  <svg class="case-ribbon" viewBox="0 0 100 600" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M50 -40 C88 90 12 210 50 330 S88 520 50 640" fill="none" stroke="currentColor"
+          stroke-width="6" stroke-linecap="round" stroke-dasharray="4 10"></path>
+  </svg>
+  <p class="case-tag">option D — full-bleed band</p>
+  <p class="case-note">Edge to edge, no corners, a hairline top and bottom. The widest rows of
+    the five, so the emptiness you noticed is gone entirely. It also cuts the ribbon in two
+    cleanly, which reads as deliberate rather than as something in the way.</p>
+  <div class="toolkit"><div class="lines" data-lines></div></div>
+</section>
+
+<section class="case bg-e">
+  <svg class="case-ribbon" viewBox="0 0 100 600" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M50 -40 C12 90 88 210 50 330 S12 520 50 640" fill="none" stroke="currentColor"
+          stroke-width="6" stroke-linecap="round" stroke-dasharray="4 10"></path>
+  </svg>
+  <p class="case-tag">option E — no panel, glow under the words</p>
+  <p class="case-note">No box at all. Instead each name and logo carries a soft paper halo, so
+    the ribbon is pushed away from the letters but still runs freely between the rows. The most
+    faithful to "no boxes"; the least protection if the ribbon ever moves.</p>
+  <div class="toolkit"><div class="lines" data-lines></div></div>
+</section>
+
+<script src="js/content.js"></script>
+<script>
+/* The same markup main.js writes, and the same three interactions, so each
+   option can be hovered and clicked rather than only looked at. */
+const D = window.MINKO;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;" }[c]));
+const mark = t => `<img class="${/\.png$/.test(t.file) ? "is-app" : ""}" src="assets/tools/${t.file}" alt="" loading="lazy">`;
+
+document.querySelectorAll("[data-lines]").forEach(root => {
+  root.innerHTML = D.tools.map((g, gi) => `<div class="line">
+      <button class="line-label" type="button" aria-pressed="false" data-group="${gi}">
+        ${esc(g.group)}<span class="n">${g.items.length}</span>
+      </button>
+      <div class="line-items">${g.items.map((t, i) =>
+        `<button class="tool-btn" type="button" style="--c:${t.c}" data-tool="${gi}-${i}"
+                 aria-expanded="false" data-name="${esc(t.name)}" data-file="${esc(t.file)}"
+                 data-use="${esc(t.use || "")}">${mark(t)}${esc(t.name)}</button>`).join("")}
+      </div>
+      <div class="line-detail" aria-live="polite"></div>
+    </div>`).join("");
+
+  let live = null;
+  const close = () => {
+    root.querySelectorAll(".tool-btn.is-on").forEach(b => { b.classList.remove("is-on"); b.setAttribute("aria-expanded","false"); });
+    root.querySelectorAll(".line.is-open").forEach(l => l.classList.remove("is-open"));
+    root.classList.remove("is-live"); live = null;
+  };
+  root.addEventListener("click", e => {
+    const label = e.target.closest(".line-label");
+    if (label) {
+      const on = label.getAttribute("aria-pressed") === "true";
+      root.querySelectorAll(".line-label").forEach(l => l.setAttribute("aria-pressed","false"));
+      root.querySelectorAll(".line").forEach(l => l.classList.remove("is-dim"));
+      if (!on) {
+        label.setAttribute("aria-pressed","true");
+        const row = label.closest(".line");
+        root.querySelectorAll(".line").forEach(l => { if (l !== row) l.classList.add("is-dim"); });
+      }
+      return;
+    }
+    const btn = e.target.closest(".tool-btn");
+    if (!btn) return;
+    const same = btn.dataset.tool === live;
+    close();
+    if (same || !btn.dataset.use) return;
+    const row = btn.closest(".line");
+    row.querySelector(".line-detail").innerHTML =
+      `<p><img class="${/\.png$/.test(btn.dataset.file) ? "is-app" : ""}" src="assets/tools/${btn.dataset.file}" alt="">
+         <span><b>${esc(btn.dataset.name)}</b> — ${esc(btn.dataset.use)}</span></p>`;
+    btn.classList.add("is-on"); btn.setAttribute("aria-expanded","true");
+    row.classList.add("is-open"); root.classList.add("is-live"); live = btn.dataset.tool;
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+});
+</script>
+</body>
+</html>

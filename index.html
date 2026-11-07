@@ -71,16 +71,25 @@
     <div class="path-list" data-timeline></div>
   </section>
 
-  <!-- ----------------------------------------------------------- skills -->
-  <!-- Trays on a table: one tray per group of tools, tilted, with its name on
-       a sticky label. Sits between the timeline and the films because it reads
-       as the toolkit behind both. -->
+  <!-- ---------------------------------------------------------- toolkit -->
+  <!-- One line per group: the group name handwritten on the left, then every
+       tool in it with its real logo and its full name. Option 7 of
+       tools-lab2.html; it replaced the tilted paper trays, which Minko liked
+       the icons in but not the boxes. Sits between the timeline and the films
+       because it reads as the toolkit behind both. -->
   <section id="skills" class="toolkit">
+    <!-- The hint is not a third line under the title: it sits out on the right
+         at the panel's edge, set in small caps rather than handwriting, so it
+         reads as an instruction for the table below it instead of as a
+         subtitle for the section. -->
     <header class="section-head">
-      <p class="eyebrow">what I work in</p>
-      <h2 data-split="words">Tools on the table</h2>
+      <div class="toolkit-title">
+        <p class="eyebrow">what I work in</p>
+        <h2 data-split="words">Tools on the table</h2>
+      </div>
+      <p class="toolkit-hint">tap one to see what I use it for <span aria-hidden="true">↓</span></p>
     </header>
-    <div class="trays" data-trays></div>
+    <div class="lines" data-lines></div>
   </section>
 
   <!-- ------------------------------------------------------------- film -->
@@ -158,12 +167,21 @@
   </section>
 
   <!-- ---------------------------------------------------------- contact -->
+  <!-- The ending is the "now" panel from end-lab.html option 11: a live clock
+       in Minko's timezone, whether that means she is awake, what she is open
+       to, and every way to reach her. The schedule and the list live in
+       D.now in js/content.js. -->
   <section id="contact" class="contact">
-    <h2 data-split="chars">Say hi!</h2>
-    <div class="contact-card" data-contact></div>
-    <div class="skills" data-skills></div>
+    <h2 data-split="chars">Let's connect</h2>
+    <div class="now-panel" data-now></div>
     <footer class="foot">
-      <p>© <span data-year></span> Yitian (Minko) Ma · made with a lot of photos</p>
+      <p>© <span data-year></span> Minko Ma</p>
+      <p class="foot-links">
+        <a class="foot-li" data-foot-li target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+        </a>
+        <a data-foot-mail></a>
+      </p>
     </footer>
   </section>
 

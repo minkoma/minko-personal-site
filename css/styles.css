@@ -21,9 +21,12 @@
   --sans: "Nunito", system-ui, sans-serif;
   --pad: clamp(18px, 5vw, 88px);
 
-  /* A little bouquet flower for the pointer, and a heart over anything clickable. */
+  /* A little bouquet flower for the pointer, and a tapping hand over anything
+     clickable. The hover cursor used to be a heart, which said "I like this"
+     rather than "you can click this"; the hand with click rays reads as an
+     affordance, and its hotspot sits on the fingertip. */
   --cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'><g fill='%23d9c2ff' stroke='%234f3a86' stroke-width='1.4'><circle cx='17' cy='8.5' r='5.6'/><circle cx='25.4' cy='14.6' r='5.6'/><circle cx='22.2' cy='24.4' r='5.6'/><circle cx='11.8' cy='24.4' r='5.6'/><circle cx='8.6' cy='14.6' r='5.6'/></g><circle cx='17' cy='17' r='4.4' fill='%23f2b544' stroke='%234f3a86' stroke-width='1.4'/></svg>") 17 17, auto;
-  --cursor-hand: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'><path d='M17 30C8 23 3 18 3 11.5a7 7 0 0 1 14-2.5 7 7 0 0 1 14 2.5C31 18 26 23 17 30z' fill='%23ff9fb2' stroke='%234f3a86' stroke-width='1.6'/><circle cx='11' cy='10.5' r='2' fill='%23fff'/></svg>") 17 17, pointer;
+  --cursor-hand: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'><g fill='none' stroke='%234f3a86' stroke-width='1.8' stroke-linecap='round'><path d='M15.3 5.6V2.7'/><path d='M9.8 7.3 8 5.4'/><path d='M20.8 7.3 22.6 5.4'/></g><path d='M13 9.6a2.3 2.3 0 0 1 4.6 0v8.3l2.2-.5a3 3 0 0 1 3.6 2.1l1 3.8a6 6 0 0 1-4.3 7.2l-3 .8a6 6 0 0 1-7-3.4l-3.3-7.2a2.2 2.2 0 0 1 3.8-2.1l1.4 2.2z' fill='%23ffc6d2' stroke='%234f3a86' stroke-width='1.6' stroke-linejoin='round'/></svg>") 15 9, pointer;
 }
 
 html,
@@ -509,7 +512,22 @@ p {
   grid-template-columns: minmax(0, 1fr) minmax(0, var(--note-w));
 }
 
+/* On a mirrored step a tower cluster puts its tallest photo on the note side,
+   so the column gap is the whole distance between that photo and the text. The
+   default gap left a band of paper there. This is tighter, but not as tight as
+   it looks: the tall frame is tilted, and its corner reaches about 5px further
+   for every degree, so a 32px gap puts the corner ~11px from the note. */
+.step:has(.layout-tower) {
+  column-gap: clamp(22px, 2.3vw, 32px);
+}
+
 .step .step-photos {
+  /* The negative margin alone only SHIFTED the cluster into the page padding:
+     with width:100% the box stays its cell's width, so the overhang on the
+     outer edge was paid for by an equal gap on the note side. Adding the bleed
+     to the width instead makes the cluster genuinely wider — every photo in it
+     grows by the same proportion — and closes that gap. */
+  width: calc(100% + var(--bleed));
   margin-right: calc(-1 * var(--bleed));
   margin-left: auto;
 }
@@ -517,6 +535,19 @@ p {
 .step.is-flip .step-photos {
   margin-right: auto;
   margin-left: calc(-1 * var(--bleed));
+}
+
+/* On a mirrored step the tower's tall frame faces the note, and that is the
+   gap Minko wanted closed. The cluster is wider than its grid area (it bleeds
+   into the page padding) and the height cap can make it wider still, so auto
+   margins cannot decide where the overflow goes — a margin-left:auto is simply
+   dropped when the box is over-constrained. Grid alignment can: aligning the
+   box to the end of its area pins the tall frame beside the note and sends all
+   the overflow out to the page's edge instead. */
+.step.is-flip .layout-tower {
+  justify-self: end;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .step.is-flip .step-note {
@@ -757,8 +788,9 @@ p {
 /* The third photo sits on its own row, pulled back up over the pair. Its width
    comes from sizeCluster, which derives it from the row's height so that a
    portrait third and a landscape third end up a similar height rather than a
-   similar width. */
-.count-3 .snap-2 {
+   similar width. Only for the default pair layout: the two shape-specific
+   layouts below place all three frames themselves. */
+.count-3:not(.layout-twins):not(.layout-tower) .snap-2 {
   order: 3;
   grid-column: 1 / span 2;
   grid-row: 2;
@@ -771,6 +803,51 @@ p {
 /* The mirrored-step overrides that used to swap the two grid columns are gone:
    which photo sits where is now decided from the photos' shapes in main.js,
    and applies the same way to a mirrored step. */
+
+/* ------------------------------------------ a tall photo and a stack of two */
+/* Chosen by sizeCluster whenever one of the three photos is clearly the
+   tallest — Minko's reference pinboard for the 2022 card, and the shape most
+   of her mixed sets want. The tall photo holds the right-hand side at full
+   height and sits over everything; the other two stack on the left. The column
+   split comes from main.js and makes the stack's two heights add up to the
+   tall photo's height, so the block's left and right edges finish level. Both
+   laps are fixed pixel amounts at the frames' edges, as everywhere else in the
+   pile. */
+.layout-tower .snap.is-stack-top {
+  order: 1;
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  margin: 0 0 0 var(--top-x, 0px);
+  z-index: 2;
+}
+
+.layout-tower .snap.is-stack-bottom {
+  order: 2;
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: start;
+  /* Both set by main.js from the photos' shapes: a landscape frame under an
+     upright runs past its column (--sub-w over 100%) and laps under the tall
+     frame; a frame of similar shape to the one above is inset instead. */
+  width: var(--sub-w, 86%);
+  margin: -20px 0 0 var(--sub-x, 0px);
+  z-index: 1;
+}
+
+.layout-tower .snap.is-tall {
+  order: 3;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  justify-self: stretch;
+  width: auto;
+  /* Laps over the stack rather than leaving a seam, and overhangs its own
+     column a little so it reads as the frame on top. No `scale` here: GSAP
+     animates scale on these same frames as the section scrolls. */
+  margin: 0 0 0 -10px;
+  z-index: 5;
+}
 
 /* The stamp lives in the 34px strip reserved at the top of the cluster, in
    whichever outer corner is away from the note. Because the strip is padding
@@ -801,6 +878,13 @@ p {
   left: -4px;
 }
 
+/* Where the stack leans out into the page's margin, main.js positions the
+   stamp from the top frame's measured corner instead, so it keeps sitting
+   beside the photos rather than on top of the upper one. */
+.is-flip .layout-tower .year-stamp {
+  top: -16px;
+}
+
 /* The old .count-3 overrides are gone: the stamp's strip is reserved for every
    cluster now, so there is nothing per-count left to correct. */
 
@@ -816,149 +900,301 @@ p {
 }
 
 /* ----------------------------------------------------------------- toolkit
-   Trays on a table. Ported from option 2 of tools-lab.html, retuned onto the
-   site's own tokens: paper white trays, the washi-tape yellow label, the plum
-   ink, and the shared shadow.
+   One line per group. Ported from option 7 of tools-lab2.html, retuned onto
+   the site's own tokens.
 
-   Named .toolkit, NOT .skills: that class is already taken by the résumé's
-   skills list (resume.html, and the block at the bottom of index.html) and its
-   rule is a two-column auto-fit grid, which split this section in half. */
+   This replaced the tilted paper trays (option 2 of tools-lab.html). Minko's
+   reason: she likes the real logos but not boxes, and what she wanted kept was
+   the full software name beside every mark. So the groups became rows, the
+   names are always spelled out, and the only decoration is a hairline.
+
+   Named .toolkit, NOT .skills: that class is taken by the resume's skills list
+   and its rule is a two-column auto-fit grid, which split this section in
+   half. The ids do not collide, so id="skills" on the section is fine. */
 .toolkit {
   position: relative;
   z-index: 1;
-  padding: 0 0 clamp(20px, 4vh, 48px);
+  padding: 0 var(--pad) clamp(20px, 4vh, 48px);
 }
 
-.trays {
+/* Wider and tighter than the first cut: the rows looked empty because the
+   section inherited the page's full --pad on both sides AND capped at 1180px,
+   so a five-item row floated in the middle of the page. The panel now runs
+   close to the page edges and the padding inside it is its own, not --pad.
+
+   The panel itself is the translucent box: the dashed ribbon runs behind this
+   section, and at full transparency a dash sat directly under tool names. A
+   paper-coloured wash at 72% with a small blur pushes it back without turning
+   the rows into cards. */
+/* Every other section gets the full .section-head rhythm. This one is
+   deliberately shorter: Minko wants the title and the entire table visible on
+   one screen, which the standard clamp(60px, 11vh, 160px) top padding plus an
+   eyebrow and a hand line made impossible. */
+.toolkit .section-head {
+  /* .toolkit now carries the page gutter itself, so the header must not add
+     another var(--pad) on top: that indented the title ~144px while the panel
+     started at 72px, and the two left edges have to agree.
+
+     max-width is dropped and the header becomes a row, so the instruction can
+     sit against the panel's right edge instead of stacking under the title. */
+  padding: clamp(26px, 5vh, 62px) 0 clamp(12px, 2.2vh, 24px);
+  max-width: none;
+  /* Same cap and centring as the panel below, or on a wide screen the title
+     sits at the page gutter while the panel starts 38px further in. */
   width: min(1480px, 100%);
   margin: 0 auto;
-  padding: 10px var(--pad) 0;
   display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
   flex-wrap: wrap;
-  gap: clamp(18px, 2.4vw, 30px);
-  justify-content: center;
 }
 
-.tray {
-  position: relative;
-  width: clamp(240px, 24vw, 290px);
-  min-height: 168px;
-  padding: 34px 18px 18px;
-  background: var(--card);
-  border-radius: 6px;
-  transform: rotate(var(--r, 0deg));
-  box-shadow: var(--shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.toolkit .section-head h2 {
+  font-size: clamp(30px, 4.4vw, 62px);
 }
 
-/* The faint ruled lines that make it read as paper rather than a panel. */
-.tray::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 6px;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px 4px);
-  pointer-events: none;
-}
-
-.tray:hover {
-  transform: rotate(0deg) translateY(-6px);
-  box-shadow: 0 20px 38px rgba(89, 72, 107, 0.2);
-  z-index: 3;
-}
-
-.tray h3 {
-  position: absolute;
-  top: -13px;
-  left: 14px;
-  margin: 0;
-  padding: 3px 12px;
-  font-family: var(--hand);
-  font-size: clamp(18px, 1.5vw, 21px);
-  font-weight: 700;
-  color: var(--plum-deep);
-  background: #fff6cf;
-  border-radius: 3px;
-  transform: rotate(-2deg);
-  box-shadow: 0 3px 8px rgba(89, 72, 107, 0.12);
-}
-
-.tray-items {
+/* Small caps, not the handwriting: the hand font is what made this read as a
+   second title. An arrow points at the table it describes. */
+.toolkit-hint {
+  margin: 0 0 clamp(6px, 1.2vh, 14px);
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: clamp(11px, 0.85vw, 12.5px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
   display: flex;
-  flex-wrap: wrap;
-  gap: 14px 16px;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  padding-bottom: 7px;
+  border-bottom: 1.5px dashed var(--line);
 }
 
-.tool {
-  position: relative;
+.toolkit-hint span {
+  font-size: 15px;
+  letter-spacing: 0;
+  color: var(--plum);
+}
+
+@media (max-width: 680px) {
+  .toolkit .section-head {
+    display: block;
+  }
+
+  .toolkit-hint {
+    margin-top: 12px;
+    display: inline-flex;
+  }
+}
+
+.lines {
+  width: min(1480px, 100%);
+  margin: 0 auto;
+  padding: clamp(16px, 2.2vw, 30px) clamp(16px, 2.4vw, 44px);
   display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  rotate: var(--ir, 0deg);
-  transition: rotate 0.3s ease, scale 0.3s ease;
+  row-gap: 2px;
+  background: rgba(255, 253, 248, 0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  border-radius: clamp(14px, 1.6vw, 22px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
+}
+
+/* align-items: center, not baseline: the handwritten group name sits level
+   with its row of tools instead of hanging off their first text baseline,
+   which read as detached from the rule under it. */
+.line {
+  display: grid;
+  grid-template-columns: clamp(118px, 13vw, 208px) 1fr;
+  align-items: center;
+  /* column-gap, NOT gap. `gap` is both axes, and this row has a second grid
+     row for the (closed, 0px) detail slot, so a ~29px row gap sat underneath
+     the content and pushed it off centre between the two rules: 19px of space
+     above the logos, 49px below. The detail spaces itself with its own
+     margin-top when it opens. */
+  column-gap: clamp(16px, 2vw, 32px);
+  padding: clamp(13px, 1.6vh, 18px) 0;
+  border-bottom: 1px solid var(--line);
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.line:last-of-type { border-bottom: 0; }
+
+/* Soloing: the clicked group's row stays lit and the rest recede. */
+.line.is-dim {
+  opacity: 0.26;
+  filter: saturate(0.25);
+}
+
+/* The group label is a real button, so soloing works on tap and by keyboard. */
+.line-label {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
   cursor: var(--cursor-hand);
-  outline-offset: 6px;
+  font-family: var(--hand);
+  font-weight: 700;
+  font-size: clamp(21px, 2vw, 28px);
+  color: var(--plum);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  text-align: right;
+  /* The longest label is "Web & commerce"; at 28px Caveat it wrapped to two
+     lines in a 172px column and hung off the rule. */
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  outline-offset: 5px;
 }
 
-.tool-face {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
+.line-label:hover,
+.line-label[aria-pressed="true"] { color: var(--plum-deep); }
+
+.line-label .n {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--ink-soft);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.line-label:hover .n,
+.line-label[aria-pressed="true"] .n { opacity: 0.7; }
+.line-label .n::before { content: "("; }
+.line-label .n::after { content: ")"; }
+
+.line-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(10px, 1.2vh, 14px) clamp(13px, 1.65vw, 27px);
+  align-items: center;
+}
+
+/* Each tool is a button too: it opens the line about what it is used for. */
+.tool-btn {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 3px 1px 6px;
+  cursor: var(--cursor-hand);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  font: 600 clamp(14.5px, 1.28vw, 19px)/1.2 var(--sans);
+  color: var(--ink);
+  border-radius: 4px;
+  outline-offset: 4px;
+  transition: color 0.22s ease, opacity 0.3s ease, transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* The real logos keep their own colours: no filter, no mask, no tint. */
-.tool img {
-  width: 100%;
-  height: 100%;
+.tool-btn img {
+  width: clamp(28px, 2.5vw, 34px);
+  height: clamp(28px, 2.5vw, 34px);
   object-fit: contain;
+  flex: 0 0 auto;
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* App Store icons arrive as square PNGs that already include their own
    background, so they get the rounded corner the real app icon has. */
-.tool.is-app img {
-  border-radius: 10px;
+.tool-btn img.is-app {
+  border-radius: 9px;
   box-shadow: 0 1px 3px rgba(89, 72, 107, 0.2);
 }
 
-.tool:hover,
-.tool:focus-visible {
-  rotate: 0deg;
-  scale: 1.18;
-  z-index: 4;
-}
-
-.tool-tip {
+/* The underline is the tool's own brand colour, grown from the left. */
+.tool-btn::after {
+  content: "";
   position: absolute;
-  left: 50%;
-  top: calc(100% + 7px);
-  translate: -50% 0;
-  white-space: nowrap;
-  font-size: 11.5px;
-  color: var(--ink-soft);
-  background: #fff;
-  padding: 3px 8px;
-  border-radius: 7px;
-  box-shadow: 0 4px 10px rgba(89, 72, 107, 0.16);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--c, var(--plum));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tool-btn:hover,
+.tool-btn:focus-visible,
+.tool-btn.is-on { color: var(--plum-deep); }
+
+.tool-btn:hover::after,
+.tool-btn:focus-visible::after,
+.tool-btn.is-on::after { transform: scaleX(1); }
+
+.tool-btn:hover { transform: translateY(-2px); }
+
+.tool-btn:hover img,
+.tool-btn.is-on img { transform: scale(1.16); }
+
+/* Spotlight: while one tool is open, every other tool recedes. */
+.lines.is-live .tool-btn:not(.is-on):not(:hover) { opacity: 0.3; }
+
+/* The detail line. Starts in the items column, under the first logo. */
+.line-detail {
+  grid-column: 2;
+  overflow: hidden;
+  max-height: 0;
   opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.35s ease;
 }
 
-.tool:hover .tool-tip,
-.tool:focus-visible .tool-tip {
+.line.is-open .line-detail {
+  max-height: 120px;
   opacity: 1;
+  margin-top: 12px;
 }
 
-@media (max-width: 640px) {
-  .tray { width: 100%; }
+.line-detail p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--hand);
+  font-size: clamp(18px, 1.7vw, 23px);
+  color: var(--ink-soft);
+}
+
+.line-detail img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.line-detail img.is-app { border-radius: 7px; }
+
+.line-detail b {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(15px, 1.3vw, 18px);
+  color: var(--plum-deep);
+}
+
+@media (max-width: 680px) {
+  .line {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .line-label { justify-content: flex-start; }
+  .line-detail { grid-column: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tray, .tool { transition: none; }
+  .line,
+  .tool-btn,
+  .tool-btn img,
+  .line-detail { transition: none; }
 }
 
 /* -------------------------------------------------------------------- film
@@ -1712,83 +1948,314 @@ p {
 .contact {
   position: relative;
   z-index: 1;
-  padding: clamp(60px, 10vh, 130px) var(--pad) 0;
+  padding: clamp(46px, 8vh, 110px) var(--pad) 0;
   max-width: 1100px;
   margin: 0 auto;
   text-align: center;
 }
 
 .contact h2 {
-  font-size: clamp(48px, 10vw, 150px);
+  /* Smaller than the other section titles and pinned to one line: this is a
+     sign-off, not a chapter opening, and the panel under it carries the page. */
+  font-size: clamp(32px, 5.6vw, 76px);
   color: var(--plum-deep);
+  white-space: nowrap;
 }
 
-.contact-card {
+/* The "now" panel: four ruled rows on a taped card. Replaced the single
+   contact card, which only ever said "here is my email" — this says when she
+   is awake, what she is looking for, and how to reach her, and the clock in
+   row one is live. Data and the sleep window come from D.now. */
+.now-panel {
   position: relative;
   background: var(--card);
-  border-radius: 6px;
-  padding: clamp(28px, 4vw, 56px);
+  border-radius: 8px;
   box-shadow: var(--shadow);
-  margin-top: 30px;
+  margin-top: clamp(22px, 3vh, 38px);
+  text-align: left;
+  transform: rotate(-0.5deg);
+  overflow: hidden;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+.now-row {
   display: grid;
-  gap: 18px;
-  justify-items: center;
-  transform: rotate(-0.8deg);
+  grid-template-columns: clamp(86px, 11vw, 132px) 1fr;
+  gap: clamp(12px, 2vw, 26px);
+  align-items: center;
+  padding: clamp(16px, 2.2vh, 24px) clamp(18px, 3vw, 40px);
+  border-bottom: 1px solid var(--line);
+  transition: border-color 0.5s ease;
+}
+
+.now-row:last-of-type { border-bottom: 0; }
+
+.now-row > i {
+  font-style: normal;
+  font-size: clamp(9.5px, 0.8vw, 11px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  transition: color 0.5s ease;
+}
+
+/* ---- row 1: the clock ---- */
+.now-clock {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: var(--cursor-hand);
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--display);
+  font-weight: 800;
+  color: var(--plum-deep);
+  line-height: 1;
+  transition: color 0.5s ease, transform 0.2s ease;
+  outline-offset: 6px;
+}
+
+.now-clock:hover { transform: translateY(-1px); }
+
+.now-hm {
+  font-size: clamp(34px, 6vw, 68px);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The seconds are deliberately smaller, superscript and recoloured on every
+   tick, so the movement is visible without the clock dominating the row. */
+.now-sec {
+  font-size: clamp(15px, 2.2vw, 26px);
+  font-variant-numeric: tabular-nums;
+  align-self: flex-start;
+  color: var(--plum);
+}
+
+.now-sec.is-beat { animation: secBeat 0.6s cubic-bezier(0.2, 0.9, 0.2, 1); }
+
+@keyframes secBeat {
+  0% { transform: translateY(-2px) scale(1.22); }
+  100% { transform: none; }
+}
+
+.now-ampm {
+  font-family: var(--hand);
+  font-weight: 700;
+  font-size: clamp(16px, 2vw, 24px);
+  color: var(--ink-soft);
+}
+
+.now-yours:empty { display: none; }
+
+.now-yours {
+  margin: 5px 0 0;
+  font-family: var(--hand);
+  font-size: clamp(14px, 1.3vw, 18px);
+  color: var(--ink-soft);
+}
+
+/* ---- row 2: awake or asleep ---- */
+.now-state {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(15px, 1.5vw, 21px);
+  color: var(--plum-deep);
+  transition: color 0.5s ease;
+}
+
+/* A little sun that becomes a crescent moon: the crescent is cut with an
+   inset box-shadow rather than a second element. */
+.now-orb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: var(--sun);
+  box-shadow: 0 0 0 5px rgba(242, 181, 68, 0.26);
+  animation: orbPulse 3s ease-in-out infinite;
+}
+
+/* Winding down: the sun dims and stops pulsing, but it is not yet a moon. */
+.now-state.is-winding .now-orb {
+  background: #e8cf9a;
+  box-shadow: 0 0 0 5px rgba(242, 181, 68, 0.14);
+  animation: none;
+}
+
+.now-state.is-asleep .now-orb {
+  background: transparent;
+  box-shadow: inset -4px 0 0 0 #b9a7d6, 0 0 0 5px rgba(124, 92, 196, 0.16);
+  animation: none;
+}
+
+@keyframes orbPulse {
+  50% { box-shadow: 0 0 0 10px rgba(242, 181, 68, 0); }
+}
+
+/* ---- row 3: what she is open to ---- */
+/* Two questions, two weights. The commitment is one solid pill because there
+   is only one answer to it; the fields are outlined pills because they are a
+   list. The four arbitrary chip colours this replaced carried no meaning, so
+   the row read as a legend to something that did not exist. */
+.now-open {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px 11px;
+}
+
+.now-open-lead {
+  font-family: var(--hand);
+  font-size: clamp(15px, 1.4vw, 19px);
+  color: var(--ink-soft);
+}
+
+.now-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 7px 15px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: clamp(12.5px, 1.1vw, 14.5px);
+  transition: transform 0.2s ease;
+}
+
+.chip-lead {
+  background: var(--plum);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(124, 92, 196, 0.3);
+}
+
+.chip-field {
+  background: transparent;
+  color: var(--plum-deep);
+  box-shadow: inset 0 0 0 1.5px #ded0f4;
+  animation: chipIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--i, 0ms);
+}
+
+.chip:hover { transform: translateY(-2px) rotate(-1deg); }
+
+@keyframes chipIn {
+  from { opacity: 0; transform: translateY(7px) scale(0.96); }
+}
+
+/* ---- the where row ---- */
+.now-place {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(15px, 1.5vw, 21px);
+  color: var(--plum-deep);
+  transition: color 0.5s ease;
+}
+
+/* ---- row 4: reach me ---- */
+.now-reach {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
 }
 
 .big-link {
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(20px, 3.2vw, 44px);
+  /* Was clamp(20px, 3.2vw, 44px), which put the address at almost heading
+     size and made the row shout. */
+  font-size: clamp(17px, 1.8vw, 26px);
   color: var(--plum-deep);
   text-decoration: none;
-  border-bottom: 4px solid var(--sun);
+  border-bottom: 3px solid var(--sun);
   overflow-wrap: anywhere;
+  transition: color 0.5s ease;
 }
 
-.contact-row {
+.now-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
+  gap: 10px;
 }
 
-.contact-note {
-  font-size: 13.5px;
-  color: var(--ink-soft);
+/* ---- the easter egg: three clicks on the clock turn the panel to night ---- */
+.now-egg-line {
+  margin: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  font-family: var(--hand);
+  font-size: clamp(16px, 1.6vw, 21px);
+  color: #cdbce8;
+  text-align: center;
+  transition: max-height 0.45s ease, opacity 0.35s ease, padding 0.45s ease;
 }
 
-.skills {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 18px;
-  margin-top: clamp(50px, 8vh, 100px);
-  text-align: left;
+.now-egg-line.is-on {
+  max-height: 70px;
+  opacity: 1;
+  padding: 0 24px 20px;
 }
 
-.sticky {
-  background: #fff6cf;
-  border-radius: 3px;
-  padding: 16px;
-  transform: rotate(var(--r, 0deg));
-  box-shadow: var(--shadow);
+.now-panel.is-night {
+  background: #1a1424;
+  background-image:
+    radial-gradient(1.4px 1.4px at 14% 22%, #fff 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 33% 68%, #ffe9a8 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 58% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 76% 55%, #d7c6ff 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 90% 30%, #fff 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 46% 88%, #fff 50%, transparent 51%);
 }
 
-.sticky:nth-child(even) {
-  background: #e4f4ee;
+.now-panel.is-night .now-row { border-color: rgba(243, 237, 248, 0.16); }
+.now-panel.is-night .now-row > i { color: #9f8fae; }
+.now-panel.is-night .now-clock,
+.now-panel.is-night .now-state,
+.now-panel.is-night .now-place,
+.now-panel.is-night .big-link { color: #ffe9a8; }
+.now-panel.is-night .now-ampm,
+.now-panel.is-night .now-yours { color: #a89ab8; }
+.now-panel.is-night .button { background: #ffe9a8; color: #1a1424; }
+
+/* At night the outlined field pills take the light and the solid one keeps
+   its weight by going gold rather than plum. */
+.now-panel.is-night .chip-field {
+  color: #ede5f7;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 233, 168, 0.32);
 }
 
-.sticky h4 {
-  margin: 0 0 6px;
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--plum);
+.now-panel.is-night .chip-lead {
+  background: #ffe9a8;
+  color: #1a1424;
+  box-shadow: none;
 }
 
-.sticky p {
-  font-size: 13px;
-  color: var(--ink-soft);
+.now-panel.is-night .now-open-lead { color: #a89ab8; }
+
+@media (max-width: 640px) {
+  .now-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .now-orb,
+  .now-sec.is-beat,
+  .chip-field { animation: none; }
+}
+
+/* The .skills / .sticky note boxes that used to close the contact section are
+   removed — the toolkit already has its own section upstream. */
 
 .foot {
   margin-top: clamp(50px, 8vh, 90px);
@@ -1800,6 +2267,34 @@ p {
   gap: 10px;
   font-size: 13px;
   color: var(--ink-soft);
+}
+
+.foot p { margin: 0; }
+
+.foot-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.foot-links a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color .2s ease, border-color .2s ease;
+}
+
+.foot-links a:hover { color: var(--ink); border-bottom-color: currentColor; }
+
+.foot-li {
+  display: inline-flex;
+  border-bottom: 0 !important;
+}
+
+.foot-li svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
 }
 
 /* ===================================================================== fx */

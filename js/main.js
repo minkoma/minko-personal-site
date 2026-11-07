@@ -17,6 +17,15 @@
   $(".hello-text").textContent = D.profile.bio;
   $("[data-year]").textContent = new Date().getFullYear();
 
+  /* Footer contact links share the single source of truth in content.js. */
+  const footLi = $("[data-foot-li]");
+  if (footLi) footLi.href = D.profile.linkedin;
+  const footMail = $("[data-foot-mail]");
+  if (footMail) {
+    footMail.href = "mailto:" + D.profile.email;
+    footMail.textContent = D.profile.email;
+  }
+
   /* ------------------------------------------------------------- my path */
   /* Coursework and campus involvement, for the school notes only. Courses are
      chips rather than a bullet list: there are up to seventeen of them, and a
@@ -59,7 +68,9 @@
       involvement: e.involvement,
       /* A school can carry a set like a job does; `photo` is the single-image
          shorthand for one that only has the one. */
-      photos: e.photos || [e.photo]
+      photos: e.photos || [e.photo],
+      tilt: e.photoTilt,
+      bias: e.photoBias
     }))
     .concat(
       D.work.map((w) => ({
@@ -71,6 +82,8 @@
         place: w.place,
         body: w.points,
         photos: w.photos,
+        tilt: w.photoTilt,
+        bias: w.photoBias,
         tags: w.tags
       }))
     )
@@ -92,12 +105,13 @@
           <ul class="note-points">${e.body.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>
           ${eduExtra(e)}
         </div>
-        <div class="step-photos count-${Math.min(e.photos.length, 3)}" data-step-photos>
+        <div class="step-photos count-${Math.min(e.photos.length, 3)}" data-step-photos
+             ${e.bias ? `data-bias="${e.bias}"` : ""}>
           <span class="year-stamp" aria-hidden="true">${esc(e.year)}</span>
           ${e.photos
             .slice(0, 3)
             .map(
-              (p, j) => `<figure class="snap snap-${j}" style="--r:${rot(i * 3 + j + 1, 5)}deg">
+              (p, j) => `<figure class="snap snap-${j}" style="--r:${e.tilt?.[j] ?? rot(i * 3 + j + 1, 5)}deg">
                 <span class="tape ${j % 2 ? "tape-br" : "tape-tl"}" aria-hidden="true"></span>
                 <img src="${p}" alt="${esc(e.title)}" loading="lazy"
                      data-lightbox data-lightbox-group="step-${i}"
@@ -105,7 +119,7 @@
               </figure>`
             )
             .join("")}
-          <p class="step-place">${esc(e.place.toLowerCase())}</p>
+          <p class="step-place">${esc(e.place)}</p>
         </div>
       </article>`
     )
@@ -170,6 +184,115 @@
     });
     if (ratios.slice(0, 2).some((r) => !r)) return;
 
+    /* Three photos of mixed shapes do not all want the same arrangement, and
+       the shapes themselves say which one they want. Whenever one photo is
+       clearly the tallest of the three, that photo runs the full height of the
+       cluster on the right and the other two stack against it — the pinboard
+       arrangement Minko drew as a reference for the 2022 card. Three photos of
+       much the same shape have no tall one to build around, so they keep the
+       pair-over-a-third layout. */
+    const shape = (r) => (r < 0.95 ? "p" : r > 1.12 ? "l" : "s");
+    const kinds = ratios.map(shape);
+    const n = (k) => kinds.filter((x) => x === k).length;
+    const mode =
+      ratios.length < 3 || !ratios[2] ? "pair" : n("p") >= 1 && n("p") <= 2 ? "tower" : "pair";
+
+    group.classList.remove("layout-tower");
+    snaps.forEach((s) =>
+      s.classList.remove("is-drop", "is-lap", "is-stack-top", "is-stack-bottom", "is-tall")
+    );
+    snaps.forEach((s) => (s.style.order = ""));
+    group.style.maxWidth = "";
+
+    /* ----------------------------------------- a tall photo and a stack of two */
+    /* The tallest photo is the one the cluster is built around: it holds the
+       right-hand side at full height and sits over everything, and the other
+       two stack on the left with their edges finishing level with its own. The
+       column split is solved from the three real ratios, so the block reads as
+       one shape rather than three photos placed near each other. */
+    if (mode === "tower") {
+      group.classList.add("layout-tower");
+      const tallest = ratios.indexOf(Math.min(...ratios));
+      const tall = snaps[tallest];
+      const arTall = ratios[tallest];
+      /* The stack puts the more upright of the two on top and the wider one
+         underneath, as in the reference: a wide photo makes a base, and an
+         upright beside the tall frame's upper half carries the eye across. */
+      const rest = snaps
+        .map((s, i) => ({ s, ar: ratios[i], i }))
+        .filter((x) => x.i !== tallest)
+        .sort((a, b) => a.ar - b.ar);
+      const restAr = rest.map((x) => x.ar);
+
+      /* How wide the lower frame is relative to the stack's column, and how far
+         the stack leans out past the cluster's left edge into the page's
+         margin. The two are decided together, because they trade: every pixel
+         the lower frame gains extends to the right, under the tall frame,
+         unless it can move left by as much.
+
+         Minko asked for "2 to 3 cm" of lean and 10-20% more size on that
+         frame. A 1400px window has about 20px of margin to lean into; an
+         1800px one has over 200. So the lean is measured rather than written
+         as a fixed number, and the size follows it: full lean gets the full
+         size increase, no lean gets the smaller frame and the overlap stays
+         where it was. Measured after the columns and the cap are applied,
+         because the cluster's own left edge depends on both; the resize
+         listener re-runs the whole function. */
+      const laps = restAr[1] > restAr[0] * 1.5;
+      const ASK = 100; /* ~2.6cm at 96dpi */
+      const columns = (sub) => {
+        const u = Math.min(
+          Math.max(1 / arTall / (1 / restAr[0] + sub / restAr[1] + 1 / arTall), 0.42),
+          0.72
+        );
+        group.style.gridTemplateColumns = `${u.toFixed(4)}fr ${(1 - u).toFixed(4)}fr`;
+        group.style.setProperty("--sub-w", `${(sub * 100).toFixed(0)}%`);
+        /* Here the row height IS the cluster's height, so it can run taller
+           than the pair layout's cap without costing more scrolling than the
+           stacked arrangement it replaced. */
+        const rowH = (1 - u) / arTall;
+        group.style.maxWidth = "";
+        if (group.clientWidth * rowH > 580) {
+          group.style.maxWidth = `${Math.round(580 / rowH)}px`;
+        }
+      };
+
+      rest[0].s.style.order = 1;
+      rest[1].s.style.order = 2;
+      tall.style.order = 3;
+      rest[0].s.classList.add("is-stack-top");
+      rest[1].s.classList.add("is-stack-bottom");
+      tall.classList.add("is-tall");
+
+      if (!laps) {
+        group.style.setProperty("--sub-x", "clamp(10px, 2.2vw, 30px)");
+        group.style.setProperty("--top-x", "0px");
+        columns(0.86);
+        return;
+      }
+
+      columns(1.3);
+      /* Keep 20px, so a tilted corner never reaches the window's edge. */
+      const shift = Math.max(0, Math.min(ASK, group.getBoundingClientRect().left - 20));
+      columns(1.3 + 0.2 * (shift / ASK));
+      group.style.setProperty("--sub-x", `${-Math.round(shift)}px`);
+      group.style.setProperty("--top-x", `${-Math.round(shift * 0.3)}px`);
+      /* The year stamp lives in the strip reserved at the top of the cluster,
+         and on a mirrored step that is the corner the stack leans into. Place
+         it from the measured position of the top frame rather than from the
+         cluster's edge: its right side should just catch that frame's corner,
+         and it must not leave the page on a narrow window. */
+      const stamp = $(".year-stamp", group);
+      if (stamp && group.closest(".step")?.classList.contains("is-flip")) {
+        const gRect = group.getBoundingClientRect();
+        const tRect = rest[0].s.getBoundingClientRect();
+        const want = tRect.left - gRect.left - stamp.offsetWidth + 22;
+        const floor = 12 - gRect.left; /* keeps the stamp 12px inside the page */
+        stamp.style.left = `${Math.round(Math.max(want, floor))}px`;
+      }
+      return;
+    }
+
     const portraitFirst = ratios[1] < ratios[0];
     const left = portraitFirst ? snaps[1] : snaps[0];
     const right = portraitFirst ? snaps[0] : snaps[1];
@@ -192,7 +315,6 @@
        of pixels of scrolling on its own. */
     const rowH = shareLeft / arLeft;
     const MAX_ROW = 430;
-    group.style.maxWidth = "";
     const avail = group.clientWidth;
     if (avail * rowH > MAX_ROW) {
       group.style.maxWidth = `${Math.round(MAX_ROW / rowH)}px`;
@@ -203,14 +325,22 @@
        comes out roughly as tall as the row above it — a peer rather than
        either a centrepiece or an afterthought. It was a fixed share of the
        width before, which made a portrait third tower over the row and a
-       landscape third look incidental. */
+       landscape third look incidental.
+
+       A set of three landscape photos is the one case where that leaves the
+       third frame looking small: a row of two wide photos is short, so a third
+       scaled from the row's height is short and narrow at once. Those sets get
+       a bigger factor and a higher ceiling. The laps are fixed pixel amounts
+       either way, so a bigger frame is covered proportionally less. */
     if (ratios[2]) {
-      const third = Math.min(Math.max(rowH * 0.95 * ratios[2], 0.36), 0.56);
+      const allWide = ratios.every((r) => r > 1.12);
+      const factor = allWide ? 1.3 : 0.95;
+      const ceiling = allWide ? 0.66 : 0.56;
+      const third = Math.min(Math.max(rowH * factor * ratios[2], 0.36), ceiling);
       group.style.setProperty("--third-w", `${(third * 100).toFixed(1)}%`);
     }
 
     const flipped = group.closest(".step")?.classList.contains("is-flip");
-    snaps.forEach((s) => s.classList.remove("is-drop", "is-lap"));
     right.classList.add("is-lap");
     (flipped ? left : right).classList.add("is-drop");
   }
@@ -268,8 +398,8 @@
     const halves = Math.ceil(need / HALF);
     const H = halves * HALF;
     if (!W) return;
-    if (svg.dataset.fit === `${W}x${H}`) return;
-    svg.dataset.fit = `${W}x${H}`;
+    if (svg.dataset.fit === `${W}x${need}`) return;
+    svg.dataset.fit = `${W}x${need}`;
 
     /* Horizontal user units are STRETCH times smaller than pixels; vertical
        ones are 1:1, so every y below is already a pixel measurement. */
@@ -295,7 +425,13 @@
 
     path.setAttribute("d", d);
     svg.setAttribute("viewBox", `0 0 ${n(vbW)} ${H}`);
-    svg.style.height = `${H}px`;
+    /* The drawing is rounded up to a whole number of half-periods, but the
+       ELEMENT is only as tall as the page below the hero. Rounding the element
+       up too used to leave up to a half-period (330px) of empty paper under the
+       footer, because the ribbon is absolutely positioned at top:100vh and so
+       grew the page. preserveAspectRatio="none" squeezes the last wave by at
+       most that much instead, which is not visible. */
+    svg.style.height = `${need}px`;
     return true;
   }
 
@@ -315,10 +451,10 @@
   window.addEventListener("load", scheduleRibbon);
 
   /* -------------------------------------------------------------- skills */
-  /* Trays on a table. Five tilted paper trays, each with its group name on a
-     sticky label and its tools scattered inside at small angles. Hovering a
-     tray straightens it and lifts it off the table; hovering one tool brings
-     it upright and names it.
+  /* One line per group: the group name handwritten on the left, then its tools
+     in a row, each with its real logo and its full name. Minko picked this out
+     of tools-lab2.html over the tilted paper trays it replaced — she wanted
+     the icons without the boxes, and the full name kept beside every mark.
 
      Every logo is the brand's real full-colour mark, served from assets/tools/
      and drawn with no filter, mask or tint. The earlier version drew from
@@ -327,33 +463,100 @@
      Fourteen are SVG from a colour-logo collection; the nine that collection
      does not publish are the official App Store app icons as PNG, which is
      why the filename comes from the data rather than being built from the
-     slug. */
+     slug.
+
+     Three interactions, all on real buttons so they work by tap and by
+     keyboard: hovering a tool lights it and recedes the rest, clicking it
+     opens the line about what it is for under its own row, and clicking a
+     group name solos that row. */
   (() => {
-    const root = $("[data-trays]");
+    const root = $("[data-lines]");
     if (!root || !D.tools) return;
+
+    /* The App Store PNGs already carry their own rounded square, so they get a
+       corner radius and the bare SVG marks do not. */
+    const mark = (t) =>
+      `<img class="${/\.png$/.test(t.file) ? "is-app" : ""}" src="assets/tools/${t.file}" alt="" loading="lazy">`;
 
     root.innerHTML = D.tools
       .map(
-        (g, gi) => `<div class="tray" style="--r:${rot(gi * 5 + 1, 2.4)}deg">
-          <h3>${esc(g.group)}</h3>
-          <div class="tray-items">
+        (g, gi) => `<div class="line">
+          <button class="line-label" type="button" aria-pressed="false" data-group="${gi}">
+            ${esc(g.group)}<span class="n">${g.items.length}</span>
+          </button>
+          <div class="line-items">
             ${g.items
-              .map((t, i) => {
-                const spin = `--ir:${rot(gi * 11 + i * 3, 7)}deg`;
-                /* The App Store icons already carry their own rounded square,
-                   so they get a corner radius and the SVG marks do not. */
-                const png = /\.png$/.test(t.file);
-                return `<span class="tool${png ? " is-app" : ""}"
-                              style="--c:${t.c};${spin}" tabindex="0">
-                          <span class="tool-face"><img src="assets/tools/${t.file}" alt="" loading="lazy"></span>
-                          <span class="tool-tip">${esc(t.name)}</span>
-                        </span>`;
-              })
+              .map(
+                (t, i) => `<button class="tool-btn" type="button" style="--c:${t.c}"
+                                   data-tool="${gi}-${i}" aria-expanded="false"
+                                   data-name="${esc(t.name)}" data-file="${esc(t.file)}"
+                                   data-use="${esc(t.use || "")}">
+                             ${mark(t)}${esc(t.name)}
+                           </button>`
+              )
               .join("")}
           </div>
+          <div class="line-detail" aria-live="polite"></div>
         </div>`
       )
       .join("");
+
+    /* One tool open at a time, so the section never grows by more than a line.
+       Clicking the open tool again, or pressing Escape, closes everything. */
+    let live = null;
+    const close = () => {
+      root.querySelectorAll(".tool-btn.is-on").forEach((b) => {
+        b.classList.remove("is-on");
+        b.setAttribute("aria-expanded", "false");
+      });
+      root.querySelectorAll(".line.is-open").forEach((l) => l.classList.remove("is-open"));
+      root.classList.remove("is-live");
+      live = null;
+    };
+
+    root.addEventListener("click", (e) => {
+      const label = e.target.closest(".line-label");
+      if (label) {
+        const on = label.getAttribute("aria-pressed") === "true";
+        root.querySelectorAll(".line-label").forEach((l) => l.setAttribute("aria-pressed", "false"));
+        root.querySelectorAll(".line").forEach((l) => l.classList.remove("is-dim"));
+        if (!on) {
+          label.setAttribute("aria-pressed", "true");
+          const row = label.closest(".line");
+          root.querySelectorAll(".line").forEach((l) => {
+            if (l !== row) l.classList.add("is-dim");
+          });
+        }
+        return;
+      }
+
+      const btn = e.target.closest(".tool-btn");
+      if (!btn) return;
+
+      const same = btn.dataset.tool === live;
+      close();
+      if (same) return;
+
+      /* A tool with no `use` written yet simply does not open a line, rather
+         than opening an empty one. */
+      const use = btn.dataset.use;
+      if (!use) return;
+
+      const row = btn.closest(".line");
+      const png = /\.png$/.test(btn.dataset.file);
+      row.querySelector(".line-detail").innerHTML =
+        `<p><img class="${png ? "is-app" : ""}" src="assets/tools/${btn.dataset.file}" alt="">
+           <span><b>${esc(btn.dataset.name)}</b> — ${esc(use)}</span></p>`;
+      btn.classList.add("is-on");
+      btn.setAttribute("aria-expanded", "true");
+      row.classList.add("is-open");
+      root.classList.add("is-live");
+      live = btn.dataset.tool;
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
   })();
 
   /* ---------------------------------------------------------------- film */
@@ -659,23 +862,150 @@
   }).join("");
 
   /* ------------------------------------------------------------- contact */
-  $("[data-contact]").innerHTML = `
-    <span class="tape tape-tl" aria-hidden="true"></span>
-    <p class="hand">the fastest way to reach me</p>
-    <a class="big-link" href="mailto:${D.profile.email}" data-confetti>${esc(D.profile.email)}</a>
-    <div class="contact-row">
-      <button type="button" class="button" data-copy data-confetti>copy email</button>
-      <a class="button" href="${D.profile.linkedin}" target="_blank" rel="noopener" data-magnetic="0.2">linkedin ↗</a>
-      <a class="button" href="${D.profile.resume}" data-magnetic="0.2">résumé ↗</a>
-    </div>
-    <p class="contact-note">${esc(D.profile.location)} · ${esc(D.profile.languages)}</p>`;
+  /* The "now" panel. Four rows: her own local time ticking, whether that hour
+     means she is asleep, what she is open to, and how to reach her. The clock
+     is the only moving part on the page that reports something true, which is
+     the whole point of it — the section says "tended", not "published once".
 
-  $("[data-skills]").innerHTML = D.skills
-    .map(
-      (s, i) =>
-        `<div class="sticky small" style="--r:${rot(i + 5, 3)}deg"><h4>${esc(s.group)}</h4><p>${s.items.map(esc).join(" · ")}</p></div>`
-    )
-    .join("");
+     Her time, not the visitor's: toLocaleTimeString with a timeZone needs no
+     library and no server call. The sleep window and the openTo list come from
+     D.now so Minko can edit both without touching this file. */
+  (() => {
+    const root = $("[data-now]");
+    if (!root || !D.now) return;
+    const N = D.now;
+
+    root.innerHTML = `
+      <span class="tape tape-tl" aria-hidden="true"></span>
+      <div class="now-row now-clock-row">
+        <i>my time</i>
+        <div>
+          <button class="now-clock" type="button" data-clock
+                  title="click me" aria-label="Minko's local time">
+            <span class="now-hm" data-hm>--:--</span><span class="now-sec" data-sec>00</span>
+            <span class="now-ampm" data-ampm></span>
+          </button>
+          <p class="now-yours" data-yours></p>
+        </div>
+      </div>
+      <div class="now-row">
+        <i>right now</i>
+        <p class="now-state" data-state>
+          <span class="now-orb" data-orb aria-hidden="true"></span>
+          <span data-state-text>—</span>
+        </p>
+      </div>
+      <div class="now-row">
+        <i>where</i>
+        <p class="now-place" data-place>—</p>
+      </div>
+      <div class="now-row">
+        <i>open to</i>
+        <div class="now-open">
+          <span class="chip chip-lead">${esc(N.openTo.commitment)}</span>
+          <span class="now-open-lead">${esc(N.openTo.lead)}</span>
+          <span class="now-fields">
+            ${N.openTo.fields.map((f, i) => `<span class="chip chip-field" style="--i:${i * 60}ms">${esc(f)}</span>`).join("")}
+          </span>
+        </div>
+      </div>
+      <div class="now-row">
+        <i>reach me</i>
+        <div class="now-reach">
+          <a class="big-link" href="mailto:${D.profile.email}" data-confetti>${esc(D.profile.email)}</a>
+          <div class="now-links">
+            <button type="button" class="button is-small" data-copy data-confetti>copy email</button>
+            <a class="button is-small" href="${D.profile.linkedin}" target="_blank" rel="noopener" data-magnetic="0.2">linkedin ↗</a>
+            <a class="button is-small" href="${D.profile.resume}" data-magnetic="0.2">résumé ↗</a>
+            <a class="button is-small" href="tel:${String(D.profile.phone).replace(/\D/g, "")}">${esc(D.profile.phone)}</a>
+          </div>
+        </div>
+      </div>
+      <p class="now-egg-line" data-egg-line aria-hidden="true"></p>`;
+
+    const hm = $("[data-hm]", root), sec = $("[data-sec]", root);
+    const ampm = $("[data-ampm]", root), yours = $("[data-yours]", root);
+    const stateText = $("[data-state-text]", root);
+    const state = $("[data-state]", root);
+    $("[data-place]", root).textContent = N.place;
+
+    /* The seconds digit cycles through the site's own palette as it ticks, so
+       the clock reads as part of the page rather than as a widget. */
+    const TICK_COLOURS = ["var(--plum)", "var(--mint)", "var(--rose)", "var(--sun)"];
+    let lastSec = -1;
+
+    function tick() {
+      const now = new Date();
+      const t = (opts) => now.toLocaleString("en-US", { timeZone: N.zone, ...opts });
+      hm.textContent = t({ hour: "numeric", minute: "2-digit", hour12: true }).replace(/\s?[AP]M$/i, "");
+      const s = t({ second: "2-digit" });
+      sec.textContent = s;
+      ampm.textContent = (t({ hour: "numeric", hour12: true }).match(/[AP]M/i) || [""])[0].toLowerCase();
+
+      if (+s !== lastSec) {
+        lastSec = +s;
+        sec.style.color = TICK_COLOURS[lastSec % TICK_COLOURS.length];
+        sec.classList.remove("is-beat");
+        void sec.offsetWidth;            /* restart the beat animation */
+        sec.classList.add("is-beat");
+      }
+
+      const hour = +t({ hour: "numeric", hour12: false });
+      /* Start inclusive, end exclusive, and it survives a window that wraps
+         past midnight (e.g. [23, 2]) as well as one that does not. */
+      const inWindow = ([from, to]) =>
+        from <= to ? hour >= from && hour < to : hour >= from || hour < to;
+
+      const asleep = inWindow(N.asleep);
+      const winding = !asleep && N.winding && inWindow(N.winding);
+      state.classList.toggle("is-asleep", asleep);
+      state.classList.toggle("is-winding", winding);
+      stateText.textContent = asleep ? N.asleepLine : winding ? N.windingLine : N.awakeLine;
+
+      /* The visitor's own clock, for the hours-apart maths they would do
+         themselves. Nothing is shown when both are in the same zone — there is
+         no fact to report then. */
+      const mine = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+      const hers = t({ hour: "numeric", minute: "2-digit", hour12: true });
+      yours.textContent = mine === hers ? "" : `${mine} where you are`;
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    /* ---- the easter egg: three clicks on the clock flips it to night ---- */
+    /* Deliberately NOT one of the six counted surprises in "Bits of me": it is
+       a reward for fiddling with the clock, not a thing to go hunting. */
+    const egg = $("[data-egg-line]", root);
+    const clock = $("[data-clock]", root);
+    let clicks = 0, timer = null;
+    clock.addEventListener("click", (e) => {
+      clicks += 1;
+      clearTimeout(timer);
+      timer = setTimeout(() => (clicks = 0), 900);
+      const night = state.classList.contains("is-asleep");
+      burst(e.clientX, e.clientY, {
+        count: 7, spread: 120, size: 1.2,
+        chars: night ? ["☾", "✦", "⋆"] : ["☀", "✦", "✿"]
+      });
+      if (clicks >= 3) {
+        clicks = 0;
+        root.classList.toggle("is-night");
+        const on = root.classList.contains("is-night");
+        egg.textContent = on
+          ? (night ? "shh. she's asleep. the stars are doing the talking." : "night mode, in the middle of the day. go on then.")
+          : "";
+        egg.classList.toggle("is-on", on);
+        if (on) {
+          burst(e.clientX, e.clientY, { count: 40, spread: 340, chars: ["☾", "✦", "⋆", "★"], size: 1.4 });
+        }
+      }
+    });
+  })();
+
+  /* The group sticky notes that used to sit under the contact card are gone:
+     the same tool list already has a section of its own (#skills, the trays),
+     so repeating it as "Video / Design / ..." text boxes was redundant.
+     D.skills is kept in content.js because résumé copy still reads from it. */
 
   /* ================================================================== hero */
   const stage = $("[data-hero]");

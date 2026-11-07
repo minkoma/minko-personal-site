@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools lab 2 — the toolkit without boxes</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#332d3b; --ink-soft:#786987; --paper:#fbf7f3;
+  --violet:#5b4a6a; --line:#e3d9ea; --sun:#ffd666;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:Nunito,system-ui,sans-serif;font-size:16px;line-height:1.6}
+img,svg{display:block;max-width:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:56px 24px 160px}
+h1{font-family:"Baloo 2",cursive;font-size:clamp(30px,5vw,46px);margin:0 0 14px;line-height:1.1}
+h2{font-family:"Baloo 2",cursive;font-size:clamp(22px,3vw,30px);margin:0 0 6px}
+.hand{font-family:Caveat,cursive;font-size:20px;color:var(--ink-soft);margin:0 0 10px}
+.lede{color:#5d5367;max-width:72ch}
+.opt{margin-top:104px;padding-top:34px;border-top:1px solid var(--line)}
+.opt-note{color:var(--ink-soft);font-size:14.5px;max-width:70ch;margin:0 0 26px}
+.tag{display:inline-block;font-family:Caveat,cursive;font-size:19px;color:#8a6f9e}
+.demo{padding:40px 26px;position:relative}
+.back{font-size:14px;color:#8a6f9e}
+
+/* ---------- shared logo atom: the real mark, no tile, no frame ---------- */
+/* The whole point of this lab: nothing sits in a box. The .png marks are App
+   Store icons that already carry their own rounded square, so they get a
+   radius; the SVG marks are bare shapes and get none. */
+.lg{width:var(--s,34px);height:var(--s,34px);flex:0 0 auto;object-fit:contain;
+  filter:drop-shadow(0 3px 6px rgba(89,72,107,.16));
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),filter .3s ease}
+.lg.app{border-radius:calc(var(--s,34px) * .22)}
+
+/* =========================================================== 1 timeline */
+.tl{--lab:112px;font-size:0}
+.tl-rule{display:grid;grid-template-columns:var(--lab) 1fr;align-items:center;
+  font-size:11px;color:#a899b4;letter-spacing:.14em;text-transform:uppercase}
+.tl-ticks{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:5px}
+.tl-track{display:grid;grid-template-columns:var(--lab) 1fr;align-items:center;
+  border-bottom:1px dashed #e8e0ee;min-height:62px}
+.tl-track h3{margin:0;font-family:Caveat,cursive;font-weight:700;font-size:19px;
+  color:#8a6f9e;padding-right:12px;text-align:right}
+.tl-clips{display:flex;gap:8px;flex-wrap:wrap;padding:10px 0}
+.tl-clip{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;
+  border-left:3px solid var(--c);border-radius:0 10px 10px 0;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 14%,transparent),transparent 92%);
+  font-size:13px;color:#5d5367;cursor:default;
+  transition:transform .25s ease,background .25s ease}
+.tl-clip:hover{transform:translateY(-2px)}
+.tl-clip:hover .lg{transform:scale(1.12)}
+.tl-play{position:absolute;top:34px;bottom:34px;width:2px;background:#e2574c;
+  box-shadow:0 0 10px rgba(226,87,76,.5);left:22%;pointer-events:none;
+  animation:sweep 9s linear infinite}
+.tl-play::before{content:"";position:absolute;top:-6px;left:-5px;width:12px;height:12px;
+  background:#e2574c;border-radius:3px 3px 6px 6px}
+@keyframes sweep{from{left:22%}to{left:97%}}
+
+/* ======================================================== 2 the sentence */
+.say{font-family:"Baloo 2",cursive;font-weight:600;
+  font-size:clamp(22px,3.4vw,38px);line-height:1.85;max-width:30ch;margin:0 auto;
+  color:var(--violet);text-align:left}
+.say .lg{display:inline-block;vertical-align:-0.22em;margin:0 .1em;--s:1.05em}
+.say em{font-family:Caveat,cursive;font-style:normal;color:#9a8aa8;font-weight:700}
+.say .grp{white-space:nowrap}
+
+/* ======================================================= 3 lasso clusters */
+.lasso{position:relative;min-height:520px}
+.cluster{position:absolute;width:var(--w,250px)}
+.cluster svg{position:absolute;inset:-22px -26px;width:calc(100% + 52px);height:calc(100% + 44px);
+  overflow:visible;pointer-events:none}
+.cluster svg path{fill:none;stroke:#cdbcdc;stroke-width:2;stroke-linecap:round;
+  stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 1.5s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.cluster h3{position:absolute;top:-46px;left:4px;margin:0;
+  font-family:Caveat,cursive;font-weight:700;font-size:21px;color:#8a6f9e;
+  transform:rotate(-3deg)}
+.cluster-items{display:flex;flex-wrap:wrap;gap:18px 20px;align-items:center;justify-content:center;
+  padding:8px 10px}
+.cluster .lg{--s:40px;transform:rotate(var(--r,0deg))}
+.cluster .pin{position:relative}
+.cluster .pin .cap{position:absolute;left:50%;top:calc(100% + 5px);transform:translateX(-50%);
+  white-space:nowrap;font-size:11px;color:#9a8fa6;opacity:0;transition:opacity .2s ease}
+.cluster .pin:hover .lg{transform:rotate(0deg) scale(1.16)}
+.cluster .pin:hover .cap{opacity:1}
+
+/* ========================================================== 4 ribbon rows */
+.rib{display:grid;gap:4px}
+.rib-row{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:10px;padding:9px 0}
+.rib-row h3{margin:0;text-align:right;font-family:Caveat,cursive;font-weight:700;
+  font-size:19px;color:#8a6f9e}
+/* The clip has to be on the track's own column. With overflow:hidden on the
+   row, a track translated left spills across the group label instead. */
+.rib-win{overflow:hidden;
+  mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.rib-track{display:flex;gap:40px;width:max-content;
+  animation:drift var(--d,26s) linear infinite}
+.rib-row:nth-child(even) .rib-track{animation-direction:reverse}
+.rib-row:hover .rib-track{animation-play-state:paused}
+.rib-track span{display:flex;align-items:center;gap:9px;font-size:13px;color:#8d8099}
+.rib-track .lg{--s:30px}
+@keyframes drift{to{transform:translateX(-50%)}}
+
+/* ============================================================= 5 pipeline */
+/* The rail is built per stage — a dot with a line segment either side — so it
+   always lands between the label and the logos whatever the copy height. An
+   absolutely-positioned rail at a hand-picked offset crossed the logos. */
+.pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding-top:18px}
+.stage{display:grid;grid-template-rows:auto 1fr auto auto;text-align:center}
+.stage h3{margin:0 0 6px;font-family:Caveat,cursive;font-weight:700;font-size:20px;color:#8a6f9e}
+.stage p{margin:0 0 16px;font-size:12px;color:#a899b4}
+.node{position:relative;height:14px;display:grid;place-items:center}
+.node::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;
+  background:repeating-linear-gradient(90deg,#d9c9e6 0 8px,transparent 8px 15px)}
+.stage:first-child .node::before{left:50%}
+.stage:last-child .node::before{right:50%}
+.node i{position:relative;width:11px;height:11px;border-radius:50%;background:var(--sun);
+  box-shadow:0 0 0 4px var(--card)}
+.stage-logos{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding-top:20px}
+.stage-logos .lg{--s:34px}
+.stage-logos .lg:hover{transform:translateY(-4px) scale(1.1)}
+
+/* ====================================================== 6 aligned columns */
+.sheet{display:grid;grid-template-columns:1fr 1fr;column-gap:72px;row-gap:34px;align-items:start}
+.sheet-group + .sheet-group{margin-top:30px}
+.sheet-group h3{margin:0 0 4px;font-family:Caveat,cursive;font-weight:700;font-size:20px;
+  color:#8a6f9e;padding-bottom:6px;border-bottom:1.5px solid var(--line)}
+.sheet-row{display:grid;grid-template-columns:26px 1fr;align-items:center;gap:12px;
+  padding:9px 2px;border-bottom:1px solid #efe8f3;font-size:14.5px;color:#4f465b;
+  transition:color .2s ease,padding-left .2s ease}
+.sheet-row:last-child{border-bottom:0}
+.sheet-row .lg{--s:22px}
+.sheet-row:hover{color:var(--violet);padding-left:7px}
+.sheet-row:hover .lg{transform:scale(1.12)}
+
+/* ========================================================= 7 one line each */
+.lines{display:grid;row-gap:2px}
+.line{display:grid;grid-template-columns:150px 1fr;align-items:baseline;gap:18px;
+  padding:14px 0;border-bottom:1px solid #efe8f3;
+  transition:opacity .3s ease,filter .3s ease}
+.lines .line:last-child{border-bottom:0}
+.line.is-dim{opacity:.26;filter:saturate(.25)}
+
+/* The group label is a real button: it solos its own row. */
+.line-label{appearance:none;background:none;border:0;padding:0 0 0 8px;cursor:pointer;
+  text-align:right;font-family:Caveat,cursive;font-weight:700;font-size:19px;color:#8a6f9e;
+  display:flex;align-items:baseline;justify-content:flex-end;gap:7px;
+  transition:color .2s ease}
+.line-label:hover,.line-label[aria-pressed="true"]{color:var(--violet)}
+.line-label .n{font-family:Nunito,sans-serif;font-weight:700;font-size:10.5px;
+  color:#bdaecb;opacity:0;transition:opacity .2s ease}
+.line-label:hover .n,.line-label[aria-pressed="true"] .n{opacity:1}
+.line-label .n::before{content:"("}
+.line-label .n::after{content:")"}
+
+.line-items{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center}
+/* Each tool is a button so the spotlight and the detail line work on tap and
+   on keyboard, not only under a mouse. */
+.tool-btn{appearance:none;background:none;border:0;padding:3px 1px 5px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:14px;color:#4f465b;
+  position:relative;border-radius:4px;
+  transition:color .22s ease,opacity .3s ease,transform .22s cubic-bezier(.2,.8,.2,1)}
+.tool-btn .lg{--s:22px;transition:transform .22s cubic-bezier(.2,.8,.2,1),filter .22s ease}
+/* The underline is the tool's own brand colour, grown from the left. */
+.tool-btn::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:var(--c);transform:scaleX(0);transform-origin:left;
+  transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.tool-btn:hover,.tool-btn:focus-visible,.tool-btn.is-on{color:var(--violet)}
+.tool-btn:hover::after,.tool-btn:focus-visible::after,.tool-btn.is-on::after{transform:scaleX(1)}
+.tool-btn:hover{transform:translateY(-2px)}
+.tool-btn:hover .lg,.tool-btn.is-on .lg{transform:scale(1.16)}
+/* Spotlight: while one tool is live, every other tool on the page recedes. */
+.lines.is-live .tool-btn:not(.is-on):not(:hover){opacity:.3}
+
+/* The detail line. Spans the items column so it starts under the first logo. */
+.line-detail{grid-column:2;overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .35s ease,opacity .25s ease,margin-top .35s ease}
+.line.is-open .line-detail{max-height:90px;opacity:1;margin-top:11px}
+.line-detail p{margin:0;font-family:Caveat,cursive;font-size:19px;color:#6d5a7d;
+  display:flex;align-items:center;gap:9px}
+.line-detail .lg{--s:20px}
+.line-detail b{font-family:"Baloo 2",cursive;font-weight:700;font-size:15px;color:var(--violet)}
+
+/* Row entrance, staggered, so the block assembles top to bottom on arrival. */
+.line{animation:lineIn .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--i)}
+@keyframes lineIn{from{opacity:0;transform:translateY(10px)}}
+@media (prefers-reduced-motion:reduce){
+  .line{animation:none}
+  .tool-btn,.tool-btn .lg,.line-detail{transition:none}
+}
+
+/* ==================================================== 8 snapped timeline */
+/* Same idea as option 1, but every clip occupies one cell of a shared
+   six-column grid, so the left edges line up down the whole block. */
+.tl2{--lab:132px}
+.tl2 .tl-track{grid-template-columns:var(--lab) 1fr}
+.tl2 .tl-clips{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;padding:11px 0}
+.tl2 .tl-clip{display:flex;align-items:center;gap:8px;padding:7px 10px 7px 8px;
+  border-left:3px solid var(--c);border-radius:0 8px 8px 0;font-size:12.5px;color:#5d5367;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 15%,transparent),transparent 95%);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl2 .tl-clip .lg{--s:20px}
+.tl2 .tl-clip:hover{color:var(--violet)}
+
+@media (max-width:760px){
+  .tl{--lab:80px}
+  .rib-row{grid-template-columns:96px 1fr}
+  .lasso{min-height:0;display:grid;gap:70px}
+  .cluster{position:static!important;width:auto}
+  .cluster h3{position:static;margin-bottom:10px}
+  .cluster svg{display:none}
+  .pipe{grid-template-columns:1fr;gap:34px}
+  .node{display:none}
+  .sheet{grid-template-columns:1fr;row-gap:28px}
+  .line{grid-template-columns:1fr;gap:8px}
+  .line-label{justify-content:flex-start;padding-left:0}
+  .line-detail{grid-column:1}
+  .tl2{--lab:80px}
+  .tl2 .tl-clips{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="back"><a href="index.html">← back to the site</a></p>
+  <h1>Tools, without the boxes</h1>
+  <p class="hand">same real logos, five ways to hold them</p>
+  <p class="lede">Every option below drops the tray, tile and card entirely: the marks sit
+    straight on the paper. They are ordered loosely from "says something about how you work"
+    to "quietest".</p>
+
+  <!-- ==================================================== 1 -->
+  <section class="opt">
+    <span class="tag">option 1</span>
+    <h2>The edit timeline</h2>
+    <p class="opt-note">Your own craft as the container. One track per group, each tool a clip
+      on it, and a playhead sweeping the whole thing. It reads as a working session rather than
+      a skills list, and a longer group just means a longer track.</p>
+    <div class="demo">
+      <div class="tl-play" aria-hidden="true"></div>
+      <div class="tl" data-timeline></div>
+    </div>
+  </section>
+
+  <!-- ==================================================== 2 -->
+  <section class="opt">
+    <span class="tag">option 2</span>
+    <h2>One sentence</h2>
+    <p class="opt-note">No layout at all: the logos are set inline in a handwritten sentence, at
+      text size, so they read as words. The most personal of the five and the only one that says
+      what you do with each tool rather than just that you own it.</p>
+    <div class="demo"><p class="say" data-say></p></div>
+  </section>
+
+  <!-- ==================================================== 3 -->
+  <section class="opt">
+    <span class="tag">option 3</span>
+    <h2>Lassoed on the desk</h2>
+    <p class="opt-note">The logos are scattered loose, and each group is circled with a
+      hand-drawn line that draws itself in. Keeps the scrapbook feel of the trays with nothing
+      rectangular anywhere. Hover a mark for its name.</p>
+    <div class="demo"><div class="lasso" data-lasso></div></div>
+  </section>
+
+  <!-- ==================================================== 4 -->
+  <section class="opt">
+    <span class="tag">option 4</span>
+    <h2>Drifting rows</h2>
+    <p class="opt-note">One slow row per group, alternating direction, pausing on hover. Takes
+      the least vertical space of anything here and never grows taller as tools are added.
+      The trade: a given logo is not always on screen.</p>
+    <div class="demo"><div class="rib" data-rib></div></div>
+  </section>
+
+  <!-- ==================================================== 5 -->
+  <section class="opt">
+    <span class="tag">option 5</span>
+    <h2>The pipeline</h2>
+    <p class="opt-note">Groups replaced by the stages of a real campaign, so the section
+      explains a process instead of an inventory. <b>The mapping below is my guess</b> — tell me
+      where each tool actually belongs in how you work and I'll fix it.</p>
+    <div class="demo">
+      <div class="pipe" data-pipe></div>
+    </div>
+  </section>
+
+  <!-- =================================================== round 2 ======= -->
+  <!-- Minko's note after round 1: she likes option 1, and the reason is the
+       full software name next to every mark. These three keep every name
+       spelled out and trade the sweep and the scatter for alignment. -->
+  <section class="opt">
+    <span class="tag">round two · every name spelled out, tidier</span>
+    <h2>Three with full names</h2>
+    <p class="opt-note">What you liked about the timeline is that nothing is a guessing game:
+      the logo and the words sit together. These three keep that and drop the movement, so the
+      block reads as a list you can scan rather than a scene.</p>
+  </section>
+
+  <!-- ==================================================== 6 -->
+  <section class="opt">
+    <span class="tag">option 6</span>
+    <h2>Two columns, ruled</h2>
+    <p class="opt-note">The quietest version. Two columns of groups, one tool per line, logo
+      then name, a hairline between rows. Nothing moves, nothing overlaps, and the whole
+      toolkit is readable in one pass. Hover nudges a row and brightens it.</p>
+    <div class="demo"><div class="sheet" data-sheet></div></div>
+  </section>
+
+  <!-- ==================================================== 7 -->
+  <section class="opt">
+    <span class="tag">option 7</span>
+    <h2>One line per group</h2>
+    <p class="opt-note">Each group gets a single row: the handwritten label on the left, then
+      its tools in a line with full names. The most compact of the name-bearing options, and the
+      left edge of every row lines up, so it reads like a contents page.</p>
+    <p class="opt-note"><b>Interactive:</b> hover a tool and it lifts with an underline in its
+      own brand colour while the rest recede. Click it to open a line about what you use it for,
+      under its own row — click again or press Escape to close. Click a group label to solo that
+      row and fade the others; the label also shows how many tools are in it. Works on tap and
+      on keyboard. <b>The one-liners are my draft words</b> — edit or delete each one.</p>
+    <div class="demo"><div class="lines" data-lines></div></div>
+  </section>
+
+  <!-- ==================================================== 8 -->
+  <section class="opt">
+    <span class="tag">option 8</span>
+    <h2>The timeline, snapped to a grid</h2>
+    <p class="opt-note">Option 1 with the mess taken out: every clip sits in one cell of a
+      shared six-column grid, so the clip edges line up in straight vertical lines all the way
+      down and no playhead sweeps across. Still a timeline, now ruled.</p>
+    <div class="demo"><div class="tl tl2" data-timeline2></div></div>
+  </section>
+</div>
+
+<script src="js/content.js"></script>
+<script>
+/* Everything renders from D.tools in js/content.js, and the logos are the ones
+   already vendored into assets/tools — nothing loads a CDN at runtime. */
+const G = (window.MINKO || {}).tools || [];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;" }[c]));
+const seed = n => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
+const rot = (n, a) => (seed(n) * 2 - 1) * a;
+
+/* One logo, bare. `s` overrides the size, `r` tilts it. */
+function logo(t, extra = "") {
+  const app = /\.png$/.test(t.file) ? " app" : "";
+  return `<img class="lg${app}" src="assets/tools/${t.file}" alt="${esc(t.name)}" title="${esc(t.name)}" loading="lazy" ${extra}>`;
+}
+const all = G.flatMap(g => g.items);
+const byName = n => all.find(t => t.name === n);
+
+/* ---------------------------------------------------------- 1 timeline */
+document.querySelector("[data-timeline]").innerHTML =
+  `<div class="tl-rule"><span></span><div class="tl-ticks">
+     <span>brief</span><span>shoot</span><span>cut</span><span>ship</span><span>measure</span>
+   </div></div>` +
+  G.map(g => `<div class="tl-track">
+      <h3>${esc(g.group)}</h3>
+      <div class="tl-clips">${g.items
+        .map(t => `<span class="tl-clip" style="--c:${t.c}">${logo(t, 'style="--s:22px"')}${esc(t.name)}</span>`)
+        .join("")}</div>
+    </div>`).join("");
+
+/* ----------------------------------------------------------- 2 sentence */
+/* Written as clauses so the verbs carry the meaning and the logos are the
+   objects. Any tool not named here is simply not in the sentence. */
+const SAY = [
+  ["I cut in", ["Premiere Pro", "Final Cut Pro", "CapCut"]],
+  ["design in", ["Canva", "Photoshop", "Figma"]],
+  ["build in", ["WordPress", "Wix", "Shopify"]],
+  ["run ads in", ["Meta Ads", "Google Ads"]],
+  ["and read the numbers in", ["Google Analytics", "Tableau", "Sprout Social"]]
+];
+document.querySelector("[data-say]").innerHTML = SAY.map(([verb, names], i) => {
+  const marks = names.map(byName).filter(Boolean).map(t => logo(t)).join("");
+  return `<span class="grp"><em>${esc(verb)}</em> ${marks}</span>${i < SAY.length - 1 ? ", " : "."}`;
+}).join(" ");
+
+/* ------------------------------------------------------------ 3 lassos */
+/* Hand-drawn-looking enclosures: a single quadratic path round each cluster,
+   with the control points jittered off the same seed so no two match. */
+/* The enclosure is a closed cubic loop, not a quadratic one: with only one
+   control point per segment the corners pull straight and the whole thing
+   renders as a diamond. Each control point is jittered off the group seed. */
+const PLACE = [
+  { l: "2%",  t: "6px",   w: 300 },
+  { l: "60%", t: "40px",  w: 190 },
+  { l: "5%",  t: "216px", w: 250 },
+  { l: "55%", t: "230px", w: 262 },
+  { l: "14%", t: "400px", w: 320 }
+];
+document.querySelector("[data-lasso]").innerHTML = G.map((g, gi) => {
+  const p = PLACE[gi] || PLACE[0];
+  const j = (k, a = 8) => rot(gi * 9 + k, a);
+  const path =
+    `M 50 ${1 + j(1, 1)} ` +
+    `C ${74 + j(2)} 1 99 ${24 + j(3)} 99 50 ` +
+    `C 99 ${76 + j(4)} ${74 + j(5)} 99 50 99 ` +
+    `C ${26 + j(6)} 99 1 ${76 + j(7)} 1 50 ` +
+    `C 1 ${24 + j(8)} ${26 + j(9)} 1 50 ${1 + j(1, 1)} Z`;
+  return `<div class="cluster" style="left:${p.l};top:${p.t};--w:${p.w}px;width:${p.w}px">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"
+           style="animation-delay:${gi * 0.12}s"><path d="${path}"/></svg>
+      <h3>${esc(g.group)}</h3>
+      <div class="cluster-items">${g.items
+        .map((t, i) => `<span class="pin">${logo(t, `style="--r:${rot(gi * 13 + i, 11).toFixed(1)}deg"`)}<span class="cap">${esc(t.name)}</span></span>`)
+        .join("")}</div>
+    </div>`;
+}).join("");
+
+/* ----------------------------------------------------------- 4 ribbons */
+document.querySelector("[data-rib]").innerHTML = G.map((g, gi) => {
+  const run = g.items.map(t => `<span>${logo(t)}${esc(t.name)}</span>`).join("");
+  return `<div class="rib-row"><h3>${esc(g.group)}</h3><div class="rib-win">
+      <div class="rib-track" style="--d:${18 + g.items.length * 3}s">${run}${run}</div></div></div>`;
+}).join("");
+
+/* ---------------------------------------------------------- 5 pipeline */
+/* A DRAFT mapping. Every tool appears exactly once; Minko confirms or moves. */
+const PIPE = [
+  { h: "Brief",   p: "research and the plan",       t: ["Brandwatch", "Excel", "Figma"] },
+  { h: "Make",    p: "shoot, cut, design",          t: ["Premiere Pro", "Final Cut Pro", "CapCut", "iMovie", "Canva", "Photoshop"] },
+  { h: "Publish", p: "where the work goes live",    t: ["WordPress", "Wix", "Shopify", "Vimeo", "Later", "GitHub"] },
+  { h: "Reach",   p: "paid, email, lifecycle",      t: ["Meta Ads", "Google Ads", "SEMrush", "HubSpot", "Keap"] },
+  { h: "Measure", p: "what it actually did",        t: ["Google Analytics", "Tableau", "Sprout Social"] }
+];
+document.querySelector("[data-pipe]").innerHTML = PIPE.map(s =>
+  `<div class="stage"><h3>${esc(s.h)}</h3><p>${esc(s.p)}</p>
+     <div class="node"><i></i></div>
+     <div class="stage-logos">${s.t.map(byName).filter(Boolean).map(t => logo(t)).join("")}</div>
+   </div>`).join("");
+
+/* ------------------------------------------------------ 6 ruled columns */
+/* Groups are dealt into two columns by hand rather than by CSS columns, so a
+   group is never split across the gutter. 12 rows left, 11 right. */
+const COLS = [[0, 1, 2], [3, 4]];
+document.querySelector("[data-sheet]").innerHTML = COLS.map(idx =>
+  `<div>${idx.filter(i => G[i]).map(i => {
+      const g = G[i];
+      return `<div class="sheet-group"><h3>${esc(g.group)}</h3>
+        ${g.items.map(t => `<div class="sheet-row">${logo(t)}<span>${esc(t.name)}</span></div>`).join("")}
+      </div>`;
+    }).join("")}</div>`).join("");
+
+/* ---------------------------------------------------- 7 one line each */
+/* DRAFT one-liners. Same rule as the pipeline mapping: these are my words,
+   not hers, and the page says so. Minko edits or deletes each one. */
+const USE = {
+  "Premiere Pro": "long-form cuts, colour and sound",
+  "Final Cut Pro": "the films I shoot on a real camera",
+  "CapCut": "fast vertical cuts and captions",
+  "iMovie": "quick assemblies on the phone",
+  "Vimeo": "where the finished films live",
+  "Canva": "decks, social sets, anything on a deadline",
+  "Photoshop": "retouching and the stills that carry a campaign",
+  "Figma": "layouts and handoff before anything gets built",
+  "WordPress": "the sites I maintain, not just launch",
+  "Wix": "fast builds for small brands",
+  "Shopify": "product pages and the checkout path",
+  "GitHub": "versioning, and this site",
+  "Meta Ads": "paid social, creative testing",
+  "Google Ads": "search and demand capture",
+  "HubSpot": "email sequences and the funnel behind them",
+  "SEMrush": "keyword and competitor research",
+  "Keap": "lifecycle automation for smaller lists",
+  "Google Analytics": "what people actually did on the site",
+  "Tableau": "turning a messy export into one chart",
+  "Sprout Social": "scheduling and social reporting",
+  "Brandwatch": "listening, before the brief is written",
+  "Later": "the social calendar",
+  "Excel": "the first place I look at any dataset"
+};
+const lines = document.querySelector("[data-lines]");
+lines.innerHTML = G.map((g, gi) =>
+  `<div class="line" style="--i:${gi * 70}ms">
+     <button class="line-label" type="button" aria-pressed="false" data-group="${gi}">
+       ${esc(g.group)}<span class="n">${g.items.length}</span>
+     </button>
+     <div class="line-items">${g.items
+       .map((t, i) => `<button class="tool-btn" type="button" style="--c:${t.c}"
+              data-tool="${gi}-${i}" data-name="${esc(t.name)}" data-file="${esc(t.file)}"
+              aria-expanded="false">${logo(t)}${esc(t.name)}</button>`)
+       .join("")}</div>
+     <div class="line-detail" aria-live="polite"></div>
+   </div>`).join("");
+
+/* One tool is "live" at a time. Clicking it opens the line under its row;
+   clicking it again, or pressing Escape, closes everything. */
+let live = null;
+function clear() {
+  lines.querySelectorAll(".tool-btn.is-on").forEach(b => { b.classList.remove("is-on"); b.setAttribute("aria-expanded", "false"); });
+  lines.querySelectorAll(".line.is-open").forEach(l => l.classList.remove("is-open"));
+  lines.classList.remove("is-live");
+  live = null;
+}
+lines.addEventListener("click", e => {
+  const label = e.target.closest(".line-label");
+  if (label) {
+    const on = label.getAttribute("aria-pressed") === "true";
+    lines.querySelectorAll(".line-label").forEach(l => l.setAttribute("aria-pressed", "false"));
+    lines.querySelectorAll(".line").forEach(l => l.classList.remove("is-dim"));
+    if (!on) {
+      label.setAttribute("aria-pressed", "true");
+      const row = label.closest(".line");
+      lines.querySelectorAll(".line").forEach(l => { if (l !== row) l.classList.add("is-dim"); });
+    }
+    return;
+  }
+  const btn = e.target.closest(".tool-btn");
+  if (!btn) return;
+  const was = btn.dataset.tool === live;
+  clear();
+  if (was) return;
+  const row = btn.closest(".line");
+  const use = USE[btn.dataset.name];
+  row.querySelector(".line-detail").innerHTML =
+    `<p><img class="lg${/\.png$/.test(btn.dataset.file) ? " app" : ""}" src="assets/tools/${btn.dataset.file}" alt="">
+       <span><b>${esc(btn.dataset.name)}</b> — ${esc(use || "add a line about this one")}</span></p>`;
+  btn.classList.add("is-on");
+  btn.setAttribute("aria-expanded", "true");
+  row.classList.add("is-open");
+  lines.classList.add("is-live");
+  live = btn.dataset.tool;
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") clear(); });
+
+/* --------------------------------------------------- 8 snapped timeline */
+document.querySelector("[data-timeline2]").innerHTML = G.map(g =>
+  `<div class="tl-track"><h3>${esc(g.group)}</h3>
+     <div class="tl-clips">${g.items
+       .map(t => `<span class="tl-clip" style="--c:${t.c}">${logo(t)}${esc(t.name)}</span>`)
+       .join("")}</div>
+   </div>`).join("");
+</script>
+</body>
+</html>
