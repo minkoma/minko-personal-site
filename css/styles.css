@@ -841,7 +841,9 @@ p {
      upright runs past its column (--sub-w over 100%) and laps under the tall
      frame; a frame of similar shape to the one above is inset instead. */
   width: var(--sub-w, 86%);
-  margin: -20px 0 0 var(--sub-x, 0px);
+  /* The two stacked frames overlap by default. A per-entry `photoStackY` can
+     loosen that, or open a real gap with a positive value. */
+  margin: var(--stack-y, -20px) 0 0 var(--sub-x, 0px);
   z-index: 1;
 }
 

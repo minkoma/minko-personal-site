@@ -123,6 +123,7 @@ window.MINKO = {
       ],
       photo: "assets/experience/northwestern.jpg",
       photoScale: 0.93,
+      photoStackY: 4,
       year: "2025–2026"
     },
     {
@@ -161,6 +162,10 @@ window.MINKO = {
       period: "Jun 2026 – Sep 2026",
       place: "Evanston, IL",
       year: "2026",
+      /* In photo order, not screen order: bagel.jpg is the landscape one and
+         the layout puts it on the right, bagel2.jpg the portrait on the left. */
+      photoTilt: [3, -3],
+      photoScale: 0.95,
       photos: ["assets/experience/bagel.jpg", "assets/experience/bagel2.jpg"],
       tags: ["Loyalty & CRM", "Segmentation", "Growth strategy"],
       points: [
@@ -176,6 +181,8 @@ window.MINKO = {
       period: "Apr 2024 – Aug 2025",
       place: "San Diego, CA",
       year: "2024–2025",
+      photoScale: 0.95,
+      photoShift: -14,
       photos: [
         "assets/experience/Asian Egg Bank.jpg",
         "assets/experience/Asian Egg Bank Team.jpg",
@@ -205,7 +212,7 @@ window.MINKO = {
       /* Tilts in the reference: the wide base leans one way, the tall strip and
          the upright above lean the other. */
       photoTilt: [-1.5, 4, -2.5],
-      photoShift: -24,
+      photoScale: 0.92,
       photos: [
         "assets/experience/storyteller-filming.jpg",
         "assets/experience/storyteller-reel.jpg",
