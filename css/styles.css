@@ -535,6 +535,7 @@ p {
 .step.is-flip .step-photos {
   margin-right: auto;
   margin-left: calc(-1 * var(--bleed));
+  transform-origin: right center;
 }
 
 /* On a mirrored step the tower's tall frame faces the note, and that is the
@@ -693,8 +694,17 @@ p {
    from naturalWidth/naturalHeight in main.js) and the cluster is a two-column
    grid, so a tall photo makes a tall cell instead of being cut. The scrapbook
    feel comes from the rotation, tape and shadow rather than from overlap. */
+/* Two optional per-entry adjustments, both from content.js and both applied
+   here rather than in the layout maths: `photoScale` shrinks a cluster that
+   fills too much of the page and `photoShift` nudges one sideways. A transform
+   rather than a width, so the cluster's own geometry — the fr columns, the
+   overlaps, the height cap — is untouched and only its drawn size changes. The
+   origin is the note side, so the space a scaled-down cluster gives back
+   appears on the page's outer edge, which is the margin being asked for. */
 .step-photos {
   position: relative;
+  transform: translateX(var(--pshift, 0px)) scale(var(--pscale, 1));
+  transform-origin: left center;
   width: 100%;
   display: grid;
   /* Each column is as wide as its photo's aspect ratio, which is what makes

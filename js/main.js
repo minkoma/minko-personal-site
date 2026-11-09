@@ -70,7 +70,9 @@
          shorthand for one that only has the one. */
       photos: e.photos || [e.photo],
       tilt: e.photoTilt,
-      bias: e.photoBias
+      bias: e.photoBias,
+      scale: e.photoScale,
+      shift: e.photoShift
     }))
     .concat(
       D.work.map((w) => ({
@@ -84,6 +86,8 @@
         photos: w.photos,
         tilt: w.photoTilt,
         bias: w.photoBias,
+        scale: w.photoScale,
+        shift: w.photoShift,
         tags: w.tags
       }))
     )
@@ -106,7 +110,8 @@
           ${eduExtra(e)}
         </div>
         <div class="step-photos count-${Math.min(e.photos.length, 3)}" data-step-photos
-             ${e.bias ? `data-bias="${e.bias}"` : ""}>
+             ${e.bias ? `data-bias="${e.bias}"` : ""}
+             style="${e.scale ? `--pscale:${e.scale};` : ""}${e.shift ? `--pshift:${e.shift}px;` : ""}">
           <span class="year-stamp" aria-hidden="true">${esc(e.year)}</span>
           ${e.photos
             .slice(0, 3)

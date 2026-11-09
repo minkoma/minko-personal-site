@@ -122,6 +122,7 @@ window.MINKO = {
         "assets/experience/nu-graduation-3.jpg"
       ],
       photo: "assets/experience/northwestern.jpg",
+      photoScale: 0.93,
       year: "2025–2026"
     },
     {
@@ -140,6 +141,8 @@ window.MINKO = {
         }
       ],
       involvement: ["Women in Business (WIB)", "Undergraduate Communication Society (UCS)"],
+      photoTilt: [-2.5, 3, -1.5],
+      photoScale: 0.9,
       photos: [
         "assets/experience/first-year-1.jpg",
         "assets/experience/first-year-2.jpg",
@@ -202,6 +205,7 @@ window.MINKO = {
       /* Tilts in the reference: the wide base leans one way, the tall strip and
          the upright above lean the other. */
       photoTilt: [-1.5, 4, -2.5],
+      photoShift: -24,
       photos: [
         "assets/experience/storyteller-filming.jpg",
         "assets/experience/storyteller-reel.jpg",
