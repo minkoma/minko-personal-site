@@ -1954,9 +1954,10 @@ p {
   position: relative;
   z-index: 1;
   padding: clamp(46px, 8vh, 110px) var(--pad) 0;
-  /* 1100px before. The card has to be this wide for the five "open to" fields
-     to sit on one line at full chip size. */
-  max-width: 1360px;
+  /* 1100px before. The card is as wide as its longest row needs and no wider:
+     the five "open to" tags have to sit on one line at full size, and anything
+     past that is empty paper down the right-hand side. */
+  max-width: 1240px;
   margin: 0 auto;
   text-align: center;
 }

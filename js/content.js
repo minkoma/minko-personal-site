@@ -9,7 +9,7 @@ window.MINKO = {
     bio: "A marketer, storyteller, and endlessly curious thinker. Blending data, strategy, creativity, and a little heart to help brands connect with people in ways that matter.",
     location: "Evanston, IL · San Diego, CA",
     email: "hello.minkoma@gmail.com",
-    linkedin: "https://www.linkedin.com/in/minko-m-281519255/",
+    linkedin: "https://www.linkedin.com/in/minkoma",
     resume: "resume.html",
     languages: "Bilingual in Mandarin and English"
   },

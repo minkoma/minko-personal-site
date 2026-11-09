@@ -63,35 +63,6 @@ window.PHOTO_MOODS = [
   },
   {
     "key": "crafts",
-    "src": "assets/aboutme/web/12%20picks/calligraphy2.jpg",
-    "ar": 0.7508,
-    "background": "#241f1c",
-    "blob1": "#4e362c",
-    "blob2": "#392c23",
-    "accent": "#ba795e",
-    "light": {
-      "background": "#f8efef",
-      "blob1": "#cf9ec2",
-      "blob2": "#d8c0c4",
-      "accent": "#993352",
-      "chip": {
-        "word": "blush",
-        "hex": "993352",
-        "rgb": "153, 51, 82",
-        "cmyk": "0, 67, 46, 40",
-        "pms": "PMS 248 C"
-      }
-    },
-    "chip": {
-      "word": "clay",
-      "hex": "BA795E",
-      "rgb": "186, 121, 94",
-      "cmyk": "0, 35, 49, 27",
-      "pms": "PMS 479 C"
-    }
-  },
-  {
-    "key": "crafts",
     "src": "assets/aboutme/web/12%20picks/crochet1.JPG",
     "ar": 1.0,
     "background": "#131519",
@@ -99,15 +70,15 @@ window.PHOTO_MOODS = [
     "blob2": "#4a402e",
     "accent": "#5e75ba",
     "light": {
-      "background": "#f4eff3",
-      "blob1": "#bb9edf",
-      "blob2": "#d8bade",
-      "accent": "#673399",
+      "background": "#f8eff3",
+      "blob1": "#cf9edc",
+      "blob2": "#d8bacf",
+      "accent": "#993393",
       "chip": {
-        "word": "violet",
-        "hex": "673399",
-        "rgb": "103, 51, 153",
-        "cmyk": "33, 67, 0, 40",
+        "word": "magenta",
+        "hex": "993393",
+        "rgb": "153, 51, 147",
+        "cmyk": "0, 67, 4, 40",
         "pms": "PMS 255 C"
       }
     },
@@ -128,16 +99,16 @@ window.PHOTO_MOODS = [
     "blob2": "#3a2822",
     "accent": "#ba945e",
     "light": {
-      "background": "#f1f6f2",
-      "blob1": "#a5c8d4",
-      "blob2": "#bdd0df",
-      "accent": "#33997c",
+      "background": "#f8eff2",
+      "blob1": "#cf9ed6",
+      "blob2": "#d8bacb",
+      "accent": "#993383",
       "chip": {
-        "word": "seafoam",
-        "hex": "33997C",
-        "rgb": "51, 153, 124",
-        "cmyk": "67, 0, 19, 40",
-        "pms": "PMS 339 C"
+        "word": "fuchsia",
+        "hex": "993383",
+        "rgb": "153, 51, 131",
+        "cmyk": "0, 67, 14, 40",
+        "pms": "PMS 234 C"
       }
     },
     "chip": {
@@ -146,6 +117,35 @@ window.PHOTO_MOODS = [
       "rgb": "186, 148, 94",
       "cmyk": "0, 20, 49, 27",
       "pms": "PMS 465 C"
+    }
+  },
+  {
+    "key": "crafts",
+    "src": "assets/aboutme/web/12%20picks/calligraphy2.jpg",
+    "ar": 0.7508,
+    "background": "#241f1c",
+    "blob1": "#4e362c",
+    "blob2": "#392c23",
+    "accent": "#ba795e",
+    "light": {
+      "background": "#f1eff3",
+      "blob1": "#ac9edf",
+      "blob2": "#cfbadf",
+      "accent": "#423399",
+      "chip": {
+        "word": "indigo",
+        "hex": "423399",
+        "rgb": "66, 51, 153",
+        "cmyk": "57, 67, 0, 40",
+        "pms": "PMS 255 C"
+      }
+    },
+    "chip": {
+      "word": "clay",
+      "hex": "BA795E",
+      "rgb": "186, 121, 94",
+      "cmyk": "0, 35, 49, 27",
+      "pms": "PMS 479 C"
     }
   },
   {

@@ -56,6 +56,12 @@ PICKS = os.path.join(ROOT, "assets", "aboutme", "web", "12 picks")
 # 3, 4, 1 rather than 1, 3, 4.
 ORDER = ["twin3.jpg", "twin4.JPG", "twin1.jpg"]
 
+# A file that belongs somewhere specific in the middle of the run, rather than
+# at the end where ORDER puts things: sort it as if it carried another name.
+# calligraphy2 is a crafts photo and should follow the cross-stitch one, not
+# lead the crafts group from under "c".
+SORT_AS = {"calligraphy2.jpg": "cross-stitch2"}
+
 # Filename prefix -> the interest key, which is how a photo finds its story in
 # content.js. Longest prefix wins, so "cross-stitch" beats "c".
 KEY_BY_PREFIX = [
@@ -211,7 +217,8 @@ def picks():
     files = [f for f in os.listdir(PICKS) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
     # Alphabetical order put the twins in 1, 3, 4; Minko wants the set to end
     # 3, 4, 1. Named files sort AFTER everything else, in the order named here.
-    files.sort(key=lambda f: (1, ORDER.index(f)) if f in ORDER else (0, f.lower()))
+    key = lambda f: SORT_AS.get(f, f).lower()
+    files.sort(key=lambda f: (1, ORDER.index(f)) if f in ORDER else (0, key(f)))
     rel = os.path.relpath(PICKS, ROOT).replace(os.sep, "/")
     out = []
     for f in files:

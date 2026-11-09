@@ -9,9 +9,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/styles.css">
-<link rel="stylesheet" href="css/depth-lab.css">
+<!-- ?v= on every file this repo owns is a cache buster, and it has to be
+     bumped whenever one of them changes. GitHub Pages serves these with a
+     ten-minute max-age and browsers hold them far longer, which once left the
+     live site running a fresh main.js against a stale content.js and
+     styles.css: the new three-line "reach me" rows appeared, with the old
+     email address in them and none of their styling. Vendor files are left
+     alone; they never change. -->
+<link rel="stylesheet" href="css/base.css?v=20261109">
+<link rel="stylesheet" href="css/styles.css?v=20261109">
+<link rel="stylesheet" href="css/depth-lab.css?v=20261109">
 </head>
 <body>
 <script>document.documentElement.classList.remove('no-js')</script>
@@ -193,12 +200,12 @@
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
 <script src="assets/vendor/Draggable.min.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
-<script src="js/content.js"></script>
-<script src="js/photo-moods.js"></script>
-<script src="js/motion.js"></script>
-<script src="js/main.js"></script>
+<script src="js/content.js?v=20261109"></script>
+<script src="js/photo-moods.js?v=20261109"></script>
+<script src="js/motion.js?v=20261109"></script>
+<script src="js/main.js?v=20261109"></script>
 <!-- The Bits of me gallery. A module, so it has to come after main.js has
      rendered the egg cards it forwards clicks to. -->
-<script type="module" src="js/depth-lab.js"></script>
+<script type="module" src="js/depth-lab.js?v=20261109"></script>
 </body>
 </html>
