@@ -155,7 +155,7 @@ window.MINKO = {
       company: "Bagel Brands",
       sub: "Einstein Bros. Bagels · Bruegger’s Bagels · Noah’s New York Bagels",
       role: "Graduate Marketing Consultant",
-      period: "Jun 2026 – Aug 2026",
+      period: "Jun 2026 – Sep 2026",
       place: "Evanston, IL",
       year: "2026",
       photos: ["assets/experience/bagel.jpg", "assets/experience/bagel2.jpg"],
