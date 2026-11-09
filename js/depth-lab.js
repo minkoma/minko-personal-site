@@ -41,17 +41,10 @@ const $ = (s, r = document) => r.querySelector(s);
 const SECTION = document.querySelector("[data-depth-section]");
 const EMBED = !!SECTION;
 
-/* One of the ten picks, me-forky.jpg, belongs to a theme that was removed from
-   the live board, so content.js no longer carries its words. Kept here rather
-   than restored to content.js, because the board is deliberately six themes. */
-const EXTRA = {
-  forky: {
-    title: "My kind of character",
-    headline: "A soft spot for a very unusual toy.",
-    story:
-      "Forky is my favourite cartoon character. A little quirky and completely lovable — he always makes me smile."
-  }
-};
+/* Spare words for a photo whose theme is not on the live board. Empty now
+   that the Forky pick has been removed; kept because the lookup below reads
+   it, and a future pick may again outlive its theme. */
+const EXTRA = {};
 
 /* The bit a photo belongs to, by interest key. Used twice: for the title
    printed into the polaroid border, and for the text on the right. */
@@ -121,7 +114,10 @@ function polaroidCanvas(img, title) {
      Scroll       Bounds on · Velocity Damping 0.12 · Velocity Max 1.5 */
 const CFG = {
   planeGap: 5.0,
-  planeHeight: 2.05,
+  /* 2.05 before. A card that tall ran off the top and bottom of a laptop
+     window as it came near, which cut the handwritten title in the polaroid's
+     bottom margin off the screen. */
+  planeHeight: 1.85,
   cameraStartZ: 4.2,
   /* Unchanged from the previous pass: the demo's panel exposes no scroll-speed
      control, and these are what made the pacing readable. */

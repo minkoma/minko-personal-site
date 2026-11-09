@@ -859,23 +859,28 @@ p {
   z-index: 6;
   top: -6px;
   right: -4px;
-  width: clamp(62px, 5.4vw, 80px);
-  aspect-ratio: 1;
+  min-width: clamp(62px, 5.4vw, 80px);
   display: grid;
   place-items: center;
+  padding: 15px 17px;
+  /* 50% on a box wider than it is tall is an ellipse, which is what lets a
+     range like "2021–2024" sit on one line without the circle growing. */
   border-radius: 50%;
+  white-space: nowrap;
+  --stamp-rot: 14deg;
   border: 3px dashed var(--plum);
   color: var(--plum);
   font-family: var(--display);
   font-weight: 800;
-  font-size: clamp(17px, 1.6vw, 23px);
+  font-size: clamp(15px, 1.35vw, 20px);
   background: rgba(255, 253, 248, 0.85);
-  transform: rotate(-14deg);
+  transform: rotate(var(--stamp-rot));
 }
 
 .is-flip .year-stamp {
   right: auto;
   left: -4px;
+  --stamp-rot: -14deg;
 }
 
 /* Where the stack leans out into the page's margin, main.js positions the
@@ -1949,7 +1954,9 @@ p {
   position: relative;
   z-index: 1;
   padding: clamp(46px, 8vh, 110px) var(--pad) 0;
-  max-width: 1100px;
+  /* 1100px before. The card has to be this wide for the five "open to" fields
+     to sit on one line at full chip size. */
+  max-width: 1360px;
   margin: 0 auto;
   text-align: center;
 }
@@ -2103,48 +2110,64 @@ p {
    is only one answer to it; the fields are outlined pills because they are a
    list. The four arbitrary chip colours this replaced carried no meaning, so
    the row read as a legend to something that did not exist. */
+/* One row: the five fields plus the commitment pill wrapped onto a second
+   line, which read as two unrelated groups. They only fit on one line at a
+   slightly smaller chip, so the sizes below are deliberate. */
 .now-open {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 9px 11px;
+  flex-wrap: nowrap;
+  gap: 14px;
 }
 
-.now-open-lead {
-  font-family: var(--hand);
-  font-size: clamp(15px, 1.4vw, 19px);
+/* "Full-time roles in" is a sentence about Minko, not a control, so it is set
+   as words — all of it in one face and one size, like the rows above it. */
+.open-lead {
+  margin: 0;
+  flex: none;
+  white-space: nowrap;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(13.5px, 1.2vw, 16px);
+  color: var(--ink);
+}
+
+.open-lead i {
+  font: inherit;
   color: var(--ink-soft);
 }
 
 .now-fields {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
 }
 
-.chip {
-  padding: 7px 15px;
-  border-radius: 999px;
+.tape-tag {
+  position: relative;
+  padding: 8px 13px;
+  background: #fdf6e6;
+  box-shadow: 0 1px 0 rgba(58, 48, 38, 0.1);
+  color: var(--ink);
   font-weight: 700;
   font-size: clamp(12.5px, 1.1vw, 14.5px);
-  transition: transform 0.2s ease;
-}
-
-.chip-lead {
-  background: var(--plum);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(124, 92, 196, 0.3);
-}
-
-.chip-field {
-  background: transparent;
-  color: var(--plum-deep);
-  box-shadow: inset 0 0 0 1.5px #ded0f4;
+  white-space: nowrap;
+  transform: rotate(var(--t, 0deg));
   animation: chipIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   animation-delay: var(--i, 0ms);
 }
 
-.chip:hover { transform: translateY(-2px) rotate(-1deg); }
+/* A strip of the same washi tape used on the photos, holding each tag down. */
+.tape-tag::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  translate: -50% 0;
+  width: 30px;
+  height: 10px;
+  background: repeating-linear-gradient(90deg, rgba(242, 181, 68, 0.55) 0 3px, rgba(242, 181, 68, 0.22) 3px 6px);
+}
 
 @keyframes chipIn {
   from { opacity: 0; transform: translateY(7px) scale(0.96); }
@@ -2161,11 +2184,70 @@ p {
 }
 
 /* ---- row 4: reach me ---- */
+/* One line per channel: email, LinkedIn, résumé. Every value is ordinary text
+   with an underline, which is what a link looks like; the only button left in
+   the row is the one that does something other than navigate. */
 .now-reach {
   display: grid;
-  gap: 12px;
+  gap: 11px;
   justify-items: start;
 }
+
+.reach-line {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+}
+
+.reach-what {
+  flex: none;
+  min-width: 68px;
+  font-size: clamp(9.5px, 0.8vw, 11px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.reach-link {
+  /* Deliberately not the display face and not bold: it is a web address, and
+     the underline is doing the work. */
+  font-size: clamp(14px, 1.15vw, 16px);
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(58, 48, 38, 0.4);
+  overflow-wrap: anywhere;
+}
+
+.reach-link:hover {
+  color: var(--plum-deep);
+  text-decoration-color: var(--plum);
+}
+
+/* Copying is the one thing in these rows that is not navigation, so it is the
+   one thing shaped like a control — and kept quiet, because writing to her
+   matters more than putting her address on the clipboard. */
+.copy-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1.5px solid var(--plum);
+  border-radius: 999px;
+  padding: 4px 11px;
+  color: var(--plum-deep);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.copy-mini:hover { background: var(--plum); color: #fff; }
 
 .big-link {
   font-family: var(--display);
@@ -2221,25 +2303,36 @@ p {
 .now-panel.is-night .now-clock,
 .now-panel.is-night .now-state,
 .now-panel.is-night .now-place,
-.now-panel.is-night .big-link { color: #ffe9a8; }
+.now-panel.is-night .reach-link { color: #f3edf8; text-decoration-color: rgba(243, 237, 248, 0.5); }
+.now-panel.is-night .reach-what { color: #9f8fae; }
 .now-panel.is-night .now-ampm,
 .now-panel.is-night .now-yours { color: #a89ab8; }
 .now-panel.is-night .button { background: #ffe9a8; color: #1a1424; }
 
-/* At night the outlined field pills take the light and the solid one keeps
-   its weight by going gold rather than plum. */
-.now-panel.is-night .chip-field {
-  color: #ede5f7;
-  box-shadow: inset 0 0 0 1.5px rgba(255, 233, 168, 0.32);
-}
-
-.now-panel.is-night .chip-lead {
-  background: #ffe9a8;
-  color: #1a1424;
+/* At night the paper tags go to a dim card rather than cream, and the copy
+   button borrows the panel's gold. */
+.now-panel.is-night .tape-tag {
+  background: rgba(243, 237, 248, 0.1);
+  color: #f3edf8;
   box-shadow: none;
 }
 
-.now-panel.is-night .now-open-lead { color: #a89ab8; }
+.now-panel.is-night .open-lead { color: #f3edf8; }
+.now-panel.is-night .open-lead i { color: #a89ab8; }
+
+.now-panel.is-night .copy-mini {
+  border-color: rgba(255, 233, 168, 0.6);
+  color: #ffe9a8;
+}
+
+.now-panel.is-night .copy-mini:hover { background: #ffe9a8; color: #1a1424; }
+
+/* Below this the five fields cannot hold one line at readable size, so they
+   wrap rather than shrink. */
+@media (max-width: 1340px) {
+  .now-open,
+  .now-fields { flex-wrap: wrap; }
+}
 
 @media (max-width: 640px) {
   .now-row {
@@ -2251,7 +2344,7 @@ p {
 @media (prefers-reduced-motion: reduce) {
   .now-orb,
   .now-sec.is-beat,
-  .chip-field { animation: none; }
+  .tape-tag { animation: none; }
 }
 
 /* The .skills / .sticky note boxes that used to close the contact section are
@@ -2552,80 +2645,6 @@ p {
   top: 0;
   font-size: 54px;
   line-height: 1;
-}
-
-/* forky */
-.egg-forky {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  translate: -50% 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-}
-
-.forky-body {
-  position: relative;
-  font-size: clamp(120px, 16vw, 200px);
-  line-height: 1;
-  display: block;
-}
-
-.forky-body .eye {
-  position: absolute;
-  top: 46%;
-  width: 0.16em;
-  height: 0.16em;
-  border-radius: 50%;
-  background: #fff;
-  border: 3px solid var(--ink);
-}
-
-.forky-body .eye::after {
-  content: "";
-  position: absolute;
-  inset: 22%;
-  border-radius: 50%;
-  background: var(--ink);
-  animation: googly 0.6s ease-in-out infinite alternate;
-}
-
-.forky-body .eye.l {
-  left: 30%;
-}
-
-.forky-body .eye.r {
-  left: 50%;
-  top: 43%;
-}
-
-.forky-body .brow {
-  position: absolute;
-  left: 30%;
-  top: 37%;
-  width: 0.4em;
-  height: 4px;
-  background: var(--rose);
-  border-radius: 4px;
-  transform: rotate(-8deg);
-}
-
-@keyframes googly {
-  to {
-    transform: translate(25%, 20%);
-  }
-}
-
-.forky-say {
-  font-family: var(--hand);
-  font-size: 34px;
-  background: #fff;
-  border: 2px solid var(--ink);
-  border-radius: 20px;
-  padding: 2px 16px;
-  box-shadow: 4px 4px 0 var(--ink);
-  margin-top: 20px;
 }
 
 /* coffee */

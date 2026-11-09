@@ -68,7 +68,6 @@ KEY_BY_PREFIX = [
     ("ballet", "ballet"),
     ("twin", "twins"),
     ("shelliemay", "bear"),
-    ("me-forky", "forky"),
     ("make-coffee", "coffee"),
     ("travel", "travel"),
 ]

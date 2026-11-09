@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Contact rows — five options</title>
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Caveat:wght@400..700&family=Nunito:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+/* ------------------------------------------------------------- the page */
+/* A scratch page, so everything is local to it. The live panel's own rules
+   come from css/styles.css above; each option below overrides only what it
+   changes, under its own .opt-N class. */
+body { background: var(--paper); }
+
+.lab {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: clamp(30px, 6vh, 70px) var(--pad) 120px;
+}
+
+.lab h1 {
+  font-family: var(--display);
+  font-size: clamp(28px, 4vw, 46px);
+  color: var(--plum-deep);
+  margin: 0 0 6px;
+}
+
+.lab-sub { margin: 0 0 34px; color: var(--ink-soft); max-width: 70ch; }
+
+.crit {
+  background: var(--card);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: clamp(20px, 3vw, 34px);
+  margin-bottom: 54px;
+}
+
+.crit h2 {
+  font-family: var(--display);
+  font-size: 20px;
+  margin: 0 0 14px;
+}
+
+.crit ol { margin: 0; padding-left: 20px; }
+.crit li { margin-bottom: 10px; max-width: 95ch; }
+.crit b { color: var(--plum-deep); }
+
+.rules { margin: 18px 0 0; padding: 16px 18px; border-left: 3px solid var(--sun); background: #fffaf0; }
+.rules p { margin: 0 0 8px; }
+.rules p:last-child { margin: 0; }
+
+.opt { margin-bottom: 62px; }
+
+.opt-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 4px; }
+.opt-head h2 { font-family: var(--display); font-size: clamp(20px, 2.2vw, 27px); margin: 0; }
+.opt-tag {
+  font-family: var(--hand);
+  font-size: 19px;
+  color: var(--mint);
+}
+.opt-note { margin: 0 0 18px; color: var(--ink-soft); max-width: 86ch; }
+
+/* The card each option is shown in: the live panel, minus the clock rows. */
+.demo { position: relative; background: var(--card); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; }
+
+/* Shared bits used by more than one option ---------------------------- */
+.ico { width: 16px; height: 16px; flex: none; }
+.row-value { font-family: var(--display); font-weight: 700; color: var(--plum-deep); }
+
+/* ===================================================== 1 · plain facts */
+.opt-1 .fact-line {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(15px, 1.35vw, 18px);
+  color: var(--ink);
+  margin: 0;
+}
+.opt-1 .fact-line b { color: var(--plum-deep); }
+.opt-1 .fact-line i { font-family: var(--hand); font-weight: 400; font-style: normal; font-size: 1.15em; color: var(--ink-soft); }
+
+.opt-1 .act { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.opt-1 .cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--plum);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 22px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(124, 92, 196, 0.28);
+}
+.opt-1 .cta:hover { background: var(--plum-deep); }
+.opt-1 .copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  padding: 11px 16px;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.opt-1 .copy:hover { border-color: var(--plum); color: var(--plum-deep); }
+.opt-1 .quiet { display: flex; gap: 20px; flex-wrap: wrap; }
+.opt-1 .quiet a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 4px;
+  font-size: 14.5px;
+}
+.opt-1 .quiet a:hover { text-decoration-color: var(--plum); color: var(--plum-deep); }
+.opt-1 .stack { display: grid; gap: 14px; justify-items: start; }
+
+/* ================================================== 2 · channel list */
+.opt-2 .chan { display: grid; }
+.opt-2 .chan > * {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 15px 2px;
+  border-top: 1px dashed var(--line);
+  text-decoration: none;
+  color: inherit;
+  background: none;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.opt-2 .chan > *:first-child { border-top: 0; }
+.opt-2 .chan > *:hover { background: #faf5ff; }
+.opt-2 .chan .what { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); display: block; }
+.opt-2 .chan .val { font-family: var(--display); font-weight: 700; font-size: clamp(15px, 1.5vw, 19px); color: var(--plum-deep); }
+.opt-2 .chan .cue { font-size: 12px; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 6px; }
+.opt-2 .chan > *:hover .cue { color: var(--plum); }
+.opt-2 .tags { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.opt-2 .tag { font-size: 13.5px; color: var(--ink); padding: 0; }
+.opt-2 .tag + .tag::before { content: "·"; margin-right: 10px; color: var(--line); }
+/* What shipped: one line per channel, the value as ordinary underlined text,
+   and a button only where something other than navigation happens. */
+.opt-2 .chan.is-shipped > p {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  border: 0;
+  padding: 6px 2px;
+  margin: 0;
+  background: none;
+}
+.opt-2 .chan.is-shipped .what { min-width: 68px; flex: none; }
+.opt-2 .plain {
+  font-size: clamp(14px, 1.15vw, 16px);
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(58, 48, 38, 0.4);
+  overflow-wrap: anywhere;
+}
+.opt-2 .plain:hover { color: var(--plum-deep); text-decoration-color: var(--plum); }
+
+.opt-2 .state {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  color: #2f6a5a;
+  background: rgba(111, 191, 169, 0.2);
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+
+/* ============================================ 3 · one primary, quiet rest */
+.opt-3 .chips { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; }
+.opt-3 .chip-fact {
+  background: var(--paper-2);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: clamp(12.5px, 1.1vw, 14.5px);
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: none;
+}
+.opt-3 .chip-state {
+  background: var(--sun);
+  color: #4a3406;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-weight: 700;
+  font-size: clamp(12.5px, 1.1vw, 14.5px);
+  white-space: nowrap;
+}
+.opt-3 .lead { font-family: var(--hand); font-size: 19px; color: var(--ink-soft); white-space: nowrap; }
+.opt-3 .reach { display: grid; gap: 13px; justify-items: start; }
+.opt-3 .primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--plum);
+  color: #fff;
+  border-radius: 999px;
+  padding: 14px 24px;
+  font-family: var(--display);
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(124, 92, 196, 0.28);
+}
+.opt-3 .secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1.5px solid var(--plum);
+  color: var(--plum-deep);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.opt-3 .tertiary { display: flex; gap: 22px; flex-wrap: wrap; }
+.opt-3 .tertiary a { font-size: 14.5px; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line); }
+.opt-3 .tertiary a:hover { text-decoration-color: var(--plum); }
+.opt-3 .pair { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* ================================================ 4 · shape carries meaning */
+.opt-4 .tape-tag {
+  position: relative;
+  display: inline-block;
+  padding: 8px 14px;
+  background: #fdf6e6;
+  box-shadow: 0 1px 0 rgba(58, 48, 38, 0.1);
+  font-weight: 700;
+  font-size: clamp(12.5px, 1.1vw, 14.5px);
+  white-space: nowrap;
+  transform: rotate(var(--t, 0deg));
+}
+.opt-4 .tape-tag::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -7px;
+  translate: -50% 0;
+  width: 34px;
+  height: 11px;
+  background: repeating-linear-gradient(90deg, rgba(242, 181, 68, 0.55) 0 3px, rgba(242, 181, 68, 0.25) 3px 6px);
+}
+.opt-4 .tape-row { display: flex; gap: 12px; align-items: center; flex-wrap: nowrap; }
+.opt-4 .tape-lead { font-family: var(--hand); font-size: 19px; color: var(--ink-soft); white-space: nowrap; }
+.opt-4 .btns { display: flex; gap: 11px; flex-wrap: wrap; align-items: center; }
+.opt-4 .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  border: 0;
+}
+.opt-4 .btn-solid { background: var(--plum); color: #fff; }
+.opt-4 .btn-line { background: none; box-shadow: inset 0 0 0 1.5px var(--plum); color: var(--plum-deep); }
+.opt-4 .stack { display: grid; gap: 13px; justify-items: start; }
+.opt-4 .addr { font-family: var(--display); font-weight: 700; font-size: clamp(16px, 1.6vw, 22px); color: var(--plum-deep); }
+
+/* ================================================== 5 · address first */
+.opt-5 .mailline { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.opt-5 .addr {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(19px, 2.4vw, 34px);
+  color: var(--plum-deep);
+  text-decoration: none;
+  border-bottom: 3px solid var(--sun);
+}
+.opt-5 .addr:hover { border-bottom-color: var(--plum); }
+.opt-5 .icons { display: flex; gap: 7px; }
+.opt-5 .icon-btn {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-decoration: none;
+}
+.opt-5 .icon-btn:hover { border-color: var(--plum); color: var(--plum-deep); background: #faf5ff; }
+.opt-5 .elsewhere { margin: 12px 0 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 14px; color: var(--ink-soft); }
+.opt-5 .elsewhere a { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line); }
+.opt-5 .elsewhere a:hover { text-decoration-color: var(--plum); color: var(--plum-deep); }
+.opt-5 .badge {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: #2f6a5a;
+  background: rgba(111, 191, 169, 0.22);
+  border-radius: 6px;
+  padding: 5px 9px;
+  white-space: nowrap;
+}
+.opt-5 .fields { font-family: var(--display); font-weight: 600; font-size: clamp(14.5px, 1.3vw, 17px); color: var(--ink); }
+.opt-5 .open-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  translate: -50% 0;
+  background: var(--ink);
+  color: #fff;
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.toast.is-on { opacity: 1; }
+
+@media (max-width: 1340px) {
+  .opt-3 .chips,
+  .opt-4 .tape-row { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+<div class="lab">
+  <p><a href="index.html">← back to the scrapbook</a></p>
+  <h1>The contact rows, five ways</h1>
+  <p class="lab-sub">
+    Same content every time: what Minko is open to, and how to reach her. What changes is
+    which things look pressable, and what the colour means.
+  </p>
+
+  <section class="crit">
+    <h2>What is wrong with the live version</h2>
+    <ol>
+      <li><b>One pill, four meanings.</b> “Full-time” is a fact, “copy email” acts in place,
+        “résumé ↗” opens another page of this site, “linkedin ↗” leaves for another site.
+        All four are the same filled plum pill, so the shape tells you nothing.</li>
+      <li><b>The outlined field chips look like filters.</b> A rounded outline in the accent colour
+        is button language. Nothing happens when you press them, which is a small dead end
+        five times over.</li>
+      <li><b>The real action is the quietest thing in the row.</b> Writing to Minko is the point of
+        the section, and the address is plain text with a thin underline, sitting next to a
+        filled button that only copies it to the clipboard.</li>
+      <li><b>Internal and external links are indistinguishable.</b> Both carry ↗, though only one
+        takes you off the site.</li>
+      <li><b>Plum is spent everywhere,</b> so it cannot mark anything. The eye has no way to find
+        the one thing worth clicking.</li>
+    </ol>
+
+    <div class="rules">
+      <p><b>The rule each option below follows,</b> in one form or another:</p>
+      <p>A fact is never pill-shaped. One filled element per row, and it is the action that
+        matters. An in-place action sits beside the thing it acts on and stays quiet. A link
+        that leaves the site is underlined and carries ↗.</p>
+    </div>
+  </section>
+
+  <!-- 1 ------------------------------------------------------------------ -->
+  <section class="opt opt-1">
+    <div class="opt-head"><h2>Option 1 · Plain facts, one call</h2><span class="opt-tag">the quietest</span></div>
+    <p class="opt-note">
+      The “open to” row stops being chips and becomes a sentence, which is how you would say it
+      out loud. The only filled button on the card writes to her; copying is a bordered
+      afterthought, and the two links read as links.
+    </p>
+    <div class="demo">
+      <div class="now-row">
+        <i>open to</i>
+        <p class="fact-line"><b>Full-time</b> <i>roles in</i> Digital Marketing, Content &amp; Social, Data Analytics, Brand Strategy, Consumer Insights</p>
+      </div>
+      <div class="now-row">
+        <i>reach me</i>
+        <div class="stack">
+          <div class="act">
+            <a class="cta" href="mailto:hello.minkoma@gmail.com">✉ Email me</a>
+            <button class="copy" type="button" data-copy>⧉ copy hello.minkoma@gmail.com</button>
+          </div>
+          <div class="quiet">
+            <a href="resume.html">Read my résumé</a>
+            <a href="#" target="_blank" rel="noopener">LinkedIn ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 ------------------------------------------------------------------ -->
+  <section class="opt opt-2">
+    <div class="opt-head"><h2>Option 2 · A list of channels</h2><span class="opt-tag">this is what shipped</span></div>
+    <p class="opt-note">
+      One line per channel: email, LinkedIn, résumé. Each value is the address itself, in
+      ordinary text at normal weight with an underline, which is all a link needs. The only
+      button left is "copy email", because copying is the one thing in the row that is not
+      navigation. Facts lose their outlines entirely and the one piece of state keeps a soft
+      mint badge. This is the version now live on the page.
+    </p>
+    <div class="demo">
+      <div class="now-row">
+        <i>open to</i>
+        <div class="tags">
+          <span class="state">Full-time</span>
+          <span class="tag">Digital Marketing</span><span class="tag">Content &amp; Social</span><span class="tag">Data Analytics</span><span class="tag">Brand Strategy</span><span class="tag">Consumer Insights</span>
+        </div>
+      </div>
+      <div class="now-row">
+        <i>reach me</i>
+        <div class="chan is-shipped">
+          <p><span class="what">email</span><a class="plain" href="mailto:hello.minkoma@gmail.com">hello.minkoma@gmail.com</a>
+            <button class="button is-small" type="button" data-copy>copy email</button></p>
+          <p><span class="what">linkedin</span><a class="plain" href="#" target="_blank" rel="noopener">linkedin.com/in/minko-m-281519255</a></p>
+          <p><span class="what">résumé</span><a class="plain" href="resume.html">minkoma.github.io/minko-personal-site/resume.html</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 ------------------------------------------------------------------ -->
+  <section class="opt opt-3">
+    <div class="opt-head"><h2>Option 3 · Primary, secondary, tertiary</h2><span class="opt-tag">closest to now</span></div>
+    <p class="opt-note">
+      Keeps the pills you already have and gives each level a job: filled plum for the one action,
+      an outline for the in-place one, underlined text for the two that navigate. The field chips
+      go sand, so plum stops being decoration, and “Full-time” goes gold because it is a fact
+      about her, not a thing to press.
+    </p>
+    <div class="demo">
+      <div class="now-row">
+        <i>open to</i>
+        <div class="chips">
+          <span class="chip-state">Full-time</span>
+          <span class="lead">roles in</span>
+          <span class="chip-fact">Digital Marketing</span>
+          <span class="chip-fact">Content &amp; Social</span>
+          <span class="chip-fact">Data Analytics</span>
+          <span class="chip-fact">Brand Strategy</span>
+          <span class="chip-fact">Consumer Insights</span>
+        </div>
+      </div>
+      <div class="now-row">
+        <i>reach me</i>
+        <div class="reach">
+          <div class="pair">
+            <a class="primary" href="mailto:hello.minkoma@gmail.com">✉ hello.minkoma@gmail.com</a>
+            <button class="secondary" type="button" data-copy>⧉ copy</button>
+          </div>
+          <div class="tertiary">
+            <a href="resume.html">résumé</a>
+            <a href="#" target="_blank" rel="noopener">linkedin ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 ------------------------------------------------------------------ -->
+  <section class="opt opt-4">
+    <div class="opt-head"><h2>Option 4 · Shape carries the meaning</h2><span class="opt-tag">most scrapbook</span></div>
+    <p class="opt-note">
+      Facts become taped paper tags with square corners; only actions are round. That fits the
+      rest of the page, where everything factual is already something stuck down with tape, and
+      it means the distinction survives in black and white.
+    </p>
+    <div class="demo">
+      <div class="now-row">
+        <i>open to</i>
+        <div class="tape-row">
+          <span class="tape-tag" style="--t:-1.5deg">Full-time</span>
+          <span class="tape-lead">roles in</span>
+          <span class="tape-tag" style="--t:1deg">Digital Marketing</span>
+          <span class="tape-tag" style="--t:-1deg">Content &amp; Social</span>
+          <span class="tape-tag" style="--t:1.5deg">Data Analytics</span>
+          <span class="tape-tag" style="--t:-0.5deg">Brand Strategy</span>
+          <span class="tape-tag" style="--t:1deg">Consumer Insights</span>
+        </div>
+      </div>
+      <div class="now-row">
+        <i>reach me</i>
+        <div class="stack">
+          <span class="addr">hello.minkoma@gmail.com</span>
+          <div class="btns">
+            <a class="btn btn-solid" href="mailto:hello.minkoma@gmail.com">✉ write to me</a>
+            <button class="btn btn-line" type="button" data-copy>⧉ copy</button>
+            <a class="btn btn-line" href="resume.html">▤ résumé</a>
+            <a class="btn btn-line" href="#" target="_blank" rel="noopener">in &nbsp;linkedin ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 ------------------------------------------------------------------ -->
+  <section class="opt opt-5">
+    <div class="opt-head"><h2>Option 5 · The address is the row</h2><span class="opt-tag">most direct</span></div>
+    <p class="opt-note">
+      The email becomes the largest thing in the card, with two small square icon buttons
+      attached to it: one copies, one opens a mail app. Square means “a tool for this field”.
+      Everything else is one quiet line underneath. Mint is reserved for state, plum for action,
+      and that is the whole colour system.
+    </p>
+    <div class="demo">
+      <div class="now-row">
+        <i>open to</i>
+        <div class="open-row">
+          <span class="badge">Full-time</span>
+          <span class="fields">Digital Marketing · Content &amp; Social · Data Analytics · Brand Strategy · Consumer Insights</span>
+        </div>
+      </div>
+      <div class="now-row">
+        <i>reach me</i>
+        <div>
+          <div class="mailline">
+            <a class="addr" href="mailto:hello.minkoma@gmail.com">hello.minkoma@gmail.com</a>
+            <span class="icons">
+              <button class="icon-btn" type="button" data-copy title="copy the address" aria-label="copy the address">⧉</button>
+              <a class="icon-btn" href="mailto:hello.minkoma@gmail.com" title="open your mail app" aria-label="open your mail app">✉</a>
+            </span>
+          </div>
+          <p class="elsewhere">
+            also: <a href="resume.html">résumé</a> · <a href="#" target="_blank" rel="noopener">linkedin ↗</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" data-toast>copied</div>
+
+<script>
+/* Every option's copy button does the real thing, so the quiet ones can be
+   judged on whether they still read as pressable. */
+const toast = document.querySelector("[data-toast]");
+document.querySelectorAll("[data-copy]").forEach((b) => {
+  b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText("hello.minkoma@gmail.com"); } catch (e) {}
+    toast.classList.add("is-on");
+    setTimeout(() => toast.classList.remove("is-on"), 1200);
+  });
+});
+</script>
+</body>
+</html>

@@ -63,6 +63,35 @@ window.PHOTO_MOODS = [
   },
   {
     "key": "crafts",
+    "src": "assets/aboutme/web/12%20picks/calligraphy2.jpg",
+    "ar": 0.7508,
+    "background": "#241f1c",
+    "blob1": "#4e362c",
+    "blob2": "#392c23",
+    "accent": "#ba795e",
+    "light": {
+      "background": "#f8efef",
+      "blob1": "#cf9ec2",
+      "blob2": "#d8c0c4",
+      "accent": "#993352",
+      "chip": {
+        "word": "blush",
+        "hex": "993352",
+        "rgb": "153, 51, 82",
+        "cmyk": "0, 67, 46, 40",
+        "pms": "PMS 248 C"
+      }
+    },
+    "chip": {
+      "word": "clay",
+      "hex": "BA795E",
+      "rgb": "186, 121, 94",
+      "cmyk": "0, 35, 49, 27",
+      "pms": "PMS 479 C"
+    }
+  },
+  {
+    "key": "crafts",
     "src": "assets/aboutme/web/12%20picks/crochet1.JPG",
     "ar": 1.0,
     "background": "#131519",
@@ -70,15 +99,15 @@ window.PHOTO_MOODS = [
     "blob2": "#4a402e",
     "accent": "#5e75ba",
     "light": {
-      "background": "#f8eff3",
-      "blob1": "#cf9edc",
-      "blob2": "#d8bacf",
-      "accent": "#993393",
+      "background": "#f4eff3",
+      "blob1": "#bb9edf",
+      "blob2": "#d8bade",
+      "accent": "#673399",
       "chip": {
-        "word": "magenta",
-        "hex": "993393",
-        "rgb": "153, 51, 147",
-        "cmyk": "0, 67, 4, 40",
+        "word": "violet",
+        "hex": "673399",
+        "rgb": "103, 51, 153",
+        "cmyk": "33, 67, 0, 40",
         "pms": "PMS 255 C"
       }
     },
@@ -99,16 +128,16 @@ window.PHOTO_MOODS = [
     "blob2": "#3a2822",
     "accent": "#ba945e",
     "light": {
-      "background": "#f8eff2",
-      "blob1": "#cf9ed6",
-      "blob2": "#d8bacb",
-      "accent": "#993383",
+      "background": "#f1f6f2",
+      "blob1": "#a5c8d4",
+      "blob2": "#bdd0df",
+      "accent": "#33997c",
       "chip": {
-        "word": "fuchsia",
-        "hex": "993383",
-        "rgb": "153, 51, 131",
-        "cmyk": "0, 67, 14, 40",
-        "pms": "PMS 234 C"
+        "word": "seafoam",
+        "hex": "33997C",
+        "rgb": "51, 153, 124",
+        "cmyk": "67, 0, 19, 40",
+        "pms": "PMS 339 C"
       }
     },
     "chip": {
@@ -128,16 +157,16 @@ window.PHOTO_MOODS = [
     "blob2": "#45302a",
     "accent": "#d4bb9a",
     "light": {
-      "background": "#f1f6f2",
-      "blob1": "#a5c8d3",
-      "blob2": "#bdd0df",
-      "accent": "#33997c",
+      "background": "#f7eff3",
+      "blob1": "#c99edf",
+      "blob2": "#d8bad4",
+      "accent": "#8b3399",
       "chip": {
-        "word": "seafoam",
-        "hex": "33997C",
-        "rgb": "51, 153, 124",
-        "cmyk": "67, 0, 19, 40",
-        "pms": "PMS 339 C"
+        "word": "magenta",
+        "hex": "8B3399",
+        "rgb": "139, 51, 153",
+        "cmyk": "9, 67, 0, 40",
+        "pms": "PMS 255 C"
       }
     },
     "chip": {
@@ -151,29 +180,29 @@ window.PHOTO_MOODS = [
   {
     "key": "food",
     "src": "assets/aboutme/web/12%20picks/foodie5.jpg",
-    "ar": 1.7797,
-    "background": "#1d1913",
-    "blob1": "#50412a",
-    "blob2": "#41281b",
-    "accent": "#ba955e",
+    "ar": 1.0,
+    "background": "#29251c",
+    "blob1": "#574a31",
+    "blob2": "#432818",
+    "accent": "#ba9b5e",
     "light": {
-      "background": "#f7eff3",
-      "blob1": "#ca9edf",
-      "blob2": "#d8bad4",
-      "accent": "#8c3399",
+      "background": "#f8efef",
+      "blob1": "#cf9ec6",
+      "blob2": "#d8bec4",
+      "accent": "#99335a",
       "chip": {
-        "word": "magenta",
-        "hex": "8C3399",
-        "rgb": "140, 51, 153",
-        "cmyk": "8, 67, 0, 40",
-        "pms": "PMS 255 C"
+        "word": "rose",
+        "hex": "99335A",
+        "rgb": "153, 51, 90",
+        "cmyk": "0, 67, 41, 40",
+        "pms": "PMS 248 C"
       }
     },
     "chip": {
-      "word": "caramel",
-      "hex": "BA955E",
-      "rgb": "186, 149, 94",
-      "cmyk": "0, 20, 49, 27",
+      "word": "sand",
+      "hex": "BA9B5E",
+      "rgb": "186, 155, 94",
+      "cmyk": "0, 17, 49, 27",
       "pms": "PMS 465 C"
     }
   },
@@ -186,16 +215,16 @@ window.PHOTO_MOODS = [
     "blob2": "#423829",
     "accent": "#d4ce9b",
     "light": {
-      "background": "#f8efef",
-      "blob1": "#cf9ec3",
-      "blob2": "#d8bfc4",
-      "accent": "#993354",
+      "background": "#f1f5f3",
+      "blob1": "#a5c3df",
+      "blob2": "#bdc4df",
+      "accent": "#338c99",
       "chip": {
-        "word": "blush",
-        "hex": "993354",
-        "rgb": "153, 51, 84",
-        "cmyk": "0, 67, 45, 40",
-        "pms": "PMS 248 C"
+        "word": "sky",
+        "hex": "338C99",
+        "rgb": "51, 140, 153",
+        "cmyk": "67, 8, 0, 40",
+        "pms": "PMS 549 C"
       }
     },
     "chip": {
@@ -215,16 +244,16 @@ window.PHOTO_MOODS = [
     "blob2": "#392923",
     "accent": "#c9a980",
     "light": {
-      "background": "#f4eff3",
-      "blob1": "#bc9edf",
-      "blob2": "#d8badd",
-      "accent": "#6a3399",
+      "background": "#f8eff1",
+      "blob1": "#cf9ed2",
+      "blob2": "#d8bac8",
+      "accent": "#993379",
       "chip": {
-        "word": "orchid",
-        "hex": "6A3399",
-        "rgb": "106, 51, 153",
-        "cmyk": "31, 67, 0, 40",
-        "pms": "PMS 255 C"
+        "word": "fuchsia",
+        "hex": "993379",
+        "rgb": "153, 51, 121",
+        "cmyk": "0, 67, 21, 40",
+        "pms": "PMS 228 C"
       }
     },
     "chip": {
@@ -233,35 +262,6 @@ window.PHOTO_MOODS = [
       "rgb": "201, 169, 128",
       "cmyk": "0, 16, 36, 21",
       "pms": "PMS 465 C"
-    }
-  },
-  {
-    "key": "forky",
-    "src": "assets/aboutme/web/12%20picks/me-forky.jpg",
-    "ar": 0.75,
-    "background": "#241c19",
-    "blob1": "#4e372c",
-    "blob2": "#422b1a",
-    "accent": "#ba7b5e",
-    "light": {
-      "background": "#f8eff2",
-      "blob1": "#cf9ed4",
-      "blob2": "#d8baca",
-      "accent": "#99337f",
-      "chip": {
-        "word": "fuchsia",
-        "hex": "99337F",
-        "rgb": "153, 51, 127",
-        "cmyk": "0, 67, 17, 40",
-        "pms": "PMS 234 C"
-      }
-    },
-    "chip": {
-      "word": "clay",
-      "hex": "BA7B5E",
-      "rgb": "186, 123, 94",
-      "cmyk": "0, 34, 49, 27",
-      "pms": "PMS 479 C"
     }
   },
   {

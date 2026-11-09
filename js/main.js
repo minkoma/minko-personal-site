@@ -87,7 +87,7 @@
         tags: w.tags
       }))
     )
-    .sort((a, b) => a.year - b.year);
+    .sort((a, b) => parseInt(a.year, 10) - parseInt(b.year, 10));
 
   $("[data-timeline]").innerHTML = entries
     .map(
@@ -875,6 +875,17 @@
     if (!root || !D.now) return;
     const N = D.now;
 
+    /* Every destination in the "reach me" rows is written out as the address it
+       lands on, since that is what says "this is a link" without a button.
+       An external URL loses its scheme and its www; an internal page is shown
+       against the host the page is actually served from, so it stays true on
+       localhost, on GitHub Pages and on a custom domain alike. */
+    const shownUrl = (u) => String(u).replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+    const pageUrl = (rel) => {
+      try { return shownUrl(new URL(rel, location.href).href); }
+      catch (e) { return String(rel); }
+    };
+
     root.innerHTML = `
       <span class="tape tape-tl" aria-hidden="true"></span>
       <div class="now-row now-clock-row">
@@ -902,32 +913,40 @@
       <div class="now-row">
         <i>open to</i>
         <div class="now-open">
-          <span class="chip chip-lead">${esc(N.openTo.commitment)}</span>
-          <span class="now-open-lead">${esc(N.openTo.lead)}</span>
+          <p class="open-lead"><b>${esc(N.openTo.commitment)}</b> <i>${esc(N.openTo.lead)}</i></p>
           <span class="now-fields">
-            ${N.openTo.fields.map((f, i) => `<span class="chip chip-field" style="--i:${i * 60}ms">${esc(f)}</span>`).join("")}
+            ${N.openTo.fields
+              .map((f, i) => `<span class="tape-tag" style="--i:${i * 60}ms;--t:${[-1.5, 1, -1, 1.5, -0.5][i % 5]}deg">${esc(f)}</span>`)
+              .join("")}
           </span>
         </div>
       </div>
       <div class="now-row">
         <i>reach me</i>
         <div class="now-reach">
-          <a class="big-link" href="mailto:${D.profile.email}" data-confetti>${esc(D.profile.email)}</a>
-          <div class="now-links">
-            <button type="button" class="button is-small" data-copy data-confetti>copy email</button>
-            <a class="button is-small" href="${D.profile.linkedin}" target="_blank" rel="noopener" data-magnetic="0.2">linkedin ↗</a>
-            <a class="button is-small" href="${D.profile.resume}" data-magnetic="0.2">résumé ↗</a>
-            <a class="button is-small" href="tel:${String(D.profile.phone).replace(/\D/g, "")}">${esc(D.profile.phone)}</a>
-          </div>
+          <p class="reach-line">
+            <span class="reach-what">email</span>
+            <a class="reach-link" href="mailto:${D.profile.email}" data-confetti>${esc(D.profile.email)}</a>
+            <button type="button" class="copy-mini" data-copy data-confetti><span aria-hidden="true">⧉</span> copy</button>
+          </p>
+          <p class="reach-line">
+            <span class="reach-what">linkedin</span>
+            <a class="reach-link" href="${D.profile.linkedin}" target="_blank" rel="noopener">${esc(shownUrl(D.profile.linkedin))}</a>
+          </p>
+          <p class="reach-line">
+            <span class="reach-what">résumé</span>
+            <a class="reach-link" href="${D.profile.resume}">${esc(pageUrl(D.profile.resume))}</a>
+          </p>
         </div>
       </div>
       <p class="now-egg-line" data-egg-line aria-hidden="true"></p>`;
 
     const hm = $("[data-hm]", root), sec = $("[data-sec]", root);
+
     const ampm = $("[data-ampm]", root), yours = $("[data-yours]", root);
     const stateText = $("[data-state-text]", root);
     const state = $("[data-state]", root);
-    $("[data-place]", root).textContent = N.place;
+    $("[data-place]", root).textContent = N.relocate ? `${N.place} · ${N.relocate}` : N.place;
 
     /* The seconds digit cycles through the site's own palette as it ticks, so
        the clock reads as part of the page rather than as a widget. */
@@ -1473,21 +1492,6 @@
         .to([svg, ball], { autoAlpha: 0, duration: 0.5 });
     },
 
-    /* Forky pops up from the bottom of the screen, wobbles, says his line. */
-    forky() {
-      const f = document.createElement("div");
-      f.className = "egg-forky";
-      f.innerHTML = `<span class="forky-body">🍴<i class="eye l"></i><i class="eye r"></i><i class="brow"></i></span><span class="forky-say">trash?!</span>`;
-      fx.appendChild(f);
-      if (!motion) return setTimeout(() => f.remove(), 2200);
-      gsap
-        .timeline({ onComplete: () => f.remove() })
-        .fromTo(f, { yPercent: 110 }, { yPercent: 0, duration: 0.6, ease: "back.out(2)" })
-        .to(f.querySelector(".forky-body"), { rotate: 12, duration: 0.14, yoyo: true, repeat: 5, ease: "sine.inOut", transformOrigin: "50% 100%" })
-        .fromTo(f.querySelector(".forky-say"), { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.35, ease: "back.out(3)" }, "-=0.6")
-        .to(f, { yPercent: 115, duration: 0.5, ease: "back.in(2)" }, "+=1.3");
-    },
-
     /* A fresh latte appears at the tap, with steam and a latte-art heart. */
     coffee(card, x, y) {
       const c = document.createElement("div");
@@ -1647,7 +1651,9 @@
           scrollTrigger: { trigger: group, start: "top bottom", end: "bottom top", scrub: 1, invalidateOnRefresh: true }
         })
       );
-      gsap.fromTo(group.querySelector(".year-stamp"), { scale: 0, rotate: -60 }, { scale: 1, rotate: -14, duration: 0.6, ease: "back.out(3)", scrollTrigger: { trigger: group, start: "top 70%", once: true } });
+      const flipped = group.closest(".step")?.classList.contains("is-flip");
+      const stampRot = flipped ? -14 : 14;
+      gsap.fromTo(group.querySelector(".year-stamp"), { scale: 0, rotate: stampRot - 46 }, { scale: 1, rotate: stampRot, duration: 0.6, ease: "back.out(3)", scrollTrigger: { trigger: group, start: "top 70%", once: true } });
       snaps.forEach((s) => {
         s.addEventListener("pointerenter", () => gsap.to(s, { scale: 1.05, rotate: 0, zIndex: 5, duration: 0.35, ease: "power2.out" }));
         s.addEventListener("pointerleave", () =>

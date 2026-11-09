@@ -117,7 +117,7 @@ html.mood-dark .depth-ui {
   align-items: baseline;
   gap: 5px;
   margin: 0 0 10px;
-  font: 600 10.5px/1 ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font: 600 12px/1 ui-monospace, "SFMono-Regular", Menlo, monospace;
   letter-spacing: 0.18em;
   opacity: 0.85;
 }
@@ -182,17 +182,19 @@ html.mood-dark .depth-ui {
 }
 
 .depth-line {
-  margin: 0 0 7px;
+  margin: 0 0 8px;
   font-family: var(--hand);
-  font-size: clamp(16px, 1.4vw, 20px);
+  font-size: clamp(19px, 1.7vw, 24px);
   line-height: 1.25;
   opacity: 1;
 }
 
+/* Sized up from 12px: Minko could not comfortably read the caption in the
+   bottom right corner of the gallery. */
 .depth-body {
   margin: 0;
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.65;
   letter-spacing: 0.015em;
   opacity: 0.92;
 }

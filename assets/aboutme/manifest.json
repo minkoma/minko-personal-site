@@ -4,14 +4,6 @@
     "web": "ballet.jpg"
   },
   {
-    "original": "Me & Forky.heic",
-    "web": "me-forky.jpg"
-  },
-  {
-    "original": "ShellieMay bear.jpg",
-    "web": "shelliemay-bear.jpg"
-  },
-  {
     "original": "ballet2.heic",
     "web": "ballet2.jpg"
   },
@@ -20,8 +12,16 @@
     "web": "ballet3.jpg"
   },
   {
+    "original": "ballet6.heic",
+    "web": "ballet4.jpg"
+  },
+  {
     "original": "calligraphy.HEIC",
     "web": "calligraphy.jpg"
+  },
+  {
+    "original": "calligraphy2.heic",
+    "web": "calligraphy2.jpg"
   },
   {
     "original": "crochet1.JPG",
@@ -52,7 +52,7 @@
     "web": "foodie4.jpg"
   },
   {
-    "original": "foodie5.jpg",
+    "original": "ziweicun.heic",
     "web": "foodie5.jpg"
   },
   {
@@ -74,6 +74,14 @@
   {
     "original": "make coffee.HEIC",
     "web": "make-coffee.jpg"
+  },
+  {
+    "original": "ShellieMay bear.jpg",
+    "web": "shelliemay-bear.jpg"
+  },
+  {
+    "original": "60506.jpeg",
+    "web": "shelliemay-bear2.jpg"
   },
   {
     "original": "travel.HEIC",
@@ -110,13 +118,5 @@
   {
     "original": "twin4.JPG",
     "web": "twin4.jpg"
-  },
-  {
-    "original": "ballet6.heic",
-    "web": "ballet4.jpg"
-  },
-  {
-    "original": "60506.jpeg",
-    "web": "shelliemay-bear2.jpg"
   }
 ]

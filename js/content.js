@@ -8,10 +8,9 @@ window.MINKO = {
     lede: "I turn human insight and data into brand stories that connect.",
     bio: "A marketer, storyteller, and endlessly curious thinker. Blending data, strategy, creativity, and a little heart to help brands connect with people in ways that matter.",
     location: "Evanston, IL · San Diego, CA",
-    email: "minkoma2002@gmail.com",
-    phone: "858-539-5783",
+    email: "hello.minkoma@gmail.com",
     linkedin: "https://www.linkedin.com/in/minko-m-281519255/",
-    resume: "../resume.html",
+    resume: "resume.html",
     languages: "Bilingual in Mandarin and English"
   },
 
@@ -32,6 +31,8 @@ window.MINKO = {
   now: {
     zone: "America/Los_Angeles",
     place: "San Diego, CA",
+    /* Rendered after `place` in the "where" row, separated by a dot. */
+    relocate: "Happy to relocate for the right opportunity",
     asleep: [2, 10],
     /* An optional third state for the small hours: still up, but not someone
        you should expect a reply from. Set to null to switch it off. */
@@ -42,7 +43,7 @@ window.MINKO = {
     openTo: {
       commitment: "Full-time",
       lead: "roles in",
-      fields: ["Marketing", "Social media", "Content creation", "Data & analytics"]
+      fields: ["Digital Marketing", "Content & Social", "Data Analytics", "Brand Strategy", "Consumer Insights"]
     }
   },
 
@@ -121,7 +122,7 @@ window.MINKO = {
         "assets/experience/nu-graduation-3.jpg"
       ],
       photo: "assets/experience/northwestern.jpg",
-      year: "2025"
+      year: "2025–2026"
     },
     {
       school: "University of California, San Diego",
@@ -145,7 +146,7 @@ window.MINKO = {
         "assets/experience/first-year-halloween.jpg"
       ],
       photo: "assets/experience/ucsd-graduation.jpg",
-      year: "2021"
+      year: "2021–2024"
     }
   ],
 
@@ -171,7 +172,7 @@ window.MINKO = {
       role: "Marketing Associate",
       period: "Apr 2024 – Aug 2025",
       place: "San Diego, CA",
-      year: "2024",
+      year: "2024–2025",
       photos: [
         "assets/experience/Asian Egg Bank.jpg",
         "assets/experience/Asian Egg Bank Team.jpg",
@@ -191,7 +192,7 @@ window.MINKO = {
       role: "UCSD Student Storyteller",
       period: "Oct 2022 – Jun 2024",
       place: "La Jolla, CA",
-      year: "2022",
+      year: "2022–2024",
       /* Two optional per-entry overrides for the photo cluster, both honoured
          by js/main.js. `photoTilt` replaces the generated rotation, in degrees,
          one per photo in the order below: the group shot on the right leans
@@ -420,8 +421,8 @@ window.MINKO = {
       key: "twins",
       emoji: "👯‍♀️",
       title: "Two of a kind",
-      headline: "Two minutes ahead. Ten centimetres behind.",
-      story: "My twin sister is two minutes younger than me — and 10 cm taller. I’ll always have seniority, even if she has the better view.",
+      headline: "Two minutes ahead. Four inches behind.",
+      story: "I’m a fraternal twin! My sister is two minutes younger, four inches taller, and looks nothing like me. Ask me anything about being a twin — I’ve got plenty of stories to share!",
       photos: [
         "assets/aboutme/web/twin1.jpg",
         "assets/aboutme/web/twin2.jpg",
@@ -434,7 +435,7 @@ window.MINKO = {
       emoji: "🩰",
       title: "A little room to dance",
       headline: "My favourite way to get out of my head.",
-      story: "Ballet is where I slow down, let go, and explore who I am through movement. I love getting completely lost in a dance.",
+      story: "Ballet is where I slow down, let go, and explore who I am through movement. It teaches me discipline and patience, reminding me that progress takes time. There’s always something new to learn, and that’s what keeps me coming back.",
       photos: [
         "assets/aboutme/web/ballet.jpg",
         "assets/aboutme/web/ballet2.jpg",
@@ -447,7 +448,7 @@ window.MINKO = {
       emoji: "🐾",
       title: "Small paws, big love",
       headline: "Five tiny guests. A very full heart.",
-      story: "I volunteer at a shelter and have fostered five kittens: Sequoia, Michael, Jane, Jonathan Bailey, and Marsala. Giving them a little home along the way has been such a joy.",
+      story: "I’ve been volunteering at a cat shelter for almost a year and have fostered five kittens so far. I love giving back to the community while helping these little furballs find their forever homes.",
       photos: [
         "assets/aboutme/web/foster-sequoia.jpg",
         "assets/aboutme/web/foster-michael-jane.jpg",
@@ -460,7 +461,7 @@ window.MINKO = {
       emoji: "🍜",
       title: "Always room for a bite",
       headline: "A curious palate, a busy kitchen.",
-      story: "I love cooking just as much as trying different cuisines. Whether I’m making a meal at home or tasting something new, food is one of my favourite ways to explore.",
+      story: "Nothing cheers me up quite like a good meal. I love experimenting in the kitchen and trying new cuisines, but I’m also the kind of person who can eat the same favourite dish on repeat without ever getting bored.",
       photos: [
         "assets/aboutme/web/foodie1.jpg",
         "assets/aboutme/web/foodie2.jpg",
@@ -474,12 +475,13 @@ window.MINKO = {
       emoji: "🧶",
       title: "Made with a little patience",
       headline: "Yarn, thread, ink. Endless possibilities.",
-      story: "Crochet, cross-stitch, and calligraphy are my little creative playground. I love watching an idea become something I can hold, stitch by stitch or brushstroke by brushstroke.",
+      story: "Crochet, cross-stitch, and calligraphy are my favourite ways to get creative. There’s something so satisfying about making something from scratch, especially when it turns out just the way I imagined (which isn’t always the case!).",
       photos: [
         "assets/aboutme/web/crochet1.jpg",
         "assets/aboutme/web/cross-stitch.jpg",
         "assets/aboutme/web/cross-stitch2.jpg",
-        "assets/aboutme/web/calligraphy.jpg"
+        "assets/aboutme/web/calligraphy.jpg",
+        "assets/aboutme/web/calligraphy2.jpg"
       ]
     },
     {
